@@ -1,6 +1,9 @@
 <template>
     <div class="top-bar">
       <img class="logo" src="../assets/logo.png">
+      <div class="menus">
+        <span v-for="(item,idx) in menuList" v:key="idx" @click="handlerMenu(item)" :class="{'selected':currentName==item}">{{item}}</span>
+      </div>
       <div class="login-part"><img src="../assets/ico-login.png"><span>Login</span></div>
     </div>
 </template>
@@ -10,7 +13,27 @@ export default {
   name: 'HelloWorld',
   props: {
     msg: String
-  }
+  },
+  data(){
+    return{
+      menuList:['Home','Manage','Authentication'],
+      currentName:'Home',
+    }
+  },
+  mounted(){
+    console.log(this.$route)
+  },
+  watch:{
+    '$route'(val){
+      this.currentName=val.name;
+      console.log(val)
+    }
+  },
+  methods:{
+    handlerMenu(val){
+      this.$router.push({name:val})
+    },
+  },
 }
 </script>
 
@@ -19,10 +42,28 @@ export default {
 .top-bar{
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  // justify-content: space-between;
+  border-bottom: 2px solid #efefef;
   .logo{
     display: block;
     width:157px;
+    margin: 0 50px 0 0;
+  }
+  .menus{
+    flex:1;
+    text-align: left;
+    span{
+      display: inline-block;
+      margin:0 64px 0 0;
+      font-size: 16px;
+      font-family: PingFangSC-Semibold, PingFang SC;
+      font-weight: 600;
+      color: #000000;
+      line-height: 65px;
+    }
+    .selected{
+      border-bottom: 3px solid #000;
+    }
   }
   .login-part{
     padding:0 16px;

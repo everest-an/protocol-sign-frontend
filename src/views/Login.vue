@@ -99,9 +99,9 @@
 
 <style scoped lang="scss">
     .container{
-        background: url(../assets/bg.png) no-repeat center;
-        background-size: 100% 100%;
-        background-attachment: fixed;
+        // background: url(../assets/bg.png) no-repeat center;
+        // background-size: 100% 100%;
+        // background-attachment: fixed;
         height: calc(100vh - 60px);
         display: flex;
         align-items: center;

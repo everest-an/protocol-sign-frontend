@@ -1,7 +1,11 @@
 <template>
   <div class="index">
+    <div class="left"></div>
+    <div class="right">
+      <router-view/>
+    </div>
     
-    <div class="container">
+    <!-- <div class="container">
       <div class="container-header">
         <div class="flex-row-center">
           <Hamburger :is-active="sidebar.opened" @toggleClick="toggleSideBar" />
@@ -13,22 +17,22 @@
         </div>
       </div>
       <div class="container-info">
-        <router-view/>
+        
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
 
-import Hamburger from '@/components/Hamburger/index.vue'
-import Screenfull from '@/components/Screenfull/index.vue'
+// import Hamburger from '@/components/Hamburger/index.vue'
+// import Screenfull from '@/components/Screenfull/index.vue'
 
 export default {
   name: "Index",
   components: {
-    Hamburger,
-    Screenfull
+    // Hamburger,
+    // Screenfull
   },
   methods: {
     toggleSideBar() {
@@ -45,14 +49,7 @@ export default {
     // ...mapGetters([
     //   'sidebar',
     // ]),
-    sidebar: function() {
-      return this.$store.state.sidebar
-    },
-    pageList() {
-      let [...list] = this.$route.matched
-      list.shift()
-      return list
-    }
+   
   }
 }
 </script>
@@ -64,9 +61,12 @@ export default {
 }
 .index {
   display: flex;
+  width: 980px;
+  margin: 32px auto 0;
   height: 100vh;
   overflow: hidden;
-  background-color: #FFFFFF;
+  background-color: #fff;
+  // background-color: #FFFFFF;
 }
 
 .container {

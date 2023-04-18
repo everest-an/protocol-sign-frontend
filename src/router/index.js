@@ -4,21 +4,43 @@ const routes = [
     {
         path: '/',
         name: 'Index',
-        //component: () => import('../views/Index.vue'),
-        //redirect: {name: 'Spu'},
-        // children: [
-        //     {
-        //         path: 'dataStatistics',
-        //         name: 'DataStatistics',
-        //         meta: {
-        //             title: '数据统计'
-        //         },
-        //         icon: 'el-icon-s-data',
-        //         redirect: {name: 'generalData'},
-        //         component: () => import('../views/dataStatistics/Index.vue'),
+        component: () => import('../views/Index.vue'),
+        redirect: {name: 'Home'},
+        children: [
+            {
+                path: 'home',
+                name: 'Home',
+                // meta: {
+                //     title: ''
+                // },
+                //icon: 'el-icon-s-data',
+                //redirect: {name: 'generalData'},
+                component: () => import('../views/home/home.vue'),
                
-        //     },     
-        // ]
+            },
+            {
+                path: '/manage',
+                name: 'Manage',
+                // meta: {
+                //     title: ''
+                // },
+                //icon: 'el-icon-s-data',
+                //redirect: {name: 'generalData'},
+                component: () => import('../views/manage/manage.vue'),
+               
+            },
+            {
+                path: '/authentication',
+                name: 'Authentication',
+                // meta: {
+                //     title: ''
+                // },
+                //icon: 'el-icon-s-data',
+                //redirect: {name: 'generalData'},
+                component: () => import('../views/authentication/authentication.vue'),
+               
+            },     
+        ]
     },
     {
         path: '/login',
