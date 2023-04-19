@@ -215,7 +215,7 @@ export default {
         justify-content: space-between;
         align-items: center;
         margin: 0 auto 24px;
-
+        cursor: pointer;
         .txt {
             display: block;
         }
@@ -274,6 +274,7 @@ export default {
             font-weight: 400;
             color: #0E37FF;
             line-height: 20px;
+            cursor: pointer;
         }
 
         .err {
@@ -307,6 +308,7 @@ export default {
         font-weight: 400;
         color: #FFFFFF;
         line-height: 40px;
+        cursor: pointer;
     }
 }
 </style>
