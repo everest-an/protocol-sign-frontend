@@ -22,6 +22,11 @@ export default {
             this.$router.push({
                 name: 'Step4'
             })
+            this.$axios.post('/message-board/deleteById', {
+                id: '123'
+            }).then(res => {
+                this.handleSearch()
+            })
         },
         handlerBack() {
             this.$router.push({
