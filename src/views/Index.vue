@@ -64,7 +64,7 @@ export default {
   display: flex;
   // width: 980px;
   margin: 32px auto 0;
-  height: 100vh;
+  min-height: 100vh;
   overflow: hidden;
   
   // background-color: #FFFFFF;

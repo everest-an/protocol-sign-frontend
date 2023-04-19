@@ -48,7 +48,7 @@ export default {
     },
     methods: {
         addMyself() {
-            this.address = sessionStorage.getItem('address');
+            this.address = localStorage.getItem('address');
             let obj = { address: this.address }
             this.userArr.push(obj);
             let arr = [];

@@ -93,7 +93,7 @@ export default {
                         // 用户已经授权登录
                         const account = accounts[0];
                         console.log(`用户已登录，账户地址为： ${account}`);
-                        sessionStorage.setItem('address', account)
+                        localStorage.setItem('address', account)
 
                         this.$axios.post('/web/login/authLogin', { accountAddress: account }).then((res) => {
                             console.log('login=========', res)
@@ -132,6 +132,8 @@ export default {
             this.$axios.post('/web/login/emailLogin', data).then((res) => {
                 console.log(res);
                 if (res.code == 0) {
+                    localStorage.setItem('address', res.results.accountAddress)
+                    localStorage.setItem('token',res.results.token)
                     this.$router.push({
                         name: 'Home'
                     })

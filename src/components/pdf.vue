@@ -37,6 +37,7 @@ export default {
     }
   },
   mounted() {
+    rectangles =[];
     PDF.GlobalWorkerOptions.workerSrc = entry
     this.loadFile('pdfUrl', 'pdf-canvas')
     this.loadCanvas()

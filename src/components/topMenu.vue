@@ -25,16 +25,20 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$route);
+    console.log('gg==', this.$route);
 
   },
   watch: {
     '$route'(val) {
       this.currentName = val.name;
-      // console.log('=======', val)
-      let token = localStorage.getItem('token');
-      if (token) {
-        this.logMsg = "Logout"
+      console.log('=======', val)
+      if (val.path == '/login') {
+        this.logMsg = "Login"
+      } else {
+        let token = localStorage.getItem('token');
+        if (token) {
+          this.logMsg = "Logout"
+        }
       }
     },
   },

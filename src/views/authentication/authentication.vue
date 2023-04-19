@@ -23,7 +23,7 @@ export default {
         }
     },
     mounted(){
-        this.address = sessionStorage.getItem('address');
+        this.address = localStorage.getItem('address');
     },
     methods:{
 
