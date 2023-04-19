@@ -36,6 +36,8 @@
 // import {
 //     ElMessage
 // } from 'element-plus';
+import * as PDF from "pdfjs-dist";
+import entry from "pdfjs-dist/build/pdf.worker.entry";
 export default {
     name: "Login",
     components: {},
@@ -76,6 +78,9 @@ export default {
         //         }]
         //     }
         //};
+    },
+    mounted(){
+        PDF.GlobalWorkerOptions.workerSrc = entry
     },
     methods: {
         handleSelectLogin(type) {
