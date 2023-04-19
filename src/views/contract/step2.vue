@@ -182,7 +182,7 @@ export default {
     }
     .foot{
         display: flex;
-        justify-content: end;
+        justify-content: flex-end;
         span{
             display: block;
             width: 102px;
