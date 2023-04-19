@@ -39,7 +39,31 @@ const routes = [
                 //redirect: {name: 'generalData'},
                 component: () => import('../views/authentication/authentication.vue'),
                
-            },     
+            }, 
+            {
+                path: '/step1',
+                name: 'Step1',
+                component: () => import('../views/contract/step1.vue'),
+               
+            },
+            {
+                path: '/step2',
+                name: 'Step2',
+                component: () => import('../views/contract/step2.vue'),
+               
+            },
+            {
+                path: '/step3',
+                name: 'Step3',
+                component: () => import('../views/contract/step3.vue'),
+               
+            },
+            {
+                path: '/step4',
+                name: 'Step4',
+                component: () => import('../views/contract/step4.vue'),
+               
+            },      
         ]
     },
     {

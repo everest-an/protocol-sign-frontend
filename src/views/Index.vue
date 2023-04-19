@@ -1,9 +1,10 @@
 <template>
   <div class="index">
     <div class="left"></div>
-    <div class="right">
+    <div class="center">
       <router-view/>
     </div>
+    <div class="right"></div>
     
     <!-- <div class="container">
       <div class="container-header">
@@ -61,12 +62,22 @@ export default {
 }
 .index {
   display: flex;
-  width: 980px;
+  // width: 980px;
   margin: 32px auto 0;
   height: 100vh;
   overflow: hidden;
-  background-color: #fff;
+  
   // background-color: #FFFFFF;
+  .left{
+    width: 207px;
+  }
+  .center{
+    flex: 1;
+    background-color: #fff;
+  }
+  .right{
+    width: 207px;
+  }
 }
 
 .container {
