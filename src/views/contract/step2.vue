@@ -4,7 +4,7 @@
     <div class="content">
         <div class="title">Add recipients</div>
         <div class="buttons">
-            <div class="bt-button"><img src="../../assets/ico-add1.png"><button class="bt-start">Start Now</button></div>
+            <div class="bt-button"><img src="../../assets/ico-add1.png"><div class="bt-start">Add Myself</div></div>
             <div class="input-button"><input placeholder="email，wallete addres" /><button>Add</button></div>
         </div>
         <div class="list">
@@ -85,6 +85,7 @@ export default {
                     width: 13px;
                     height: 13px;
                     display: block;
+                    margin-right: 10px;
                 }
                 button{
                     border: none;

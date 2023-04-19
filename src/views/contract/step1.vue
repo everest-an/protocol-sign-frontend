@@ -27,7 +27,7 @@ export default {
     },
 }
 </script>
-<style scope lang="scss">
+<style scoped lang="scss">
 .contract-wrap{
     padding:40px 24px;
     .content{

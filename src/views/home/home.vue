@@ -25,7 +25,7 @@ export default {
     },
 }
 </script>
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .home-wrap{
     display: flex;
     justify-content: center;
