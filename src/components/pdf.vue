@@ -19,9 +19,10 @@
 
 <script>
 import * as PDF from "pdfjs-dist";
-import pdfUrl from "@/assets/2.pdf";
+// import pdfUrl from "@/assets/2.pdf";
 import signImg from "@/assets/sign_here.svg";
 import entry from "pdfjs-dist/build/pdf.worker.entry";
+let rectangles = [];
 export default {
   name: "PDF",
   data() {
@@ -36,7 +37,7 @@ export default {
   },
   mounted() {
     PDF.GlobalWorkerOptions.workerSrc = entry
-    this.loadFile(pdfUrl, 'pdf-canvas')
+    this.loadFile('pdfUrl', 'pdf-canvas')
     this.loadCanvas()
   },
   methods: {
@@ -45,7 +46,7 @@ export default {
       let that = this;
       const canvas = document.getElementById('canvas');
       const ctx = canvas.getContext('2d');
-      let rectangles = [];
+      // let rectangles = [];
       canvas.addEventListener('mousedown', handleMouseDown);
       canvas.addEventListener('mousemove', handleMouseMove);
       canvas.addEventListener('mouseup', handleMouseUp);
@@ -81,6 +82,7 @@ export default {
         for (const rect of rectangles) {
           rect.isDragging = false;
         }
+        console.log(rectangles)
       }
 
       function redraw() {
@@ -146,14 +148,21 @@ export default {
     },
 
     loadFile(url, id) {
-      let loadingTask = PDF.getDocument(url);
-      loadingTask.promise.then((pdf) => {
-        this.pdfDoc = pdf // 保存加载的pdf文件流
-        this.pdfPages = this.pdfDoc.numPages // 获取pdf文件的总页数
-        this.$nextTick(() => {
-          this.renderPage(pdf, id);
+      let file = this.$store.state.pdfFile;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const data = new Uint8Array(event.target.result);
+        let loadingTask = PDF.getDocument(data);
+        loadingTask.promise.then((pdf) => {
+          this.pdfDoc = pdf // 保存加载的pdf文件流
+          this.pdfPages = this.pdfDoc.numPages // 获取pdf文件的总页数
+          this.$nextTick(() => {
+            this.renderPage(pdf, id);
+          });
         });
-      });
+      };
+      reader.readAsArrayBuffer(file);
+   
     },
 
     async renderPage(pdf, id) {

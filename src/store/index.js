@@ -1,32 +1,28 @@
-// import { createStore } from 'vuex'
-// import Cookies from 'js-cookie'
+import { createStore } from 'vuex'
 
-// export default createStore({
-//   state() {
-//     return {
-//       sidebar: {
-//         opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
-//         withoutAnimation: false
-//       },
-//     }
-//   },
-//   mutations: {
-//     TOGGLE_SIDEBAR: state => {
-//       state.sidebar.opened = !state.sidebar.opened
-//       state.sidebar.withoutAnimation = false
-//       if (state.sidebar.opened) {
-//         Cookies.set('sidebarStatus', 1)
-//       } else {
-//         Cookies.set('sidebarStatus', 0)
-//       }
-//     },
-//   },
-//   actions: {
-//     toggleSideBar({ commit }) {
-//       commit('TOGGLE_SIDEBAR')
-//     },
-//   },
-//   modules: {
+export default createStore({
+    state() {
+        return {
+            pdfFile: null,
+            receiverEmail: null,
+            placeMark: null
+        }
+    },
+    mutations: {
+        SET_PDF: (state, file) => {
+            state.pdfFile = file
+        },
+        SET_EMAIL: (state, arr) => {
+            state.receiverEmail = arr
+        },
+    },
+    actions: {
+        setPdf({ commit }, amount) {
+            // alert(amount)
+            // commit('SET_PDF')
+        },
+    },
+    modules: {
 
-//   }
-// })
+    }
+})

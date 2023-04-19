@@ -19,11 +19,14 @@ export default {
     },
     methods: {
         handlerNext() {
-            // 创建一个FormData对象
+            // let file = this.$store.state.pdfFile;
+            // console.log(file)
+            // let receiverEmail = this.$store.state.receiverEmail;
+            // //创建一个FormData对象
             // var formData = new FormData();
 
             // // 添加文件
-            // formData.append('file', null);
+            // formData.append('file', file);
 
             // // 添加参数
             // formData.append('authentication', 0);
@@ -38,10 +41,16 @@ export default {
             //     }
             // }).then(function (response) {
             //     console.log(response);
+            //     this.$router.push({
+            //         name: 'Step4'
+            //     })
             // }).catch(function (error) {
             //     console.log(error);
             // });
-            // return
+            this.$router.push({
+                    name: 'Step4'
+                })
+            return
 
             // var form = document.createElement("form");
             // form.id = "form";
@@ -77,7 +86,7 @@ export default {
     },
 }
 </script>
-<style scope lang="scss">
+<style scoped lang="scss">
 .contract-wrap {
     padding: 40px 24px;
 }

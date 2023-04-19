@@ -13,12 +13,13 @@
     "file-loader": "^6.2.0",
     "node-sass": "^8.0.0",
     "nprogress": "^0.2.0",
-    "pdfjs-dist": "^2.11.338",
+    "pdfjs-dist": "2.11.338",
     "sass-loader": "^13.2.2",
     "save": "^2.9.0",
     "url-parse": "^1.5.10",
     "vue": "^3.2.13",
-    "vue-router": "^4.1.6"
+    "vue-router": "^4.1.6",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

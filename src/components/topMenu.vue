@@ -74,6 +74,7 @@ export default {
     border: 1px solid rgba(0,0,0,0.65);
     display: flex;
     align-items: center;
+    margin-right: 20px;
     img{
       display: block;
       width: 18px;
