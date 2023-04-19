@@ -3,7 +3,7 @@
       <img class="logo" src="../assets/logo.png">
       <div class="menus">
         <div v-if="menuList.indexOf(currentName)>-1">
-          <span v-for="(item,idx) in menuList" v:key="idx" @click="handlerMenu(item)" :class="{'selected':currentName==item}">{{item}}</span>
+          <span v-for="(item,idx) in menuList" :key="idx" @click="handlerMenu(item)" :class="{'selected':currentName==item}">{{item}}</span>
         </div>
       </div>
       <div class="login-part"><img src="../assets/ico-login.png"><span>Login</span></div>
