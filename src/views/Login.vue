@@ -84,7 +84,7 @@ export default {
                 if (typeof window.ethereum !== 'undefined') {
                     console.log('MetaMask已安装');
                 } else {
-                    alert('MetaMask未安装！')
+                    alert('MetaMask uninstall！')
                     return
                 }
                 // 请求用户授权登录
