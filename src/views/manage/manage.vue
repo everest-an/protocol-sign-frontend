@@ -2,18 +2,18 @@
     <div class="manage-wrap">
         <div class="top"><button class="bt-start" @click="startNow">Start Now</button></div>
         <div class="content">
-            <!-- <div class="title">Add Documents </div> -->
+            <div class="title">My uploaded files</div>
             <div class="table-wrap">
                 <div class="table-title"><span class="col1">Subject</span><span class="col2">Status</span><span
                         class="col3">Last Change</span><span class="col4"></span></div>
                 <div class="table-content">
                     <div class="list" v-for="item in list" :key="item.id">
                         <div class="col1">
-                            <p class="txt1">数字签名合同范本</p>
-                            <p class="txt2">To：123455667@163.com</p>
+                            <p class="txt1">{{item.fileName}}</p>
+                            <!-- <p class="txt2">To：{123455667@163.com}</p> -->
                         </div>
                         <div class="col2">waiting</div>
-                        <div class="col3">23242423</div>
+                        <div class="col3">{{item.createTime}}</div>
                         <div class="col4">
                             <button>Sign</button>
                             <!-- <button class="grey">Sign</button> -->
@@ -40,6 +40,7 @@ export default {
         let token = localStorage.getItem('token');
         this.$axios.post('/web/contract/queryPage', { size: 20,current:1 }).then((res) => {
             console.log(res);
+            this.list = res.results.records;
         }).catch(function (error) {
             console.log(error);
         });
@@ -83,12 +84,15 @@ export default {
             font-family: HarmonyOS_Sans_Black;
             color: #333333;
             line-height: 23px;
+            margin-bottom: 10px;
+            font-weight: bold;
         }
 
         .table-wrap {
             .col1 {
                 flex: 1;
                 display: block;
+                padding-left: 20px;
             }
 
             .col2 {

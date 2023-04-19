@@ -77,24 +77,16 @@ export default {
             formData.append('fileName', file.name);
             formData.append('placeMark', placeMark);
             formData.append('receiverEmail', receiverEmail);
+
+            this.message = "支付中,请稍后..."
+            this.toastMsg = "支付并发送成功！"
             // 发送POST请求
             this.$axios.post('/web/contract/addContractByAuthor', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
-            }).then(function (response) {
+            }).then((response) => {
                 console.log(response);
-                this.$router.push({
-                    name: 'Step4'
-                })
-            }).catch(function (error) {
-                console.log(error);
-            });
-            this.message = "支付中,请稍后..."
-            this.toastMsg = "支付并发送成功！"
-            this.showModal = true;
-            setTimeout(() => {
-                this.showModal = false;
                 this.show = true;
                 setTimeout(() => {
                     this.show = false;
@@ -102,6 +94,13 @@ export default {
                         name: 'Manage'
                     })
                 }, 2000)
+            }).catch(function (error) {
+                console.log(error);
+            });
+
+            this.showModal = true;
+            setTimeout(() => {
+                this.showModal = false;
             }, 2000)
         },
         handlerBack() {
@@ -124,7 +123,6 @@ export default {
                 this.showModal = false;
                 this.show = true;
                 setTimeout(() => {
-
                     this.show = false;
                 }, 2000)
             }, 2000)
