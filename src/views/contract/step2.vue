@@ -27,6 +27,7 @@
         </div>
 
     </div>
+    <div class="foot"><span @click="handlerBack">Back</span><span class="black" @click="handlerNext">Next</span></div>
 </div>
 
 
@@ -43,7 +44,16 @@ export default {
         }
     },
     methods:{
-
+        handlerNext(){
+            this.$router.push({
+                name:'Step3'
+            })
+        },
+        handlerBack(){
+            this.$router.push({
+                name:'Step1'
+            })
+        },
     },
 }
 </script>
@@ -53,6 +63,7 @@ export default {
     
     .content{
         text-align: left;
+        min-height: 500px;
         .title{
             font-size: 16px;
             font-family: HarmonyOS_Sans_Black;
@@ -167,6 +178,31 @@ export default {
                     }
                 }
             }
+        }
+    }
+    .foot{
+        display: flex;
+        justify-content: flex-end;
+        span{
+            display: block;
+            width: 102px;
+            height: 32px;
+            line-height: 32px;
+            border-radius: 16px;
+            border: 1px solid #000000;
+            font-size: 14px;
+            font-family: PingFangSC-Regular, PingFang SC;
+            font-weight: 400;
+            color: #000000;
+            margin: 0 10px 0 0;
+
+        }
+        .black{
+            background: #000000;
+            font-size: 14px;
+            font-family: PingFangSC-Regular, PingFang SC;
+            font-weight: 400;
+            color: #FFFFFF;
         }
     }
 }

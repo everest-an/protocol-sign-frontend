@@ -1,5 +1,5 @@
 <template>
-  <div class="content" :style="cursor">
+  <div class="pdf-content" :style="cursor">
     <div style="position: relative;display: flex;">
       <div :style="divContent"></div>
       <canvas id="pdf-canvas" class="canvas-location"></canvas>
@@ -182,7 +182,7 @@ export default {
 }
 </script>
 <style scope lang="scss">
-.content {
+.pdf-content {
   background: #eee;
   padding: 20px;
   margin-top: 20px;

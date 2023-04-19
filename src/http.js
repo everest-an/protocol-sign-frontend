@@ -25,7 +25,7 @@ function endLoading() {
 }
 
  //const baseURL = 'https://ec.pugongyinghulian.com/shopapi3/smallshop'
- const baseURL = 'https://tjtest.pugongyinghulian.com/shopapi/smallshop'
+ const baseURL = 'https://tjtest.pugongyinghulian.com/dsign_api'
 
 // const baseURL = 'http://192.168.1.22:8116/smallshop'
 axios.defaults.baseURL = baseURL

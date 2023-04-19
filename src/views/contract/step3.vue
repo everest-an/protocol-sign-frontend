@@ -1,23 +1,8 @@
 <template>
     <div class="contract-wrap">
         <Step :currentStep="3"></Step>
-        <!-- <div class="content" :style="cursor">
-            <div style="position: relative;display: flex;">
-                <div :style="divContent"></div>
-                <canvas id="pdf-canvas" class="canvas-location"></canvas>
-                <canvas id="canvas" class="canvas-location"></canvas>
-            </div>
-            <div class="menu-bar">
-                <div>
-                    <div class="item-button">Signature Fields</div>
-                    <div class="nav-item" @click="signHandle()">
-                        <div>0xC50557…a579C7's</div>
-                        <div>Signature</div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
         <pdf-canvas></pdf-canvas>
+        <div class="foot"><span @click="handlerBack">Back</span><span class="black" @click="handlerNext">Next</span></div>
     </div>
 </template>
 <script>
@@ -26,18 +11,23 @@ import PdfCanvas from '@/components/pdf.vue'
 
 export default {
     name: "Manage",
-    components: { Step,PdfCanvas},
+    components: { Step, PdfCanvas },
     data() {
         return {
-           
+
         }
     },
-    mounted() {
-        
-    },
     methods: {
-
-       
+        handlerNext() {
+            this.$router.push({
+                name: 'Step4'
+            })
+        },
+        handlerBack() {
+            this.$router.push({
+                name: 'Step2'
+            })
+        },
     },
 }
 </script>
@@ -46,4 +36,31 @@ export default {
     padding: 40px 24px;
 }
 
+.foot {
+    display: flex;
+    justify-content: flex-end;
+
+    span {
+        display: block;
+        width: 102px;
+        height: 32px;
+        line-height: 32px;
+        border-radius: 16px;
+        border: 1px solid #000000;
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #000000;
+        margin: 0 10px 0 0;
+
+    }
+
+    .black {
+        background: #000000;
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #FFFFFF;
+    }
+}
 </style>
