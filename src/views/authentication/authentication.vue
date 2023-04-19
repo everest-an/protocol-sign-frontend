@@ -4,7 +4,7 @@
             <div class="auth-self">
                 <div class="left">
                     <img class="img" src="../../assets/ico-person.png">
-                    <span class="txt">dsfsfsfsdfsfsferwrw</span>
+                    <span class="txt">{{address}}</span>
                     <img class="copy" src="../../assets/ico-copy.png">
                 </div>
                 <div class="right"><button class="bt-start">Authentication</button></div>
@@ -19,7 +19,11 @@ export default {
     data() {
         return{
             currentType:'',
+            address:''
         }
+    },
+    mounted(){
+        this.address = sessionStorage.getItem('address');
     },
     methods:{
 
@@ -30,9 +34,12 @@ export default {
 .auth-wrap{
     padding: 20px 24px;
     .auth-content{
+        margin: 40px;
         .auth-self{
+            padding: 30px;
             display: flex;
             align-items: center;
+            border: 1px solid #eee;
             .left{
                 flex:1;
                 display: flex;

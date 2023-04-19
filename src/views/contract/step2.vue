@@ -43,11 +43,13 @@ export default {
             currentType: '',
             userArr: [],
             ortherAddress: '',
+            address: ''
         }
     },
     methods: {
         addMyself() {
-            let obj = { address: '0xC505573cC5c03381a6E8d93dac66932B3Ba579C7' }
+            this.address = sessionStorage.getItem('address');
+            let obj = { address: this.address }
             this.userArr.push(obj);
             let arr = [];
             this.userArr.map(item => {

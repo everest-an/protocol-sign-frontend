@@ -2,7 +2,7 @@
     <div class="manage-wrap">
         <div class="top"><button class="bt-start" @click="startNow">Start Now</button></div>
         <div class="content">
-            <div class="title">Add Documents </div>
+            <!-- <div class="title">Add Documents </div> -->
             <div class="table-wrap">
                 <div class="table-title"><span class="col1">Subject</span><span class="col2">Status</span><span
                         class="col3">Last Change</span><span class="col4"></span></div>
@@ -15,8 +15,9 @@
                         <div class="col2">waiting</div>
                         <div class="col3">23242423</div>
                         <div class="col4">
-                            <button class="grey">Sign</button>
-                            <button>Download</button>
+                            <button>Sign</button>
+                            <!-- <button class="grey">Sign</button> -->
+                            <!-- <button>Download</button> -->
                         </div>
                     </div>
 
@@ -106,7 +107,7 @@ export default {
                 font-family: PingFangSC-Semibold, PingFang SC;
                 font-weight: 600;
                 color: #000000;
-                line-height: 17px;
+                line-height: 32px;
             }
 
             .table-content {
@@ -174,4 +175,5 @@ export default {
             }
         }
     }
-}</style>
+}
+</style>
