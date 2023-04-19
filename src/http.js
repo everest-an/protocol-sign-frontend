@@ -59,7 +59,7 @@ request.interceptors.response.use(response => {
       endLoading();
     }
     // console.log('http response===',response)
-    return response.data.results || response.data;
+    return response.data;
 }, error => {
     // 请求失败
     resCount++;

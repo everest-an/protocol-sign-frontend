@@ -15,17 +15,18 @@
                 <div class="title">Log In</div>
                 <div class="list">
                     <div class="name">Email</div>
-                    <input placeholder="Enter Email">
-                    <div class="err">Email is required have a value</div>
+                    <input placeholder="Enter Email" v-model="email">
+                    <!-- <div class="err">Email is required have a value</div> -->
                 </div>
                 <div class="list">
                     <div class="name">Email Code</div>
-                    <input placeholder="Enter Email Code"><span class="code">Send email code</span>
-                    <div class="err">A Code is required</div>
+                    <input placeholder="Enter Email Code" v-model="emailCode"><span class="code" @click="sendCode">Send
+                        email code</span>
+                    <!-- <div class="err">A Code is required</div> -->
                 </div>
                 <div class="tips">By clicking Get Started, you agree to DocuSign’s Privacy Notice and Terms & Conditions.
                 </div>
-                <div class="bt-submit">LOG  IN</div>
+                <div class="bt-submit" @click="loginEmail">LOG IN</div>
             </div>
         </div>
     </div>
@@ -41,6 +42,8 @@ export default {
     data() {
         return {
             currentType: '',
+            email: '',
+            emailCode: ''
         }
 
         // var validateuserName = (rule, value, callback) => {
@@ -102,6 +105,33 @@ export default {
             } else {//邮箱登录
                 this.currentType = type;
             }
+        },
+        sendCode() {
+            this.$axios.post('/web/login/sendCode', { emailAddress: this.email }).then((response) => {
+                console.log(response);
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
+        //邮箱登录
+        loginEmail() {
+            let data = {
+                emailAddress: this.email,
+                code: this.emailCode,
+            }
+            this.$axios.post('/web/login/emailLogin', data).then((res) => {
+                console.log(res);
+                if (res.code == 0) {
+                    this.$router.push({
+                        name: 'Home'
+                    })
+                }else{
+                    alert(res.msg)
+                }
+
+            }).catch(function (error) {
+                console.log(error);
+            });
         },
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
