@@ -160,7 +160,7 @@ export default {
             margin: 50px 0 0;
 
             .text-box {
-                width: calc(50% - 68px);
+                // width: calc(50% - 68px);
                 display: block;
                 padding: 20px;
                 border-radius: 8px;
