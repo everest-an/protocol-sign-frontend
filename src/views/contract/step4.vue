@@ -1,3 +1,26 @@
 <template>
-    4444
+<div class="contract-wrap">
+    <Step :currentStep="4"></Step>
+</div>
 </template>
+<script>
+import Step from '@/components/step.vue'
+export default {
+    name: "Manage",
+    components: {Step},
+    data() {
+        return{
+            currentType:'',
+        }
+    },
+    methods:{
+
+    },
+}
+</script>
+<style scope lang="scss">
+.contract-wrap{
+    padding:20px 24px;
+}
+
+</style>

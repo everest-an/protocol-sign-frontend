@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: 'HelloWorld',
+  name: 'TopMenu',
   props: {
     msg: String
   },
