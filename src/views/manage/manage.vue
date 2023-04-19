@@ -7,7 +7,7 @@
                 <div class="table-title"><span class="col1">Subject</span><span class="col2">Status</span><span
                         class="col3">Last Change</span><span class="col4"></span></div>
                 <div class="table-content">
-                    <div class="list">
+                    <div class="list" v-for="item in list" :key="item.id">
                         <div class="col1">
                             <p class="txt1">数字签名合同范本</p>
                             <p class="txt2">To：123455667@163.com</p>
@@ -33,7 +33,16 @@ export default {
     data() {
         return {
             currentType: '',
+            list: []
         }
+    },
+    mounted() {
+        let token = localStorage.getItem('token');
+        this.$axios.post('/web/contract/queryPage', { size: 20,current:1 }).then((res) => {
+            console.log(res);
+        }).catch(function (error) {
+            console.log(error);
+        });
     },
     methods: {
         startNow() {

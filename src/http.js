@@ -28,11 +28,12 @@ function endLoading() {
  const baseURL = 'https://tjtest.pugongyinghulian.com/dsign_api'
 
 // const baseURL = 'http://192.168.1.22:8116/smallshop'
-axios.defaults.baseURL = baseURL
+axios.defaults.baseURL = baseURL;
+
+// let token = localStorage.getItem('token')
 const request = axios.create({
     baseURL: baseURL,
     headers: {
-        'token': 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIweDliOTAyNDRiNzU1YWRhMDQ0ZWZlYmRjM2RkMmFlYzk1OWUzMWFjNjEiLCJhdWRpZW5jZSI6IiIsImNyZWF0ZWQiOjE2ODE4OTg5NjU0NzAsImV4cCI6MTY4MjE1ODE2NX0.fz2x0HBAuOh0ifS2FIQgav_tSpHU23I4a7kmboIiX_mBo_sL1BZMXsZTZDEQuGPdrjC_h64nRyKhcAeJjAfdWw',
         'isWeb':'0',
     },
 })
@@ -47,6 +48,9 @@ request.interceptors.request.use(config => {
     } else if (!config.data.qs) {
         config.data = qs.stringify(config.data);
     }
+    config.headers = {
+        'token': localStorage.getItem('token'),              // 这里自定义配置，这里传的是token
+    };
     startLoading();
     //console.log(config)
     return config;

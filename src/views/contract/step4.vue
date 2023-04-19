@@ -64,9 +64,35 @@ export default {
             }
         },
         handlerPay() {
+            let file = this.$store.state.pdfFile;
+            let receiverEmail = JSON.stringify(this.$store.state.receiverEmail);
+            let placeMark = JSON.stringify(this.$store.state.placeMark);
+            let authentication = this.selectedOption == 'option2' ? 0 : 1;
+            //创建一个FormData对象
+            var formData = new FormData();
+            // 添加文件
+            formData.append('file', file);
+            // 添加参数
+            formData.append('authentication', authentication);
+            formData.append('fileName', file.name);
+            formData.append('placeMark', placeMark);
+            formData.append('receiverEmail', receiverEmail);
+            // 发送POST请求
+            this.$axios.post('/web/contract/addContractByAuthor', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then(function (response) {
+                console.log(response);
+                this.$router.push({
+                    name: 'Step4'
+                })
+            }).catch(function (error) {
+                console.log(error);
+            });
             this.message = "支付中,请稍后..."
             this.toastMsg = "支付并发送成功！"
-            this.showModal = true
+            this.showModal = true;
             setTimeout(() => {
                 this.showModal = false;
                 this.show = true;

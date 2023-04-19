@@ -94,7 +94,17 @@ export default {
                         const account = accounts[0];
                         console.log(`用户已登录，账户地址为： ${account}`);
                         sessionStorage.setItem('address', account)
-                        this.$router.push({ name: 'Index' })
+
+                        this.$axios.post('/web/login/authLogin', { accountAddress: account }).then((res) => {
+                            console.log('login=========', res)
+                            if (res.code == 0) {
+                                localStorage.setItem('token',res.results.token)
+                                this.$router.push({ name: 'Index' })
+                            }
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+                        // this.$router.push({ name: 'Index' })
                     })
                     .catch((error) => {
                         // 用户拒绝了授权登录请求
@@ -125,7 +135,7 @@ export default {
                     this.$router.push({
                         name: 'Home'
                     })
-                }else{
+                } else {
                     alert(res.msg)
                 }
 
