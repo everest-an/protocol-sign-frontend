@@ -1,7 +1,7 @@
 <template>
     <div class="contract-wrap">
         <Step :currentStep="3"></Step>
-        <pdf-canvas></pdf-canvas>
+        <pdf-canvas ref="pdfcanvas"></pdf-canvas>
         <div class="foot"><span @click="handlerBack">Back</span><span class="black" @click="handlerNext">Next</span></div>
     </div>
 </template>
@@ -47,9 +47,10 @@ export default {
             // }).catch(function (error) {
             //     console.log(error);
             // });
+            this.$refs['pdfcanvas'].saveRectangles();
             this.$router.push({
                     name: 'Step4'
-                })
+            })
             return
 
             // var form = document.createElement("form");

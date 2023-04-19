@@ -32,7 +32,8 @@ export default {
       pdfPages: null,
       divContent: '',
       cursor: 'default',
-      isMenuClick: false
+      isMenuClick: false,
+      rect: {  width: 200, height: 100}
     }
   },
   mounted() {
@@ -41,7 +42,10 @@ export default {
     this.loadCanvas()
   },
   methods: {
-
+    saveRectangles() {
+      console.log(rectangles)
+      this.$store.commit('SET_MARK', rectangles)
+    },
     loadCanvas() {
       let that = this;
       const canvas = document.getElementById('canvas');
@@ -139,8 +143,7 @@ export default {
             return;
           }
         }
-
-        const rect = { x: mouseX, y: mouseY, width: 250, height: 150, isDragging: false };
+        const rect = { x: mouseX, y: mouseY, isDragging: false, ...that.rect };
         rectangles.push(rect);
         redraw();
         that.isMenuClick = false;
@@ -162,7 +165,7 @@ export default {
         });
       };
       reader.readAsArrayBuffer(file);
-   
+
     },
 
     async renderPage(pdf, id) {

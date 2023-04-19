@@ -5,7 +5,7 @@ export default createStore({
         return {
             pdfFile: null,
             receiverEmail: null,
-            placeMark: null
+            placeMark: null,//位置标记
         }
     },
     mutations: {
@@ -14,6 +14,9 @@ export default createStore({
         },
         SET_EMAIL: (state, arr) => {
             state.receiverEmail = arr
+        },
+        SET_MARK: (state, mark) => {
+            state.placeMark = mark
         },
     },
     actions: {
