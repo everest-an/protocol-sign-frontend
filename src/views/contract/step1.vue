@@ -78,6 +78,7 @@ export default {
             line-height: 20px;
             display: block;
             margin: 0 auto;
+            cursor: pointer;
         }
     }
 }

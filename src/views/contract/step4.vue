@@ -5,11 +5,11 @@
             <div class="auth-part">
                 <div class="auth">
                     <label>authentication:<input name="auth" value="option1" type="radio" v-model="selectedOption"
-                            @click="handleOptionClick('option1')">是</label>
+                            @click="handleOptionClick('option1')">yes</label>
                     <label><input name="auth" value="option2" type="radio" v-model="selectedOption"
-                            @click="handleOptionClick('option2')">否</label>
+                            @click="handleOptionClick('option2')">no</label>
                 </div>
-                <div class="button" v-if="isVerfy"><button @click="verfyIdentity">verfy</button></div>
+                <div class="button" v-if="isVerfy"><button @click="verfyIdentity">verify</button></div>
             </div>
             <div class="pay-method">
                 <div class="title">Pay <span class="red">$10</span> to Dsign, Select payment method</div>
@@ -49,8 +49,8 @@ export default {
             selectedOption: 'option2',
             isVerfy: false,
             showModal: false,
-            message: '正在认证中...',
-            toastMsg: '认证成功！',
+            message: 'Authenticating...',
+            toastMsg: 'Authentication Ok！',
             show: false,
             payMetaMask: true
         }
@@ -78,8 +78,8 @@ export default {
             formData.append('placeMark', placeMark);
             formData.append('receiverEmail', receiverEmail);
 
-            this.message = "支付中,请稍后..."
-            this.toastMsg = "支付并发送成功！"
+            this.message = "paying..."
+            this.toastMsg = "pay success！"
             // 发送POST请求
             this.$axios.post('/web/contract/addContractByAuthor', formData, {
                 headers: {
@@ -116,8 +116,8 @@ export default {
             }
         },
         verfyIdentity() {
-            this.message = "正在认证中...";
-            this.toastMsg = "认证成功！";
+            this.message = "Authenticating...";
+            this.toastMsg = "Authentication Ok!";
             this.showModal = true
             setTimeout(() => {
                 this.showModal = false;
@@ -169,13 +169,14 @@ export default {
                 margin: 0 0 0 30px;
                 position: absolute;
                 left: 400px;
-
+                cursor: pointer;
                 button {
                     display: block;
                     background: none;
                     border: none;
                     height: 100%;
                     width: 100%;
+                    cursor: pointer;
                 }
             }
         }
@@ -238,7 +239,7 @@ export default {
             font-weight: 400;
             color: #000000;
             margin: 0 10px 0 0;
-
+            cursor: pointer;
         }
 
         .black {

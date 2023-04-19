@@ -107,7 +107,7 @@ export default {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-
+                cursor: pointer;
                 img {
                     width: 13px;
                     height: 13px;
@@ -151,6 +151,7 @@ export default {
                 font-family: PingFangSC-Semibold, PingFang SC;
                 font-weight: 600;
                 color: #FFFFFF;
+                cursor: pointer;
             }
         }
 
@@ -240,6 +241,7 @@ export default {
             font-weight: 400;
             color: #000000;
             margin: 0 10px 0 0;
+            cursor: pointer;
 
         }
 

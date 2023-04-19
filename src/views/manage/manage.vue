@@ -72,7 +72,7 @@ export default {
             line-height: 20px;
             display: block;
             background-color: #fff;
-
+            cursor: pointer;
         }
     }
 

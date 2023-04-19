@@ -53,7 +53,7 @@ export default {
         font-weight: 400;
         color: #000000;
         margin: 0 10px 0 0;
-
+        cursor: pointer;
     }
 
     .black {

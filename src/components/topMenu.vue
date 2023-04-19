@@ -72,7 +72,7 @@ export default {
   .menus {
     flex: 1;
     text-align: left;
-
+   
     span {
       display: inline-block;
       margin: 0 64px 0 0;
@@ -81,6 +81,7 @@ export default {
       font-weight: 600;
       color: #000000;
       line-height: 65px;
+      cursor: pointer;
     }
 
     .selected {
@@ -96,7 +97,7 @@ export default {
     display: flex;
     align-items: center;
     margin-right: 20px;
-
+    cursor: pointer;
     img {
       display: block;
       width: 18px;
