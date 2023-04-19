@@ -20,7 +20,7 @@ export default {
 </script>
 <style scope lang="scss">
 .contract-wrap{
-    padding:20px 24px;
+    padding:40px 24px;
 }
 
 </style>
