@@ -7,7 +7,7 @@
             </div>
             <div class="right" v-if="!currentType">
                 <div class="styles {{curentType=='fox'?'select':''}}" @click="handleSelectLogin('fox')"><span
-                        class="txt">MetaMast</span><img class="img" src="../assets/ico-fox.png"></div>
+                        class="txt">MetaMask</span><img class="img" src="../assets/ico-fox.png"></div>
                 <div class="styles {{curentType=='email'?'select':''}}" @click="handleSelectLogin('email')"><span
                         class="txt">Email</span><img class="img" src="../assets/ico-emial.png"></div>
             </div>
@@ -36,8 +36,8 @@
 // import {
 //     ElMessage
 // } from 'element-plus';
-import * as PDF from "pdfjs-dist";
-import entry from "pdfjs-dist/build/pdf.worker.entry";
+// import * as PDF from "pdfjs-dist";
+// import entry from "pdfjs-dist/build/pdf.worker.entry";
 export default {
     name: "Login",
     components: {},
@@ -80,7 +80,7 @@ export default {
         //};
     },
     mounted(){
-        PDF.GlobalWorkerOptions.workerSrc = entry
+        // PDF.GlobalWorkerOptions.workerSrc = entry
     },
     methods: {
         handleSelectLogin(type) {

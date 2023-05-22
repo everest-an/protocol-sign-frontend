@@ -22,3 +22,5 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+//pdfjs库卡顿问题 通过换库解决  换vue-pdf

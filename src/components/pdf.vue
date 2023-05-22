@@ -156,6 +156,7 @@ export default {
       const reader = new FileReader();
       reader.onload = (event) => {
         const data = new Uint8Array(event.target.result);
+
         let loadingTask = PDF.getDocument(data);
         loadingTask.promise.then((pdf) => {
           this.pdfDoc = pdf // 保存加载的pdf文件流
@@ -164,6 +165,8 @@ export default {
             this.renderPage(pdf, id);
           });
         });
+
+        
       };
       reader.readAsArrayBuffer(file);
 
