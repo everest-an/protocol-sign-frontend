@@ -1,11 +1,17 @@
 <template>
-  <div class="pdf-content" :style="cursor">
-    <div style="position: relative;display: flex;">
-      <div :style="divContent"></div>
+  <div class="pdf-content" :class="{ 'pdf-center': showMenu == false }" :style="cursor">
+    <div style="position: relative;" id="pdfContainer">
+      <!-- 加载原生pdf -->
       <canvas id="pdf-canvas" class="canvas-location"></canvas>
-      <canvas id="canvas" class="canvas-location"></canvas>
+      <!-- 删除按钮 -->
+      <span class="delete" style="position: absolute;z-index: 1;color: red;cursor: pointer;" @click="deleteRect(index)"
+        :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * (canvasHeight + item.index * 10) - 20) + 'px'"
+        v-for="(item, index) in rectangles" :key="index">
+        delete
+      </span>
     </div>
-    <div class="menu-bar">
+
+    <div class="menu-bar" v-if="showMenu">
       <div>
         <div class="item-button">Signature Fields</div>
         <div class="nav-item" @click="signHandle()">
@@ -25,6 +31,9 @@ import entry from "pdfjs-dist/build/pdf.worker.entry";
 let rectangles = [];
 export default {
   name: "PDF",
+  props: {
+    showMenu: Boolean
+  },
   data() {
     return {
       currentType: '',
@@ -33,39 +42,107 @@ export default {
       divContent: '',
       cursor: 'default',
       isMenuClick: false,
-      rect: {  width: 200, height: 100}
+      numPages: 1,
+      canvasHeight: 0,
+      canvasWidth: 0,
+      canvasIndex: 0,
+      rectangles: [],
+      rect: { width: 200, height: 100 },
+      deleteStyle: '',
+      ctxs: []
     }
   },
   mounted() {
-    rectangles =[];
+    rectangles = [];
     PDF.GlobalWorkerOptions.workerSrc = entry
     this.loadFile('pdfUrl', 'pdf-canvas')
-    this.loadCanvas()
+    // this.loadCanvas()
   },
   methods: {
     saveRectangles() {
       console.log(rectangles)
-      this.$store.commit('SET_MARK', rectangles)
+      this.$store.commit('SET_MARK', rectangles);
+      this.rectangles = rectangles
+    },
+    deleteRect(index) {
+      rectangles.splice(index, 1);
+      this.redraw();
+      this.rectangles = []
+      this.rectangles = rectangles
+    },
+    redraw() {
+      let that = this;
+      let ctxs = this.ctxs;
+      for (let i = 0; i < ctxs.length; i++) {
+        ctxs[i].clearRect(0, 0, that.canvasWidth, that.canvasHeight);
+      }
+      for (const rect of rectangles) {
+        // ctxs[0].fillStyle = 'red';
+        // 设置线条样式为虚线
+        ctxs[rect.index].setLineDash([5, 3]);
+        ctxs[rect.index].beginPath();
+        ctxs[rect.index].rect(rect.x, rect.y, rect.width, rect.height);
+        ctxs[rect.index].closePath();
+        // 绘制路径的描边（即矩形边框）
+        ctxs[rect.index].strokeStyle = "red";
+        ctxs[rect.index].stroke();
+
+        // 添加描述
+        let text = "This is a Signature Area!";
+        ctxs[rect.index].font = "bold 16px Arial";
+        let textWidth = ctxs[rect.index].measureText(text).width;
+        let textHeight = 16;
+        ctxs[rect.index].fillStyle = "black";
+        let centerX = rect.x + rect.width / 2 - textWidth / 2;
+        let centerY = rect.y + rect.height / 2 + textHeight / 2;
+        ctxs[rect.index].fillText(text, centerX, centerY);
+      }
+      that.rectangles = [];
+      that.rectangles = rectangles
+
+      //生成PDF并下载
+      // const pdf = new JSPDF({
+      //   orientation: "l",
+      //   unit: "pt",
+      //   format: [960, 540]
+      // });
+      // pdf.addImage(canvas.toDataURL('image/jpeg'), 'JPEG', 0, 0, 960, 540);
+      // pdf.save('newPdf.pdf');
     },
     loadCanvas() {
       let that = this;
-      const canvas = document.getElementById('canvas');
-      const ctx = canvas.getContext('2d');
-      // let rectangles = [];
-      canvas.addEventListener('mousedown', handleMouseDown);
-      canvas.addEventListener('mousemove', handleMouseMove);
-      canvas.addEventListener('mouseup', handleMouseUp);
+      // 获取所有的 绘制矩形的canvas 元素
+      const pageContainer = document.querySelectorAll('.pageContainer');
+      console.log('pageContainer', pageContainer)
+      // 循环遍历每个 div 元素
+      let ctxs = [];
+      pageContainer.forEach((item, index) => {
+        // 添加点击事件监听器
+        item.addEventListener('mousedown', (event) => {
+          handleMouseDown(event, index)
+        });
+        item.addEventListener('mousemove', handleMouseMove);
+        item.addEventListener('mouseup', handleMouseUp);
+        item.addEventListener('click', (event) => {
+          handleCanvasClick(event, index)
+        });
+        ctxs[index] = item.getContext('2d');
+      });
+      this.ctxs = ctxs;
 
-      function handleMouseDown(event) {
+      function handleMouseDown(event, index) {
+        that.canvasIndex = index;
         const mouseX = event.offsetX;
         const mouseY = event.offsetY;
         for (let i = rectangles.length - 1; i >= 0; i--) {
           const rect = rectangles[i];
-          if (mouseX > rect.x && mouseX < rect.x + rect.width && mouseY > rect.y && mouseY < rect.y + rect.height) {
-            rect.isDragging = true;
-            rect.offsetX = mouseX - rect.x;
-            rect.offsetY = mouseY - rect.y;
-            break;
+          if (that.canvasIndex == rect.index) {
+            if (mouseX > rect.x && mouseX < rect.x + rect.width && mouseY > rect.y && mouseY < rect.y + rect.height) {
+              rect.isDragging = true;
+              rect.offsetX = mouseX - rect.x;
+              rect.offsetY = mouseY - rect.y;
+              break;
+            }
           }
         }
       }
@@ -77,10 +154,10 @@ export default {
           if (rect.isDragging) {
             rect.x = mouseX - rect.offsetX;
             rect.y = mouseY - rect.offsetY;
-            // console.log(rectangles)
+            console.log('move', rectangles)
           }
         }
-        redraw();
+        that.redraw();
       }
 
       function handleMouseUp(event) {
@@ -90,43 +167,12 @@ export default {
         console.log(rectangles)
       }
 
-      function redraw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (const rect of rectangles) {
-          // ctx.fillStyle = 'red';
-          // 设置线条样式为虚线
-          ctx.setLineDash([5, 3]);
-          ctx.beginPath();
-          ctx.rect(rect.x, rect.y, rect.width, rect.height);
-          ctx.closePath();
-          // 绘制路径的描边（即矩形边框）
-          ctx.strokeStyle = "red";
-          ctx.stroke();
 
-          // 添加描述
-          let text = "This is a Signature Area!";
-          ctx.font = "bold 16px Arial";
-          let textWidth = ctx.measureText(text).width;
-          let textHeight = 16;
-          ctx.fillStyle = "black";
-          let centerX = rect.x + rect.width / 2 - textWidth / 2;
-          let centerY = rect.y + rect.height / 2 + textHeight / 2;
-          ctx.fillText(text, centerX, centerY);
-        }
 
-        //生成PDF并下载
-        // const pdf = new JSPDF({
-        //   orientation: "l",
-        //   unit: "pt",
-        //   format: [960, 540]
-        // });
-        // pdf.addImage(canvas.toDataURL('image/jpeg'), 'JPEG', 0, 0, 960, 540);
-        // pdf.save('newPdf.pdf');
-      }
+      // canvas.addEventListener('click', handleCanvasClick);
 
-      canvas.addEventListener('click', handleCanvasClick);
-
-      function handleCanvasClick(event) {
+      function handleCanvasClick(event, index) {
+        that.canvasIndex = index;
         if (!that.isMenuClick) {
           return
         }
@@ -144,9 +190,9 @@ export default {
             return;
           }
         }
-        const rect = { x: mouseX, y: mouseY, isDragging: false, ...that.rect };
+        const rect = { index, x: mouseX, y: mouseY, isDragging: false, ...that.rect };
         rectangles.push(rect);
-        redraw();
+        that.redraw();
         that.isMenuClick = false;
       }
     },
@@ -166,29 +212,88 @@ export default {
           });
         });
 
-        
+
       };
       reader.readAsArrayBuffer(file);
 
     },
 
     async renderPage(pdf, id) {
-      const canvas = document.getElementById(id);
-      //绘制矩形的画布
-      const canvasRect = document.getElementById('canvas');
-      const ctx = canvas.getContext('2d');
-      const page = await pdf.getPage(1);
-      const viewport = page.getViewport({ scale: 1 });
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-      canvasRect.width = canvas.width;
-      canvasRect.height = canvas.height;
-      this.divContent = `width:${canvas.width}px;height:${canvas.height}px`
-      const renderContext = {
-        canvasContext: ctx,
-        viewport: viewport,
-      };
-      await page.render(renderContext);
+
+      // //绘制矩形的画布
+      // const canvasRect = document.getElementById('canvas');
+
+      // 获取 PDF 的总页数
+      const numPages = pdf.numPages;
+      this.numPages = numPages;
+
+      // 获取容器元素
+      const container = document.getElementById('pdfContainer');
+
+      // 清空容器
+      // container.innerHTML = '';
+
+      for (let pageNumber = 1; pageNumber <= numPages; pageNumber++) {
+        //创建一个包裹canvans的容器
+        const pageContainer = document.createElement('div');
+        pageContainer.id = 'pageContainer' + pageNumber;
+        // 创建一个新的 Canvas 元素
+        const canvas = document.createElement('canvas');
+        const canvasRect = document.createElement('canvas');
+        canvas.id = 'page' + pageNumber;
+        canvasRect.classList.add('pageContainer');
+        canvasRect.id = 'pageRect' + pageNumber;
+        canvasRect.style.position = 'absolute';
+        canvasRect.style.left = '0';
+        pageContainer.style.marginBottom = '10px';
+        pageContainer.style.position = 'relative';
+
+        // 将 Canvas 添加到容器中
+        // container.appendChild(canvas);
+        // container.appendChild(canvasRect);
+        container.appendChild(pageContainer);
+
+        pageContainer.appendChild(canvas);
+        pageContainer.appendChild(canvasRect);
+
+        // 获取当前页的数据
+        const page = await pdf.getPage(pageNumber);
+
+        // 获取页面的原始大小
+        const viewport = page.getViewport({ scale: 1 });
+
+        // 设置 Canvas 的大小以适应页面
+        let width = viewport.width;
+        let height = viewport.height;;
+        canvas.width = width;
+        canvas.height = height;
+        canvasRect.width = width;
+        canvasRect.height = height;
+        this.canvasWidth = width;
+        this.canvasHeight = height;
+        pageContainer.style.width = width + 'px';
+        pageContainer.style.height = height + 'px';
+        // this.divContent = `width:${canvas.width}px;height:${canvas.height}px`
+        // 获取 Canvas 的上下文
+        const context = canvas.getContext('2d');
+        // 将页面渲染到 Canvas 上
+        await page.render({ canvasContext: context, viewport });
+      }
+      this.loadCanvas();
+
+      // const page = await pdf.getPage(1);
+      // const viewport = page.getViewport({ scale: 1 });
+      // canvas.width = viewport.width;
+      // canvas.height = viewport.height;
+      // canvasRect.width = canvas.width;
+      // canvasRect.height = canvas.height;
+      // this.divContent = `width:${canvas.width}px;height:${canvas.height}px`
+      // const renderContext = {
+      //   canvasContext: context,
+      //   viewport: viewport,
+      // };
+      // await page.render(renderContext);
+
     },
     signHandle() {
       this.cursor = `cursor:url(${signImg}),pointer`;
@@ -205,6 +310,10 @@ export default {
   position: relative;
   // cursor: url('@/assets/sign_here.svg'),pointer;
   cursor: default;
+}
+.pdf-center{
+  display: flex;
+  justify-content: center;
 }
 
 .canvas-location {

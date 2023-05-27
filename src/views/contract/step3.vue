@@ -1,7 +1,7 @@
 <template>
     <div class="contract-wrap">
         <Step :currentStep="3"></Step>
-        <pdf-canvas ref="pdfcanvas"></pdf-canvas>
+        <pdf-canvas ref="pdfcanvas" :show-menu="true"></pdf-canvas>
         <div class="foot"><span @click="handlerBack">Back</span><span class="black" @click="handlerNext">Next</span></div>
     </div>
 </template>

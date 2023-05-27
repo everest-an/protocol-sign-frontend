@@ -1,11 +1,11 @@
-import {createRouter, createWebHashHistory} from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
     {
         path: '/',
         name: 'Index',
         component: () => import('../views/Index.vue'),
-        redirect: {name: 'Home'},
+        redirect: { name: 'Home' },
         children: [
             {
                 path: 'home',
@@ -16,7 +16,7 @@ const routes = [
                 //icon: 'el-icon-s-data',
                 //redirect: {name: 'generalData'},
                 component: () => import('../views/home/home.vue'),
-               
+
             },
             {
                 path: '/manage',
@@ -27,7 +27,7 @@ const routes = [
                 //icon: 'el-icon-s-data',
                 //redirect: {name: 'generalData'},
                 component: () => import('../views/manage/manage.vue'),
-               
+
             },
             {
                 path: '/authentication',
@@ -38,32 +38,37 @@ const routes = [
                 //icon: 'el-icon-s-data',
                 //redirect: {name: 'generalData'},
                 component: () => import('../views/authentication/authentication.vue'),
-               
-            }, 
+
+            },
             {
                 path: '/step1',
                 name: 'Step1',
                 component: () => import('../views/contract/step1.vue'),
-               
+
             },
             {
                 path: '/step2',
                 name: 'Step2',
                 component: () => import('../views/contract/step2.vue'),
-               
+
             },
             {
                 path: '/step3',
                 name: 'Step3',
                 component: () => import('../views/contract/step3.vue'),
-               
+
             },
             {
                 path: '/step4',
                 name: 'Step4',
                 component: () => import('../views/contract/step4.vue'),
-               
-            },      
+
+            }, {
+                path: '/sign',
+                name: 'Sign',
+                component: () => import('../views/sign/sign.vue'),
+
+            },
         ]
     },
     {
