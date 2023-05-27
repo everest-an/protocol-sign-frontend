@@ -2,7 +2,7 @@
   <div class="pdf-content" :class="{ 'pdf-center': showMenu == false }" :style="cursor">
     <div style="position: relative;" id="pdfContainer">
       <!-- 加载原生pdf -->
-      <canvas id="pdf-canvas" class="canvas-location"></canvas>
+      <!-- <canvas id="pdf-canvas" class="canvas-location"></canvas> -->
       <!-- 删除按钮 -->
       <span class="delete" style="position: absolute;z-index: 1;color: red;cursor: pointer;" @click="deleteRect(index)"
         :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * (canvasHeight + item.index * 10) - 20) + 'px'"
@@ -55,7 +55,7 @@ export default {
   mounted() {
     rectangles = [];
     PDF.GlobalWorkerOptions.workerSrc = entry
-    this.loadFile('pdfUrl', 'pdf-canvas')
+    this.loadFile('pdfUrl')
     // this.loadCanvas()
   },
   methods: {
@@ -197,7 +197,7 @@ export default {
       }
     },
 
-    loadFile(url, id) {
+    loadFile() {
       let file = this.$store.state.pdfFile;
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -208,7 +208,7 @@ export default {
           this.pdfDoc = pdf // 保存加载的pdf文件流
           this.pdfPages = this.pdfDoc.numPages // 获取pdf文件的总页数
           this.$nextTick(() => {
-            this.renderPage(pdf, id);
+            this.renderPage(pdf);
           });
         });
 
@@ -218,7 +218,7 @@ export default {
 
     },
 
-    async renderPage(pdf, id) {
+    async renderPage(pdf) {
 
       // //绘制矩形的画布
       // const canvasRect = document.getElementById('canvas');
