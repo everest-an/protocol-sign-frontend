@@ -33,6 +33,7 @@ axios.defaults.baseURL = baseURL;
 // let token = localStorage.getItem('token')
 const request = axios.create({
     baseURL: baseURL,
+    timeout:60000,
     headers: {
         'isWeb': '0',
     },

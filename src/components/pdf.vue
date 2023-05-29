@@ -1,5 +1,19 @@
 <template>
   <div class="pdf-content" :class="{ 'pdf-center': showMenu == false }" :style="cursor">
+    <div class="modal" v-if="showModal" @click="showModal = false">
+      <div class="modal-content" @click.stop>
+        <div class="part-1">
+          <span class="input-label">Type</span>
+          <input class="text-signature-input" type="text" placeholder="Type Signature" v-model="userName">
+        </div>
+        <div class="text-signature-container">
+          <span class="eth-signed-by-text">Dsigned By:</span>
+          <span class="sign-text">{{ userName || address }}</span>
+          <span class="address-text">{{ address }}</span>
+        </div>
+        <div class="add-btn" @click="insertSign()">Insert</div>
+      </div>
+    </div>
     <div style="position: relative;" id="pdfContainer">
       <!-- 加载原生pdf -->
       <!-- <canvas id="pdf-canvas" class="canvas-location"></canvas> -->
@@ -9,11 +23,25 @@
         v-for="(item, index) in rectangles" :key="index">
         x
       </span>
-      <!-- 签名区域 -->
-      <div v-if="placeMark">
-        <div style="position: absolute;z-index: 1;color: red;cursor: pointer;"
-          :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * (canvasHeight + item.index * 10) - 20) + 'px'"
-          v-for="(item, index) in rectangles" :key="index">
+      <!-- 待签名区域 -->
+      <div v-if="placeMarkCopy && isRender">
+        <div class="sign" @click="userSign(index)"
+          :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * (canvasHeight + item.index * 10) - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'"
+          v-for="(item, index) in placeMarkCopy" :key="index">
+          Click to Sign
+        </div>
+      </div>
+
+      <!-- 已签名区域 -->
+      <div v-if="placeMarkSign.length > 0 && isRender">
+        <div class="signed"
+          :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * (canvasHeight + item.index * 10) - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'"
+          v-for="(item, index) in placeMarkSign" :key="index">
+          <div class="text-signature-container" style="border: none;">
+            <span class="eth-signed-by-text">Dsigned By:</span>
+            <span class="sign-text">{{ item.userName || address }}</span>
+            <span class="address-text">{{ address }}</span>
+          </div>
         </div>
       </div>
 
@@ -59,14 +87,23 @@ export default {
       rect: { width: 200, height: 100, isResize: false },
       deleteStyle: '',
       ctxs: [],
-      sizeDrag: 5
+      sizeDrag: 5,
+      isRender: false,
+      placeMarkCopy: null,
+      placeMarkSign: [],
+      showModal: false,
+      userName: '',
+      address: '',
+      signIndex: null
     }
   },
   mounted() {
     rectangles = [];
-    PDF.GlobalWorkerOptions.workerSrc = entry
-    // this.loadFile('pdfUrl')
-    // this.loadCanvas()
+    PDF.GlobalWorkerOptions.workerSrc = entry;
+    let address = localStorage.getItem('address');
+    let str1 = address.substring(0, 10);
+    let str2 = address.substring(address.length - 5);
+    this.address = str1 + '...' + str2;
   },
   methods: {
     saveRectangles() {
@@ -392,8 +429,10 @@ export default {
         const context = canvas.getContext('2d');
         // 将页面渲染到 Canvas 上
         await page.render({ canvasContext: context, viewport });
+        this.isRender = true
       }
       this.loadCanvas();
+      this.placeMarkCopy = this.placeMark
 
       // const page = await pdf.getPage(1);
       // const viewport = page.getViewport({ scale: 1 });
@@ -409,9 +448,26 @@ export default {
       // await page.render(renderContext);
 
     },
+    //点击工具栏签名插件
     signHandle() {
       this.cursor = `cursor:url(${signImg}),pointer`;
       this.isMenuClick = true;
+    },
+    //待签名用户点击签名区域
+    userSign(index) {
+      console.log(index)
+      this.userName = '';
+      this.signIndex = index;
+      this.showModal = true
+    },
+    //添加签名
+    insertSign() {
+      let str = JSON.stringify(this.placeMarkCopy[this.signIndex]);
+      this.placeMarkCopy.splice(this.signIndex, 1);
+      this.showModal = false;
+      let obj = JSON.parse(str);
+      obj.userName = this.userName;
+      this.placeMarkSign.push(obj)
     }
   },
 }
@@ -419,11 +475,116 @@ export default {
 <style scoped lang="scss">
 .pdf-content {
   background: #eee;
-  padding: 20px;
+  padding: 5px;
   // margin-top: 20px;
   position: relative;
   // cursor: url('@/assets/sign_here.svg'),pointer;
   cursor: default;
+}
+
+.text-signature-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  background: #fff;
+  border: 1.31868px solid rgba(0, 0, 0, .1);
+  box-sizing: border-box;
+  border-radius: 15px;
+  margin-top: 15px;
+  padding: 12px 30px;
+
+  .eth-signed-by-text {
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 24px;
+    color: #e27019;
+  }
+
+  .sign-text {
+    font-weight: 700;
+    font-size: 26px;
+    line-height: 39px;
+    color: #373b46;
+  }
+
+  .address-text {
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 24px;
+    color: #6e7179;
+  }
+}
+
+.modal {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  margin: -5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    width: 600px;
+    height: 400px;
+    padding: 30px 51px;
+    border-radius: 20px;
+    box-shadow: 0 0 3px #868e96;
+    background: #f9fbfc;
+    box-sizing: border-box;
+
+    .part-1 {
+      display: flex;
+      align-items: center;
+    }
+
+
+    .add-btn {
+      position: absolute;
+      right: 52px;
+      bottom: 50px;
+      background: black;
+      border-radius: 8px;
+      padding: 8px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 450;
+      font-size: 16px;
+      border: 2px solid transparent;
+      cursor: pointer;
+    }
+
+    .input-label {
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 24px;
+      color: #373b46;
+    }
+
+    .text-signature-input {
+      width: 100%;
+      background: #fff;
+      border: 1px solid #b5b9c6;
+      box-sizing: border-box;
+      border-radius: 11px;
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 24px;
+      margin-left: 10px;
+      padding: 12px 30px;
+    }
+  }
 }
 
 .move {
@@ -467,5 +628,23 @@ export default {
   text-align: left;
   margin-left: 30px;
   cursor: pointer;
+}
+
+.sign {
+  position: absolute;
+  z-index: 1;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.signed {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
