@@ -15,7 +15,7 @@
                         <div class="col2">waiting</div>
                         <div class="col3">{{item.createTime}}</div>
                         <div class="col4">
-                            <button @click="gotoPage(item.id)">Sign</button>
+                            <button @click="gotoPage(item)">Sign</button>
                             <!-- <button class="grey">Sign</button> -->
                             <!-- <button>Download</button> -->
                         </div>
@@ -50,9 +50,11 @@ export default {
             this.$router.push({
                 name: 'Step1'
             })
+           
         },
-        gotoPage(id){
-            this.$router.push({ name: 'Sign' })
+        gotoPage(item){
+            this.$router.push({ name: 'Sign' });
+            sessionStorage.setItem('pdfUrl',item.arweaveUrl)
         }
     },
 }

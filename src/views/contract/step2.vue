@@ -17,7 +17,7 @@
                         <p class="txt1">{{ item.address }}</p>
                         <!-- <p class="txt2">对方暂未注册</p> -->
                     </div>
-                    <div class="del"><img src="../../assets/ico-del.png"></div>
+                    <div class="del" @click="deleteAccount(index)"><img src="../../assets/ico-del.png"></div>
                 </div>
                 <!-- <div class="text-box">
                 <div class="img"><img src="../../assets/ico-logo.png"></div>
@@ -47,6 +47,16 @@ export default {
         }
     },
     methods: {
+        deleteAccount(index){
+            this.userArr.splice(index, 1);
+            // console.log(this.userArr);
+            let arr = [];
+            this.userArr.map(item => {
+                arr.push(item.address)
+            })
+            console.log('arr==', arr)
+            this.$store.commit('SET_EMAIL', arr)
+        },
         addMyself() {
             this.address = localStorage.getItem('address');
             let obj = { address: this.address }
@@ -214,7 +224,7 @@ export default {
                 .del {
                     width: 24px;
                     height: 24px;
-
+                    cursor: pointer;
                     img {
                         display: block;
                         width: 24px;

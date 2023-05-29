@@ -2,7 +2,7 @@
     <div class="home-wrap">
         <div class="content">
             <!-- <p class="txt">Sign Page</p> -->
-            <pdf-canvas ref="pdfcanvas" :show-menu="false"></pdf-canvas>
+            <pdf-canvas ref="pdfcanvas" :show-menu="false" :pdf-url="pdfUrl"></pdf-canvas>
         </div>
     </div>
 </template>
@@ -14,7 +14,12 @@ export default {
     data() {
         return{
             currentType:'',
+            pdfUrl:''
         }
+    },
+    mounted(){
+       this.pdfUrl = sessionStorage.getItem('pdfUrl');
+       this.$refs.pdfcanvas.loadFile(this.pdfUrl)
     },
     methods:{
         handlerStart(){

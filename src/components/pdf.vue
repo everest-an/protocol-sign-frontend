@@ -7,8 +7,13 @@
       <span class="delete" style="position: absolute;z-index: 1;color: red;cursor: pointer;" @click="deleteRect(index)"
         :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * (canvasHeight + item.index * 10) - 20) + 'px'"
         v-for="(item, index) in rectangles" :key="index">
-        delete
+        x
       </span>
+      <!-- 拖拽区域 -->
+      <!-- <div class="move" style="position: absolute;z-index: 1;"
+        :style="'left:' + (item.x + item.width - 10) + 'px;' + 'top:' + (item.y + item.height + 10 + item.index * (canvasHeight + item.index * 10) - 20) + 'px'"
+        v-for="(item, index) in rectangles" :key="index">
+      </div> -->
     </div>
 
     <div class="menu-bar" v-if="showMenu">
@@ -32,7 +37,8 @@ let rectangles = [];
 export default {
   name: "PDF",
   props: {
-    showMenu: Boolean
+    showMenu: Boolean,
+    pdfUrl: String
   },
   data() {
     return {
@@ -47,15 +53,16 @@ export default {
       canvasWidth: 0,
       canvasIndex: 0,
       rectangles: [],
-      rect: { width: 200, height: 100 },
+      rect: { width: 200, height: 100, isResize: false },
       deleteStyle: '',
-      ctxs: []
+      ctxs: [],
+      sizeDrag: 5
     }
   },
   mounted() {
     rectangles = [];
     PDF.GlobalWorkerOptions.workerSrc = entry
-    this.loadFile('pdfUrl')
+    // this.loadFile('pdfUrl')
     // this.loadCanvas()
   },
   methods: {
@@ -80,12 +87,17 @@ export default {
         // ctxs[0].fillStyle = 'red';
         // 设置线条样式为虚线
         ctxs[rect.index].setLineDash([5, 3]);
-        ctxs[rect.index].beginPath();
-        ctxs[rect.index].rect(rect.x, rect.y, rect.width, rect.height);
-        ctxs[rect.index].closePath();
+        //绘制签名区域
+        ctxs[rect.index].fillStyle = 'rgba(0,0,0,0.1)';
+        ctxs[rect.index].fillRect(rect.x, rect.y, rect.width, rect.height);
+        //绘制矩形拖拽缩放区域
+        ctxs[rect.index].fillStyle = "gray";
+        ctxs[rect.index].fillRect(rect.x + rect.width - that.sizeDrag, rect.y + rect.height - that.sizeDrag, that.sizeDrag * 2, that.sizeDrag * 2);
+
         // 绘制路径的描边（即矩形边框）
         ctxs[rect.index].strokeStyle = "red";
         ctxs[rect.index].stroke();
+
 
         // 添加描述
         let text = "This is a Signature Area!";
@@ -137,7 +149,8 @@ export default {
         for (let i = rectangles.length - 1; i >= 0; i--) {
           const rect = rectangles[i];
           if (that.canvasIndex == rect.index) {
-            if (mouseX > rect.x && mouseX < rect.x + rect.width && mouseY > rect.y && mouseY < rect.y + rect.height) {
+            // if (mouseX > rect.x && mouseX < rect.x + rect.width && mouseY > rect.y && mouseY < rect.y + rect.height) {
+            if (mouseX > rect.x - that.sizeDrag && mouseX < rect.x + that.sizeDrag + rect.width && mouseY > rect.y - that.sizeDrag && mouseY < rect.y + rect.height + that.sizeDrag) {
               rect.isDragging = true;
               rect.offsetX = mouseX - rect.x;
               rect.offsetY = mouseY - rect.y;
@@ -152,9 +165,32 @@ export default {
         const mouseY = event.offsetY;
         for (const rect of rectangles) {
           if (rect.isDragging) {
-            rect.x = mouseX - rect.offsetX;
-            rect.y = mouseY - rect.offsetY;
-            console.log('move', rectangles)
+            let size = 10;//拖拽区域大小
+            // 检查鼠标是否在调整大小的定位区域内 右下角
+
+            if (
+              rect.isResize == true ||
+              mouseX > rect.x + rect.width - size &&
+              mouseX < rect.x + rect.width + size &&
+              mouseY > rect.y + rect.height - size &&
+              mouseY < rect.y + rect.height + size
+            ) {//在右下角 放大或者缩小矩形
+              rect.isResize = true;
+              if (mouseX - rect.x > 10 && mouseY - rect.y > 10) {
+                rect.width = mouseX - rect.x;
+                rect.height = mouseY - rect.y;
+              }
+              console.log('rect.width====', rect.width)
+            } else {
+              if (rect.isResize == true) {
+                return
+              }
+              rect.x = mouseX - rect.offsetX;
+              rect.y = mouseY - rect.offsetY;
+            }
+            // rect.x = mouseX - rect.offsetX;
+            // rect.y = mouseY - rect.offsetY;
+            // console.log('move', rectangles)
           }
         }
         that.redraw();
@@ -163,6 +199,7 @@ export default {
       function handleMouseUp(event) {
         for (const rect of rectangles) {
           rect.isDragging = false;
+          rect.isResize = false;
         }
         console.log(rectangles)
       }
@@ -183,11 +220,13 @@ export default {
         // 检查是否点击在一个已存在的矩形内部
         for (let i = rectangles.length - 1; i >= 0; i--) {
           let rect = rectangles[i];
-          if (mouseX > rect.x && mouseX < rect.x + rect.width && mouseY > rect.y && mouseY < rect.y + rect.height) {
-            // 如果是，将其设置为选中的矩形并返回
-            console.log('矩形内点击')
-            // selectedRectangle = rect;
-            return;
+          if (that.canvasIndex == rect.index) {
+            if (mouseX > rect.x && mouseX < rect.x + rect.width && mouseY > rect.y && mouseY < rect.y + rect.height) {
+              // 如果是，将其设置为选中的矩形并返回
+              console.log('矩形内点击')
+              // selectedRectangle = rect;
+              return;
+            }
           }
         }
         const rect = { index, x: mouseX, y: mouseY, isDragging: false, ...that.rect };
@@ -197,13 +236,29 @@ export default {
       }
     },
 
-    loadFile() {
-      let file = this.$store.state.pdfFile;
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const data = new Uint8Array(event.target.result);
-
-        let loadingTask = PDF.getDocument(data);
+    loadFile(url) {
+      // console.log('pdfUrl===',this.pdfUrl)
+      if (!url) {
+        // 加载PDF文档 本地文件
+        let file = this.$store.state.pdfFile;
+        const reader = new FileReader();
+        reader.readAsArrayBuffer(file);
+        reader.onload = (event) => {
+          const data = new Uint8Array(event.target.result);
+          let loadingTask = PDF.getDocument(data);
+          loadingTask.promise.then((pdf) => {
+            this.pdfDoc = pdf // 保存加载的pdf文件流
+            this.pdfPages = this.pdfDoc.numPages // 获取pdf文件的总页数
+            this.$nextTick(() => {
+              this.renderPage(pdf);
+            });
+          });
+        };
+      } else {
+        // 加载PDF文档 url路径  获取非Blob文件流
+        // let url = 'https://arweave.net/uQ23E13xYRiKxwma7zwn7cFPi6_G7KgcJ53OQ0SfqbM';
+        var arrayBuffer = new Uint8Array(url).buffer;
+        let loadingTask = PDF.getDocument(arrayBuffer);
         loadingTask.promise.then((pdf) => {
           this.pdfDoc = pdf // 保存加载的pdf文件流
           this.pdfPages = this.pdfDoc.numPages // 获取pdf文件的总页数
@@ -211,10 +266,21 @@ export default {
             this.renderPage(pdf);
           });
         });
+      }
 
-
-      };
-      reader.readAsArrayBuffer(file);
+      // // 将文件流转换为Blob对象
+      // let url = 'https://arseed.web3infura.io/uQ23E13xYRiKxwma7zwn7cFPi6_G7KgcJ53OQ0SfqbM';
+      // var blob = new Blob([url], { type: "application/pdf" });
+      // // 创建URL对象
+      // var fileUrl = URL.createObjectURL(blob);
+      // let loadingTask = PDF.getDocument(fileUrl);
+      // loadingTask.promise.then((pdf) => {
+      //   this.pdfDoc = pdf // 保存加载的pdf文件流
+      //   this.pdfPages = this.pdfDoc.numPages // 获取pdf文件的总页数
+      //   this.$nextTick(() => {
+      //     this.renderPage(pdf);
+      //   });
+      // });
 
     },
 
@@ -311,7 +377,14 @@ export default {
   // cursor: url('@/assets/sign_here.svg'),pointer;
   cursor: default;
 }
-.pdf-center{
+
+.move {
+  background-color: red;
+  width: 20px;
+  height: 20px;
+}
+
+.pdf-center {
   display: flex;
   justify-content: center;
 }
