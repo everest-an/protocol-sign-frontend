@@ -51,6 +51,7 @@ export default {
 <style scoped lang="scss">
 .step-wrap{
     display: flex;
+    margin-bottom: 20px;
     // justify-content: space-between;
     .step{
         flex:1;

@@ -18,14 +18,17 @@
                         <img src="../../assets/ico-fox.png">
                         <span>Pay with metamask</span>
                     </div>
-                    <div class="list" :class="!payMetaMask ? 'selected' : ''" @click="payMethods('card')">
+                    <!-- <div class="list" :class="!payMetaMask ? 'selected' : ''" @click="payMethods('card')">
                         <img src="../../assets/ico-add.png">
                         <span>Pay with a card</span>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
-        <div class="foot"><span @click="handlerBack">Back</span><span class="black" @click="handlerPay">Pay and Send</span>
+        <div id="paypal-button-container-P-85191607KB5209331MRW2YPA"></div>
+        <div class="foot">
+            <span @click="handlerBack">Back</span>
+            <span class="black" @click="handlerPay">Pay and Send</span>
         </div>
         <div v-if="showModal" class="modal">
             <div class="modal-content">
@@ -55,6 +58,27 @@ export default {
             payMetaMask: true
         }
     },
+    mounted() {
+        paypal.Buttons({
+            style: {
+                shape: 'rect',
+                color: 'silver',
+                layout: 'vertical',
+                label: 'subscribe'
+            },
+            createSubscription: function (data, actions) {
+                return actions.subscription.create({
+                    /* Creates the subscription */
+                    plan_id: 'P-85191607KB5209331MRW2YPA',
+                    quantity: 1, // The quantity of the product for a subscription
+                    price: 5
+                });
+            },
+            onApprove: function (data, actions) {
+                alert(data.subscriptionID); // You can add optional success message for the subscriber here
+            }
+        }).render('#paypal-button-container-P-85191607KB5209331MRW2YPA'); // Renders the PayPal button
+    },
     methods: {
         payMethods(type) {
             if (type == 'metamask') {
@@ -64,6 +88,7 @@ export default {
             }
         },
         handlerPay() {
+
             let file = this.$store.state.pdfFile;
             let receiverEmail = JSON.stringify(this.$store.state.receiverEmail);
             let placeMark = JSON.stringify(this.$store.state.placeMark);
@@ -78,30 +103,28 @@ export default {
             formData.append('placeMark', placeMark);
             formData.append('receiverEmail', receiverEmail);
 
-            this.message = "paying..."
-            this.toastMsg = "pay success！"
+            this.message = "waiting..."
+            this.showModal = true;
+            setTimeout(() => {
+                this.showModal = false;
+            }, 2000)
+
+            return
             // 发送POST请求
             this.$axios.post('/web/contract/addContractByAuthor', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             }).then((response) => {
-                console.log(response);
-                this.show = true;
-                setTimeout(() => {
-                    this.show = false;
-                    this.$router.push({
-                        name: 'Manage'
-                    })
-                }, 2000)
+                this.showModal = false;
+                this.$router.push({
+                    name: 'Manage'
+                })
             }).catch(function (error) {
                 console.log(error);
             });
 
-            this.showModal = true;
-            setTimeout(() => {
-                this.showModal = false;
-            }, 2000)
+
         },
         handlerBack() {
             this.$router.push({
@@ -170,6 +193,7 @@ export default {
                 position: absolute;
                 left: 400px;
                 cursor: pointer;
+
                 button {
                     display: block;
                     background: none;
@@ -193,12 +217,12 @@ export default {
                 flex-wrap: wrap;
 
                 .list {
-                    width: calc(50% - 40px);
-                    border: 1px solid #ddd;
+                    width: 748px;
+                    border: 1px solid #eee;
                     display: flex;
                     align-items: center;
-                    margin: 0 10px;
-                    padding: 10px 0;
+                    // margin: 0 10px;
+                    padding: 5px 0;
 
                     img {
                         display: block;
@@ -216,7 +240,7 @@ export default {
                 }
 
                 .selected {
-                    border: 2px solid #0E37FF;
+                    // border: 2px solid #0E37FF;
                 }
             }
         }

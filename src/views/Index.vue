@@ -2,10 +2,10 @@
   <div class="index">
     <div class="left"></div>
     <div class="center">
-      <router-view/>
+      <router-view />
     </div>
     <div class="right"></div>
-    
+
     <!-- <div class="container">
       <div class="container-header">
         <div class="flex-row-center">
@@ -50,7 +50,7 @@ export default {
     // ...mapGetters([
     //   'sidebar',
     // ]),
-   
+
   }
 }
 </script>
@@ -60,22 +60,25 @@ export default {
   display: flex;
   align-items: center;
 }
+
 .index {
   display: flex;
   // width: 980px;
-  margin: 32px auto 0;
-  min-height: 100vh;
+  margin: 30px auto 0;
+  min-height: 500px;
   overflow: hidden;
-  
+
   // background-color: #FFFFFF;
-  .left{
+  .left {
     width: 207px;
   }
-  .center{
+
+  .center {
     flex: 1;
     background-color: #fff;
   }
-  .right{
+
+  .right {
     width: 207px;
   }
 }
@@ -126,13 +129,12 @@ export default {
   color: #5a5e66;
   vertical-align: text-bottom;
 
-&.hover-effect {
-   cursor: pointer;
-   transition: background .3s;
+  &.hover-effect {
+    cursor: pointer;
+    transition: background .3s;
 
-&:hover {
-   background: rgba(0, 0, 0, .025)
- }
-}
-}
-</style>
+    &:hover {
+      background: rgba(0, 0, 0, .025)
+    }
+  }
+}</style>

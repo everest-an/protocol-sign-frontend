@@ -37,7 +37,6 @@ export default {
         }
     },
     mounted() {
-        let token = localStorage.getItem('token');
         this.$axios.post('/web/contract/queryPage', { size: 20,current:1 }).then((res) => {
             console.log(res);
             this.list = res.results.records;
@@ -50,11 +49,10 @@ export default {
             this.$router.push({
                 name: 'Step1'
             })
-           
         },
         gotoPage(item){
-            this.$router.push({ name: 'Sign' });
-            sessionStorage.setItem('pdfUrl',item.arweaveUrl)
+            this.$router.push({ name: 'Sign',query:{'fileCode':item.fileCode} });
+            sessionStorage.setItem('placeMark',item.placeMark)
         }
     },
 }

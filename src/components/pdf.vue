@@ -9,11 +9,14 @@
         v-for="(item, index) in rectangles" :key="index">
         x
       </span>
-      <!-- 拖拽区域 -->
-      <!-- <div class="move" style="position: absolute;z-index: 1;"
-        :style="'left:' + (item.x + item.width - 10) + 'px;' + 'top:' + (item.y + item.height + 10 + item.index * (canvasHeight + item.index * 10) - 20) + 'px'"
-        v-for="(item, index) in rectangles" :key="index">
-      </div> -->
+      <!-- 签名区域 -->
+      <div v-if="placeMark">
+        <div style="position: absolute;z-index: 1;color: red;cursor: pointer;"
+          :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * (canvasHeight + item.index * 10) - 20) + 'px'"
+          v-for="(item, index) in rectangles" :key="index">
+        </div>
+      </div>
+
     </div>
 
     <div class="menu-bar" v-if="showMenu">
@@ -38,7 +41,7 @@ export default {
   name: "PDF",
   props: {
     showMenu: Boolean,
-    pdfUrl: String
+    placeMark: Array
   },
   data() {
     return {
@@ -236,9 +239,9 @@ export default {
       }
     },
 
-    loadFile(url) {
+    loadFile(fileCode) {
       // console.log('pdfUrl===',this.pdfUrl)
-      if (!url) {
+      if (!fileCode) {
         // 加载PDF文档 本地文件
         let file = this.$store.state.pdfFile;
         const reader = new FileReader();
@@ -255,33 +258,78 @@ export default {
           });
         };
       } else {
-        // 加载PDF文档 url路径  获取非Blob文件流
-        // let url = 'https://arweave.net/uQ23E13xYRiKxwma7zwn7cFPi6_G7KgcJ53OQ0SfqbM';
-        var arrayBuffer = new Uint8Array(url).buffer;
-        let loadingTask = PDF.getDocument(arrayBuffer);
-        loadingTask.promise.then((pdf) => {
-          this.pdfDoc = pdf // 保存加载的pdf文件流
-          this.pdfPages = this.pdfDoc.numPages // 获取pdf文件的总页数
-          this.$nextTick(() => {
-            this.renderPage(pdf);
+        this.$axios({
+          url: 'http://18.181.218.33:8132/web/contract/loadContract',
+          method: 'post',
+          responseType: 'blob',
+          header: { "Content-Type": "multipart/form-data" },
+          data: {
+            'fileCode': fileCode
+          }
+        }).then(res => {
+          let url = window.URL.createObjectURL(new Blob([res], { type: 'application/pdf' }));
+          let loadingTask = PDF.getDocument(url);
+          loadingTask.promise.then((pdf) => {
+            this.pdfDoc = pdf // 保存加载的pdf文件流
+            this.pdfPages = this.pdfDoc.numPages // 获取pdf文件的总页数
+            this.$nextTick(() => {
+              this.renderPage(pdf);
+            });
           });
+          // resolve(res)
+        }).catch(() => {
+          // resolve(false);
         });
+
+        return
+        this.$axios.post('/web/contract/loadContract', { fileCode }).then(async (res) => {
+
+
+
+          //导出PDF
+          // var form = document.createElement("form");
+          // form.id = "form";
+          // form.name = "form";
+          // document.body.appendChild(form);
+          // var input = document.createElement("input");
+          // input.type = "hidden";
+          // input.name = "fileCode"; //参数名字
+          // input.value = fileCode; //参数值
+          // form.appendChild(input);
+          // form.method = "POST"; //请求方式
+          // form.action = 'http://18.181.218.33:8132/web/contract/loadContract';
+          // form.submit();
+          // document.body.removeChild(form);
+
+          // // 加载PDF文档 url路径  获取非Blob文件流
+          // var arrayBuffer = new Uint8Array(res).buffer;
+          // let loadingTask = PDF.getDocument(arrayBuffer);
+          // loadingTask.promise.then((pdf) => {
+          //   this.pdfDoc = pdf // 保存加载的pdf文件流
+          //   this.pdfPages = this.pdfDoc.numPages // 获取pdf文件的总页数
+          //   this.$nextTick(() => {
+          //     this.renderPage(pdf);
+          //   });
+          // });
+
+
+          // //将文件流转换为Blob对象
+          let url = window.URL.createObjectURL(new Blob([res], { type: 'application/pdf' }));
+          let loadingTask = PDF.getDocument(url);
+          loadingTask.promise.then((pdf) => {
+            this.pdfDoc = pdf // 保存加载的pdf文件流
+            this.pdfPages = this.pdfDoc.numPages // 获取pdf文件的总页数
+            this.$nextTick(() => {
+              this.renderPage(pdf);
+            });
+          });
+
+        }).catch(function (error) {
+          console.log(error);
+        });
+
+
       }
-
-      // // 将文件流转换为Blob对象
-      // let url = 'https://arseed.web3infura.io/uQ23E13xYRiKxwma7zwn7cFPi6_G7KgcJ53OQ0SfqbM';
-      // var blob = new Blob([url], { type: "application/pdf" });
-      // // 创建URL对象
-      // var fileUrl = URL.createObjectURL(blob);
-      // let loadingTask = PDF.getDocument(fileUrl);
-      // loadingTask.promise.then((pdf) => {
-      //   this.pdfDoc = pdf // 保存加载的pdf文件流
-      //   this.pdfPages = this.pdfDoc.numPages // 获取pdf文件的总页数
-      //   this.$nextTick(() => {
-      //     this.renderPage(pdf);
-      //   });
-      // });
-
     },
 
     async renderPage(pdf) {
@@ -372,7 +420,7 @@ export default {
 .pdf-content {
   background: #eee;
   padding: 20px;
-  margin-top: 20px;
+  // margin-top: 20px;
   position: relative;
   // cursor: url('@/assets/sign_here.svg'),pointer;
   cursor: default;
