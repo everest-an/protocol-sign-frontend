@@ -1,13 +1,13 @@
 <template>
    <div class="step-wrap">
         <div :class="[currentStep==1?'step step1 selected':'step step1']">
-            <span class="num">{{1<currentStep?'√':'1'}}</span><span class="txt">add documents</span>
+            <span class="num">{{1<currentStep?'√':'1'}}</span><span class="txt">Add documents</span>
         </div>
         <div :class="[currentStep==2?'step step2 selected':'step step2']">
-            <span class="num">{{2<currentStep?'√':'2'}}</span><span class="txt">add recipients</span>
+            <span class="num">{{2<currentStep?'√':'2'}}</span><span class="txt">Add recipients</span>
         </div>
         <div :class="[currentStep==3?'step step3 selected':'step step3']">
-            <span class="num">{{3<currentStep?'√':'3'}}</span><span class="txt"> prepare documents</span>
+            <span class="num">{{3<currentStep?'√':'3'}}</span><span class="txt"> Prepare documents</span>
         </div>
         <div :class="[currentStep==4?'step step4 selected':'step step4']">
             <span class="num">{{4<currentStep?'√':'4'}}</span><span class="txt"> Authentication and payments</span>

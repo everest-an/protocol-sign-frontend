@@ -4,7 +4,7 @@
         <div class="content">
             <div class="auth-part">
                 <div class="auth">
-                    <label>authentication:<input name="auth" value="option1" type="radio" v-model="selectedOption"
+                    <label>Authentication:<input name="auth" value="option1" type="radio" v-model="selectedOption"
                             @click="handleOptionClick('option1')">yes</label>
                     <label><input name="auth" value="option2" type="radio" v-model="selectedOption"
                             @click="handleOptionClick('option2')">no</label>

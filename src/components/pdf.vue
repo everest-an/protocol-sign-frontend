@@ -34,7 +34,7 @@
 
       <!-- 已签名区域 -->
       <div v-if="placeMarkSign.length > 0 && isRender">
-        <div class="signed" :id="'signed' + index"
+        <div class="signed" :id="'signed' + item.signedIndex"
           :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * (canvasHeight + item.index * 10) - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'"
           v-for="(item, index) in placeMarkSign" :key="index">
           <div class="text-signature-container" style="border: none;">
@@ -95,7 +95,8 @@ export default {
       showModal: false,
       userName: '',
       address: '',
-      signIndex: null
+      signIndex: null,
+      signedIndex: 0
     }
   },
   mounted() {
@@ -422,8 +423,10 @@ export default {
       this.showModal = false;
       let obj = JSON.parse(str);
       obj.userName = this.userName;
+      obj.signedIndex = this.signedIndex;
+      this.signedIndex++;
       this.placeMarkSign.push(obj)
-      this.$emit('setPlaceMarkSign',this.placeMarkSign)
+      this.$emit('setPlaceMarkSign', this.placeMarkSign)
     }
   },
 }
