@@ -66,70 +66,56 @@ export default {
             console.log('pageList====', arr)
             const pdf = new jsPDF('', 'pt', [540, 960]);
             let pageI = 1;
-            let p = new Promise((resolve, reject) => {
-                arr.map((itemArr, pageIndex) => {
-                    console.log('pageIndex====', pageIndex)
-                    let i = pageIndex + 1;
-                    const canvasElement = document.getElementById('page' + i);
-                    //绘制页面
-                    itemArr.map((item, index) => {
-                        console.log('signIndex====', index)
-                        // 获取要合并的Canvas和div的引用
-                        const divElement = document.getElementById('signed' + index);
+            arr.map(async (itemArr, pageIndex) => {
+                console.log('pageIndex====', pageIndex)
+                let i = pageIndex + 1;
+                const canvasElement = document.getElementById('page' + i);
+                //绘制页面
+                await itemArr.map(async (item, index) => {
+                    console.log('signIndex====', item.signedIndex)
+                    // 获取要合并的Canvas和div的引用
+                    const divElement = document.getElementById('signed' + item.signedIndex);
+                    // 创建一个新的Canvas作为目标Canvas
+                    const mergedCanvas = document.createElement('canvas');
+                    const mergedContext = mergedCanvas.getContext('2d');
+                    // 获取Canvas和div的宽度和高度
+                    const width = Math.max(canvasElement.width, divElement.offsetWidth);
+                    const height = Math.max(canvasElement.height, divElement.offsetHeight);
 
-                        // 创建一个新的Canvas作为目标Canvas
-                        const mergedCanvas = document.createElement('canvas');
-                        const mergedContext = mergedCanvas.getContext('2d');
-                        console.log('canvasElement====', canvasElement)
-                        // 获取Canvas和div的宽度和高度
-                        const width = Math.max(canvasElement.width, divElement.offsetWidth);
-                        const height = Math.max(canvasElement.height, divElement.offsetHeight);
+                    // 设置目标Canvas的宽度和高度
+                    mergedCanvas.width = width;
+                    mergedCanvas.height = height;
 
-                        // 设置目标Canvas的宽度和高度
-                        mergedCanvas.width = width;
-                        mergedCanvas.height = height;
+                    // 使用html2canvas将Canvas和div的内容绘制到目标Canvas上
+                    await Promise.all([
+                        html2canvas(canvasElement),
+                        html2canvas(divElement)
+                    ]).then(([canvasImg, divImg]) => {
+                        // 将Canvas和div的内容绘制到目标Canvas上
+                        mergedContext.drawImage(canvasImg, 0, 0);
+                        let left = parseInt(divElement.style.left);
+                        let top = parseInt(divElement.style.top);
+                        mergedContext.drawImage(divImg, left, top);
+                        const screenshotUrl = mergedCanvas.toDataURL('image/jpeg', 1.0);
+                        // 将图像数据添加到当前页面的 PDF 中
+                        // pdf.setPage(pageIndex + 1, [width, height], "landscape")
+                        pdf.addImage(screenshotUrl, "JPEG", 0, 0);
+                        if (pageI < arr.length) {
+                            pageI++
+                            pdf.addPage();
+                        }
 
-                        // 使用html2canvas将Canvas和div的内容绘制到目标Canvas上
-                        Promise.all([
-                            html2canvas(canvasElement),
-                            html2canvas(divElement)
-                        ]).then(([canvasImg, divImg]) => {
-                            // 将Canvas和div的内容绘制到目标Canvas上
-                            mergedContext.drawImage(canvasImg, 0, 0);
-                            let left = parseInt(divElement.style.left);
-                            let top = parseInt(divElement.style.top);
-                            mergedContext.drawImage(divImg, left, top);
-                            const screenshotUrl = mergedCanvas.toDataURL('image/jpeg', 1.0);
-                            // 将图像数据添加到当前页面的 PDF 中
-                            // for(pageI;)
-                            pdf.setPage(pageI - 1, [width,height], "portrait")
-                            pdf.addImage(screenshotUrl, "JPEG", 0, 0);
-                            if (pageI < arr.length) {
-                                pageI++
-                                pdf.addPage();
-                            }
-                            // pdf.setPage(pageI - 1, [width,height], "portrait")
-                            // pdf.addImage(screenshotUrl, 'PNG', 0, 0);
-                            // pdf.save(`canvas_${pageIndex + 1}.pdf`);
-                            // // 如果不是最后一个 Canvas，则跳转到下一页
-                            // if (i < canvasList.length - 1) {
-                            //     pdf.setPage(i + 2);
-                            // }
-
-                            // // 创建一个下载链接并触发下载
-                            // const link = document.createElement('a');
-                            // link.href = screenshotUrl;
-                            // link.download = 'screenshot.png';
-                            // link.click();
-                        });
-                    })
+                        // // 创建一个下载链接并触发下载
+                        // const link = document.createElement('a');
+                        // link.href = screenshotUrl;
+                        // link.download = 'screenshot.png';
+                        // link.click();
+                    });
                 })
             })
-
-
             setTimeout(() => {
                 pdf.save("merged_pdf.pdf");
-            }, 3000)
+            }, 5000)
         },
         //生成PDF并上传
         finishHandle() {

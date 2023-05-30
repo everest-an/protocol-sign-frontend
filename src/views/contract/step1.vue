@@ -3,7 +3,7 @@
         <Step :currentStep="1"></Step>
         <div class="content">
             <img class="img" src="../../assets/ico-add.png">
-            <p class="txt">drop documents here to get started</p>
+            <p class="txt">Drop documents here to get started</p>
             <button class="bt-start" @click="handlerStart">Start Now</button>
             <input type="file" ref="fileInput" style="display:none" @change="handleFileInputChange">
         </div>
