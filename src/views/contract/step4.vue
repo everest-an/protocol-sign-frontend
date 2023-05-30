@@ -5,9 +5,9 @@
             <div class="auth-part">
                 <div class="auth">
                     <label>Authentication:<input name="auth" value="option1" type="radio" v-model="selectedOption"
-                            @click="handleOptionClick('option1')">yes</label>
+                            @click="handleOptionClick('option1')">Yes</label>
                     <label><input name="auth" value="option2" type="radio" v-model="selectedOption"
-                            @click="handleOptionClick('option2')">no</label>
+                            @click="handleOptionClick('option2')">No</label>
                 </div>
                 <div class="button" v-if="isVerfy"><button @click="verfyIdentity">verify</button></div>
             </div>
@@ -16,7 +16,7 @@
                 <div class="pay-list">
                     <div class="list " :class="payMetaMask ? 'selected' : ''" @click="payMethods('metamask')">
                         <img src="../../assets/ico-fox.png">
-                        <span>Pay with metamask</span>
+                        <span>Pay with Metamask</span>
                     </div>
                     <div class="list" :class="!payMetaMask ? 'selected' : ''" @click="payMethods('paypal')">
                         <img src="../../assets/ico-paypal.png">
@@ -95,11 +95,12 @@ export default {
         },
          handlerPay() {
 
-            this.message = "waiting..."
+            this.message = "success..."
             this.showModal = true;
-            // setTimeout(() => {
-            //     this.showModal = false;
-            // }, 2000)
+            setTimeout(() => {
+                this.showModal = false;
+                this.isPay=true;
+            }, 2000)
             let datas={
                 total:1,
                 currency:'USD',
@@ -169,7 +170,7 @@ export default {
         handlerStatus() {
             this.$axios.post('/web/contract/queryPayStatus').then((response) => {
                 if(response.code==0){
-                   
+                   this.handlerSend();
                 }
                 console.log(response)
                 
