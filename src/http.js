@@ -25,7 +25,8 @@ function endLoading() {
 }
 
 //  const baseURL = 'https://tjtest.pugongyinghulian.com/dsign_api'
-const baseURL = 'http://18.181.218.33:8132/'
+ const baseURL = 'https://www.ahawechat.com/dsign_api'
+// const baseURL = 'http://18.181.218.33:8132/'
 
 // const baseURL = 'http://192.168.1.22:8116/smallshop'
 axios.defaults.baseURL = baseURL;

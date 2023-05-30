@@ -9,15 +9,15 @@
                 <div class="table-content">
                     <div class="list" v-for="item in list" :key="item.id">
                         <div class="col1">
-                            <p class="txt1">{{item.fileName}}</p>
+                            <p class="txt1">{{ item.fileName }}</p>
                             <!-- <p class="txt2">To：{123455667@163.com}</p> -->
                         </div>
                         <div class="col2">waiting</div>
-                        <div class="col3">{{item.createTime}}</div>
+                        <div class="col3">{{ item.createTime }}</div>
                         <div class="col4">
-                            <button @click="gotoPage(item)">Sign</button>
+                            <button @click="gotoPage(item)" v-if="item.status == 0">Sign</button>
                             <!-- <button class="grey">Sign</button> -->
-                            <!-- <button>Download</button> -->
+                            <button v-else @click="downPdf(item)">Download</button>
                         </div>
                     </div>
 
@@ -27,6 +27,7 @@
     </div>
 </template>
 <script>
+import FileSaver from 'file-saver';
 export default {
     name: "Manage",
     components: {},
@@ -37,7 +38,7 @@ export default {
         }
     },
     mounted() {
-        this.$axios.post('/web/contract/queryPage', { size: 20,current:1 }).then((res) => {
+        this.$axios.post('/web/contract/queryPage', { size: 20, current: 1 }).then((res) => {
             console.log(res);
             this.list = res.results.records;
         }).catch(function (error) {
@@ -50,9 +51,26 @@ export default {
                 name: 'Step1'
             })
         },
-        gotoPage(item){
-            this.$router.push({ name: 'Sign',query:{'fileCode':item.fileCode} });
-            sessionStorage.setItem('placeMark',item.placeMark)
+        gotoPage(item) {
+            this.$router.push({ name: 'Sign', query: { 'fileCode': item.fileCode } });
+            sessionStorage.setItem('placeMark', item.placeMark)
+        },
+        //下载pdf
+        downPdf(item) {
+            this.$axios({
+                url: 'http://18.181.218.33:8132/web/contract/loadContract',
+                method: 'post',
+                responseType: 'blob',
+                header: { "Content-Type": "multipart/form-data" },
+                data: {
+                    'fileCode': item.fileCode
+                }
+            }).then(res => {
+                // 使用FileSaver.js下载文件
+                FileSaver.saveAs(new Blob([res], { type: 'application/pdf' }), item.fileName);
+            }).catch(() => {
+
+            });
         }
     },
 }
@@ -111,7 +129,8 @@ export default {
             .col4 {
                 width: 100px;
                 display: block;
-                button{
+
+                button {
                     cursor: pointer;
                 }
             }

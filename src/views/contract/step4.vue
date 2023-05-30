@@ -25,7 +25,7 @@
                 </div>
             </div>
         </div>
-        <div id="paypal-button-container-P-85191607KB5209331MRW2YPA"></div>
+        <!-- <div id="paypal-button-container-P-85191607KB5209331MRW2YPA"></div> -->
         <div class="foot">
             <span @click="handlerBack">Back</span>
             <span class="black" @click="handlerPay">Pay and Send</span>
@@ -59,25 +59,25 @@ export default {
         }
     },
     mounted() {
-        paypal.Buttons({
-            style: {
-                shape: 'rect',
-                color: 'silver',
-                layout: 'vertical',
-                label: 'subscribe'
-            },
-            createSubscription: function (data, actions) {
-                return actions.subscription.create({
-                    /* Creates the subscription */
-                    plan_id: 'P-85191607KB5209331MRW2YPA',
-                    quantity: 1, // The quantity of the product for a subscription
-                    price: 5
-                });
-            },
-            onApprove: function (data, actions) {
-                alert(data.subscriptionID); // You can add optional success message for the subscriber here
-            }
-        }).render('#paypal-button-container-P-85191607KB5209331MRW2YPA'); // Renders the PayPal button
+        // paypal.Buttons({
+        //     style: {
+        //         shape: 'rect',
+        //         color: 'silver',
+        //         layout: 'vertical',
+        //         label: 'subscribe'
+        //     },
+        //     createSubscription: function (data, actions) {
+        //         return actions.subscription.create({
+        //             /* Creates the subscription */
+        //             plan_id: 'P-85191607KB5209331MRW2YPA',
+        //             quantity: 1, // The quantity of the product for a subscription
+        //             price: 5
+        //         });
+        //     },
+        //     onApprove: function (data, actions) {
+        //         alert(data.subscriptionID); // You can add optional success message for the subscriber here
+        //     }
+        // }).render('#paypal-button-container-P-85191607KB5209331MRW2YPA'); // Renders the PayPal button
     },
     methods: {
         payMethods(type) {
@@ -109,7 +109,7 @@ export default {
                 this.showModal = false;
             }, 2000)
 
-            return
+            
             // 发送POST请求
             this.$axios.post('/web/contract/addContractByAuthor', formData, {
                 headers: {

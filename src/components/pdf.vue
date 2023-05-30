@@ -34,7 +34,7 @@
 
       <!-- 已签名区域 -->
       <div v-if="placeMarkSign.length > 0 && isRender">
-        <div class="signed"
+        <div class="signed" :id="'signed' + index"
           :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * (canvasHeight + item.index * 10) - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'"
           v-for="(item, index) in placeMarkSign" :key="index">
           <div class="text-signature-container" style="border: none;">
@@ -64,6 +64,7 @@ import * as PDF from "pdfjs-dist";
 // import pdfUrl from "@/assets/2.pdf";
 import signImg from "@/assets/sign_here.svg";
 import entry from "pdfjs-dist/build/pdf.worker.entry";
+
 let rectangles = [];
 export default {
   name: "PDF",
@@ -295,6 +296,7 @@ export default {
           });
         };
       } else {
+
         this.$axios({
           url: 'http://18.181.218.33:8132/web/contract/loadContract',
           method: 'post',
@@ -305,6 +307,7 @@ export default {
           }
         }).then(res => {
           let url = window.URL.createObjectURL(new Blob([res], { type: 'application/pdf' }));
+          // FileSaver.saveAs(new Blob([res], { type: 'application/pdf' }), '1.pdf');
           let loadingTask = PDF.getDocument(url);
           loadingTask.promise.then((pdf) => {
             this.pdfDoc = pdf // 保存加载的pdf文件流
@@ -317,54 +320,6 @@ export default {
         }).catch(() => {
           // resolve(false);
         });
-
-        return
-        this.$axios.post('/web/contract/loadContract', { fileCode }).then(async (res) => {
-
-
-
-          //导出PDF
-          // var form = document.createElement("form");
-          // form.id = "form";
-          // form.name = "form";
-          // document.body.appendChild(form);
-          // var input = document.createElement("input");
-          // input.type = "hidden";
-          // input.name = "fileCode"; //参数名字
-          // input.value = fileCode; //参数值
-          // form.appendChild(input);
-          // form.method = "POST"; //请求方式
-          // form.action = 'http://18.181.218.33:8132/web/contract/loadContract';
-          // form.submit();
-          // document.body.removeChild(form);
-
-          // // 加载PDF文档 url路径  获取非Blob文件流
-          // var arrayBuffer = new Uint8Array(res).buffer;
-          // let loadingTask = PDF.getDocument(arrayBuffer);
-          // loadingTask.promise.then((pdf) => {
-          //   this.pdfDoc = pdf // 保存加载的pdf文件流
-          //   this.pdfPages = this.pdfDoc.numPages // 获取pdf文件的总页数
-          //   this.$nextTick(() => {
-          //     this.renderPage(pdf);
-          //   });
-          // });
-
-
-          // //将文件流转换为Blob对象
-          let url = window.URL.createObjectURL(new Blob([res], { type: 'application/pdf' }));
-          let loadingTask = PDF.getDocument(url);
-          loadingTask.promise.then((pdf) => {
-            this.pdfDoc = pdf // 保存加载的pdf文件流
-            this.pdfPages = this.pdfDoc.numPages // 获取pdf文件的总页数
-            this.$nextTick(() => {
-              this.renderPage(pdf);
-            });
-          });
-
-        }).catch(function (error) {
-          console.log(error);
-        });
-
 
       }
     },
@@ -468,6 +423,7 @@ export default {
       let obj = JSON.parse(str);
       obj.userName = this.userName;
       this.placeMarkSign.push(obj)
+      this.$emit('setPlaceMarkSign',this.placeMarkSign)
     }
   },
 }
@@ -518,9 +474,11 @@ export default {
 }
 
 .modal {
-  position: absolute;
+  position: fixed;
   width: 100%;
   height: 100%;
+  top: 0;
+  left: 0;
   background: rgba(0, 0, 0, 0.3);
   z-index: 9999;
   margin: -5px;
