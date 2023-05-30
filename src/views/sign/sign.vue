@@ -66,12 +66,12 @@ export default {
             console.log('pageList====', arr)
             const pdf = new jsPDF('', 'pt', [540, 960]);
             let pageI = 1;
-            arr.map(async (itemArr, pageIndex) => {
+            arr.map((itemArr, pageIndex) => {
                 console.log('pageIndex====', pageIndex)
                 let i = pageIndex + 1;
                 const canvasElement = document.getElementById('page' + i);
                 //绘制页面
-                await itemArr.map(async (item, index) => {
+                itemArr.map((item, index) => {
                     console.log('signIndex====', item.signedIndex)
                     // 获取要合并的Canvas和div的引用
                     const divElement = document.getElementById('signed' + item.signedIndex);
@@ -85,9 +85,8 @@ export default {
                     // 设置目标Canvas的宽度和高度
                     mergedCanvas.width = width;
                     mergedCanvas.height = height;
-
                     // 使用html2canvas将Canvas和div的内容绘制到目标Canvas上
-                    await Promise.all([
+                    Promise.all([
                         html2canvas(canvasElement),
                         html2canvas(divElement)
                     ]).then(([canvasImg, divImg]) => {
