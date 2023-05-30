@@ -5,18 +5,22 @@
             <div class="auth-part">
                 <div class="auth">
                     <label>Authentication:<input name="auth" value="option1" type="radio" v-model="selectedOption"
-                            @click="handleOptionClick('option1')">yes</label>
+                            @click="handleOptionClick('option1')">Yes</label>
                     <label><input name="auth" value="option2" type="radio" v-model="selectedOption"
-                            @click="handleOptionClick('option2')">no</label>
+                            @click="handleOptionClick('option2')">No</label>
                 </div>
                 <div class="button" v-if="isVerfy"><button @click="verfyIdentity">verify</button></div>
             </div>
             <div class="pay-method">
-                <div class="title">Pay <span class="red">$10</span> to Dsign, Select payment method</div>
+                <div class="title">Pay <span class="red">$1</span> to Dsign, Select payment method</div>
                 <div class="pay-list">
                     <div class="list " :class="payMetaMask ? 'selected' : ''" @click="payMethods('metamask')">
                         <img src="../../assets/ico-fox.png">
-                        <span>Pay with metamask</span>
+                        <span>Pay with Metamask</span>
+                    </div>
+                    <div class="list" :class="!payMetaMask ? 'selected' : ''" @click="payMethods('paypal')">
+                        <img src="../../assets/ico-paypal.png">
+                        <span></span>
                     </div>
                     <!-- <div class="list" :class="!payMetaMask ? 'selected' : ''" @click="payMethods('card')">
                         <img src="../../assets/ico-add.png">
@@ -28,7 +32,8 @@
         <!-- <div id="paypal-button-container-P-85191607KB5209331MRW2YPA"></div> -->
         <div class="foot">
             <span @click="handlerBack">Back</span>
-            <span class="black" @click="handlerPay">Pay and Send</span>
+            <span v-if="!isPay" class="black" @click="handlerPay">Pay</span>
+            <span v-else class="black" @click="handlerStatus">Send</span>
         </div>
         <div v-if="showModal" class="modal">
             <div class="modal-content">
@@ -55,7 +60,8 @@ export default {
             message: 'Authenticating...',
             toastMsg: 'Authentication Ok！',
             show: false,
-            payMetaMask: true
+            payMetaMask: true,
+            isPay:false,//是否支付成功
         }
     },
     mounted() {
@@ -87,8 +93,42 @@ export default {
                 this.payMetaMask = false
             }
         },
-        handlerPay() {
+         handlerPay() {
 
+            this.message = "success..."
+            this.showModal = true;
+            setTimeout(() => {
+                this.showModal = false;
+                this.isPay=true;
+            }, 2000)
+            let datas={
+                total:1,
+                currency:'USD',
+                description:'',
+                localOrderNo:'',
+            };
+            
+
+            if(!this.payMetaMask){
+                // 发送POST请求
+                this.$axios.get('/web/pay/payPai',{params:datas}).then((response) => {
+                    if(response.code==0){
+                        this.showModal = false;
+                        this.isPay=true;
+                    }
+                    
+                    console.log(response)
+                    
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+            
+
+
+        },
+        handlerSend(){
+            console.log('www')
             let file = this.$store.state.pdfFile;
             let receiverEmail = JSON.stringify(this.$store.state.receiverEmail);
             let placeMark = JSON.stringify(this.$store.state.placeMark);
@@ -102,27 +142,44 @@ export default {
             formData.append('fileName', file.name);
             formData.append('placeMark', placeMark);
             formData.append('receiverEmail', receiverEmail);
-
-            this.message = "waiting..."
-            this.showModal = true;
-            setTimeout(() => {
-                this.showModal = false;
-            }, 2000)
-
             
-            // 发送POST请求
-            this.$axios.post('/web/contract/addContractByAuthor', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
+                // this.message = "waiting..."
+                // this.showModal = true;
+                // setTimeout(() => {
+                //     this.showModal = false;
+                // }, 2000)
+
+                if(!this.payMetaMask){
+                    // 发送POST请求
+                    this.$axios.post('/web/contract/addContractByAuthor', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }).then((response) => {
+                        this.showModal = false;
+                        this.$router.push({
+                            name: 'Manage'
+                        })
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }  
+                
+           
+        },
+        handlerStatus() {
+            this.$axios.post('/web/contract/queryPayStatus').then((response) => {
+                if(response.code==0){
+                   this.handlerSend();
                 }
-            }).then((response) => {
-                this.showModal = false;
-                this.$router.push({
-                    name: 'Manage'
-                })
-            }).catch(function (error) {
+                console.log(response)
+                
+             }).catch(function (error) {
                 console.log(error);
+                
             });
+             //this.handlerSend();
+            
 
 
         },
@@ -226,7 +283,7 @@ export default {
 
                     img {
                         display: block;
-                        width: 40px;
+                        // width: 40px;
                         height: 40px;
                     }
 
@@ -240,7 +297,7 @@ export default {
                 }
 
                 .selected {
-                    // border: 2px solid #0E37FF;
+                    border: 2px solid #0E37FF;
                 }
             }
         }

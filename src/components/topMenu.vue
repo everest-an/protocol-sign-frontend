@@ -2,7 +2,7 @@
   <div class="top-bar">
     <img class="logo" src="../assets/logo.png">
     <div class="menus">
-      <div v-if="menuList.indexOf(currentName) > -1">
+      <div >
         <span v-for="(item, idx) in menuList" :key="idx" @click="handlerMenu(item)"
           :class="{ 'selected': currentName == item }">{{ item }}</span>
       </div>
