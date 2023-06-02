@@ -35,7 +35,7 @@
       <!-- 已签名区域 -->
       <div v-if="placeMarkSign.length > 0 && isRender">
         <div class="signed" :id="'signed' + item.signedIndex"
-          :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * (canvasHeight + item.index * 10) - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'"
+          :style="'left:' + item.x + 'px;' + 'top:' + (item.y - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'"
           v-for="(item, index) in placeMarkSign" :key="index">
           <div class="text-signature-container" style="border: none;">
             <span class="eth-signed-by-text">Dsigned By:</span>
@@ -64,7 +64,7 @@ import * as PDF from "pdfjs-dist";
 // import pdfUrl from "@/assets/2.pdf";
 import signImg from "@/assets/sign_here.svg";
 import entry from "pdfjs-dist/build/pdf.worker.entry";
-
+import { baseURL } from '@/http'
 let rectangles = [];
 export default {
   name: "PDF",
@@ -167,7 +167,7 @@ export default {
       let that = this;
       // 获取所有的 绘制矩形的canvas 元素
       const pageContainer = document.querySelectorAll('.pageContainer');
-      console.log('pageContainer', pageContainer)
+      // console.log('pageContainer', pageContainer)
       // 循环遍历每个 div 元素
       let ctxs = [];
       pageContainer.forEach((item, index) => {
@@ -298,8 +298,30 @@ export default {
         };
       } else {
 
+        // this.$axios.post('/web/contract/loadContract', {
+        //   headers: {
+        //     'Content-Type': 'multipart/form-data',
+        //   },
+        //   data: {
+        //     'fileCode': fileCode
+        //   }
+        // }).then((res) => {
+        //   let url = window.URL.createObjectURL(new Blob([res], { type: 'application/pdf' }));
+        //   // FileSaver.saveAs(new Blob([res], { type: 'application/pdf' }), '1.pdf');
+        //   let loadingTask = PDF.getDocument(url);
+        //   loadingTask.promise.then((pdf) => {
+        //     this.pdfDoc = pdf // 保存加载的pdf文件流
+        //     this.pdfPages = this.pdfDoc.numPages // 获取pdf文件的总页数
+        //     this.$nextTick(() => {
+        //       this.renderPage(pdf);
+        //     });
+        //   });
+        // }).catch(function (error) {
+        //   console.log(error);
+        // });
+
         this.$axios({
-          url: 'http://18.181.218.33:8132/web/contract/loadContract',
+          url: baseURL + '/web/contract/loadContract',
           method: 'post',
           responseType: 'blob',
           header: { "Content-Type": "multipart/form-data" },
@@ -344,10 +366,12 @@ export default {
         //创建一个包裹canvans的容器
         const pageContainer = document.createElement('div');
         pageContainer.id = 'pageContainer' + pageNumber;
+        pageContainer.classList.add('page-container');
         // 创建一个新的 Canvas 元素
         const canvas = document.createElement('canvas');
         const canvasRect = document.createElement('canvas');
         canvas.id = 'page' + pageNumber;
+       
         canvasRect.classList.add('pageContainer');
         canvasRect.id = 'pageRect' + pageNumber;
         canvasRect.style.position = 'absolute';
@@ -425,8 +449,23 @@ export default {
       obj.userName = this.userName;
       obj.signedIndex = this.signedIndex;
       this.signedIndex++;
-      this.placeMarkSign.push(obj)
+      this.placeMarkSign.push(obj);
+      console.log(obj)
       this.$emit('setPlaceMarkSign', this.placeMarkSign)
+
+
+      this.$nextTick(() => {
+        // 获取要移动的节点和目标父节点的引用
+        const nodeToMove = document.getElementById('signed' + obj.signedIndex);
+        let j = obj.index + 1;
+        const targetParent = document.getElementById('pageContainer' + j);
+        // console.log(nodeToMove)
+        // console.log(targetParent)
+        // 将节点移动到新的父节点下
+        targetParent.appendChild(nodeToMove);
+      })
+
+
     }
   },
 }

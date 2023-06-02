@@ -32,8 +32,9 @@
         <!-- <div id="paypal-button-container-P-85191607KB5209331MRW2YPA"></div> -->
         <div class="foot">
             <span @click="handlerBack">Back</span>
-            <span v-if="!isPay" class="black" @click="handlerPay">Pay</span>
-            <span v-else class="black" @click="handlerStatus">Send</span>
+            <!-- <span v-if="!isPay" class="black" @click="handlerPay">Pay</span> -->
+            <!-- <span v-else class="black" @click="handlerStatus">Send</span> -->
+            <span  class="black" @click="handlerSend">Send</span>
         </div>
         <div v-if="showModal" class="modal">
             <div class="modal-content">
@@ -61,7 +62,7 @@ export default {
             toastMsg: 'Authentication Ok！',
             show: false,
             payMetaMask: true,
-            isPay:false,//是否支付成功
+            isPay: false,//是否支付成功
         }
     },
     mounted() {
@@ -93,42 +94,41 @@ export default {
                 this.payMetaMask = false
             }
         },
-         handlerPay() {
+        handlerPay() {
 
             this.message = "success..."
             this.showModal = true;
             setTimeout(() => {
                 this.showModal = false;
-                this.isPay=true;
+                this.isPay = true;
             }, 2000)
-            let datas={
-                total:1,
-                currency:'USD',
-                description:'',
-                localOrderNo:'',
+            let datas = {
+                total: 1,
+                currency: 'USD',
+                description: '',
+                localOrderNo: '',
             };
-            
 
-            if(!this.payMetaMask){
+
+            if (!this.payMetaMask) {
                 // 发送POST请求
-                this.$axios.get('/web/pay/payPai',{params:datas}).then((response) => {
-                    if(response.code==0){
+                this.$axios.get('/web/pay/payPai', { params: datas }).then((response) => {
+                    if (response.code == 0) {
                         this.showModal = false;
-                        this.isPay=true;
+                        this.isPay = true;
                     }
-                    
+
                     console.log(response)
-                    
+
                 }).catch(function (error) {
                     console.log(error);
                 });
             }
-            
+
 
 
         },
-        handlerSend(){
-            console.log('www')
+        handlerSend() {
             let file = this.$store.state.pdfFile;
             let receiverEmail = JSON.stringify(this.$store.state.receiverEmail);
             let placeMark = JSON.stringify(this.$store.state.placeMark);
@@ -142,44 +142,44 @@ export default {
             formData.append('fileName', file.name);
             formData.append('placeMark', placeMark);
             formData.append('receiverEmail', receiverEmail);
-            
-                // this.message = "waiting..."
-                // this.showModal = true;
-                // setTimeout(() => {
-                //     this.showModal = false;
-                // }, 2000)
 
-                if(!this.payMetaMask){
-                    // 发送POST请求
-                    this.$axios.post('/web/contract/addContractByAuthor', formData, {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    }).then((response) => {
-                        this.showModal = false;
-                        this.$router.push({
-                            name: 'Manage'
-                        })
-                    }).catch(function (error) {
-                        console.log(error);
-                    });
-                }  
-                
-           
+            // this.message = "waiting..."
+            // this.showModal = true;
+            // setTimeout(() => {
+            //     this.showModal = false;
+            // }, 2000)
+
+            // if (!this.payMetaMask) {
+            // 发送POST请求
+            this.$axios.post('/web/contract/addContractByAuthor', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then((response) => {
+                this.showModal = false;
+                this.$router.push({
+                    name: 'Manage'
+                })
+            }).catch(function (error) {
+                console.log(error);
+            });
+            // }
+
+
         },
         handlerStatus() {
             this.$axios.post('/web/contract/queryPayStatus').then((response) => {
-                if(response.code==0){
-                   this.handlerSend();
+                if (response.code == 0) {
+                    this.handlerSend();
                 }
                 console.log(response)
-                
-             }).catch(function (error) {
+
+            }).catch(function (error) {
                 console.log(error);
-                
+
             });
-             //this.handlerSend();
-            
+            //this.handlerSend();
+
 
 
         },

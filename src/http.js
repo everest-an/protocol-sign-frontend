@@ -55,6 +55,7 @@ request.interceptors.request.use(config => {
 
     config.headers = {
         'token': localStorage.getItem('token'),              // 这里自定义配置，这里传的是token
+        // 'token': 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIweDUzNzYxYmEyNjdlYzI3OWRjMjk2MzQ1Y2I2MjE2OGEyMjUzNjY5NDUiLCJhdWRpZW5jZSI6IiIsImNyZWF0ZWQiOjE2ODU0MzUxNjg1MTQsImV4cCI6MTY4NTY5NDM2OH0.Ji_Khj_hlKALBPoEZSAK0-mVGrjtqCzTJY6GXHGP2UOuuwM4YoP8d-7tla6L2HUDejHphcW46crR4ff9nE15Yg',              // 这里自定义配置，这里传的是token
     };
     startLoading();
     //console.log(config)

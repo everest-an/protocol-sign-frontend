@@ -28,6 +28,7 @@
 </template>
 <script>
 import FileSaver from 'file-saver';
+import { baseURL } from '@/http'
 export default {
     name: "Manage",
     components: {},
@@ -58,7 +59,7 @@ export default {
         //下载pdf
         downPdf(item) {
             this.$axios({
-                url: 'http://18.181.218.33:8132/web/contract/loadContract',
+                url: baseURL + '/web/contract/loadContract',
                 method: 'post',
                 responseType: 'blob',
                 header: { "Content-Type": "multipart/form-data" },

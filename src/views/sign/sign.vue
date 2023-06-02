@@ -13,6 +13,7 @@ import PdfCanvas from '@/components/pdf.vue'
 import jsPDF from 'jspdf'
 import FileSaver from 'file-saver';
 import html2canvas from 'html2canvas'
+// import {} from 'http'
 let pageList = []
 export default {
     name: "Home",
@@ -42,11 +43,10 @@ export default {
             this.$router.push({ name: 'Sign' })
         },
         setPlaceMarkSign(placeSign) {
-            console.log('1111111111', placeSign);
             pageList = placeSign
         },
         //生成PDF
-        buildPDF() {
+        async buildPDF() {
             // 使用 reduce() 函数进行重新分组
             let arr = pageList.reduce((result, item) => {
                 // 获取对象的 index 值
@@ -63,16 +63,24 @@ export default {
 
                 return result;
             }, []);
-            console.log('pageList====', arr)
-            const pdf = new jsPDF('', 'pt', [540, 960]);
+            console.log('pageList====', JSON.parse(JSON.stringify(arr)))
+            const pdf = new jsPDF(
+                {
+                    orientation: 'landscape', // 纵向，或使用 'landscape' 横向
+                    unit: 'pt', // 单位为毫米
+                    format: 'a4', // 页面格式，可以是 'a4'、'letter' 等
+                    compress: true // 是否压缩 PDF
+                }
+            );
             let pageI = 1;
-            arr.map((itemArr, pageIndex) => {
-                console.log('pageIndex====', pageIndex)
+            await arr.map(async (itemArr, pageIndex) => {
+                // console.log('pageIndex====', pageIndex)
                 let i = pageIndex + 1;
                 const canvasElement = document.getElementById('page' + i);
                 //绘制页面
-                itemArr.map((item, index) => {
-                    console.log('signIndex====', item.signedIndex)
+                await itemArr.map(async (item, index) => {
+                    // console.log('signIndex====', item.signedIndex)
+
                     // 获取要合并的Canvas和div的引用
                     const divElement = document.getElementById('signed' + item.signedIndex);
                     // 创建一个新的Canvas作为目标Canvas
@@ -86,39 +94,61 @@ export default {
                     mergedCanvas.width = width;
                     mergedCanvas.height = height;
                     // 使用html2canvas将Canvas和div的内容绘制到目标Canvas上
-                    Promise.all([
-                        html2canvas(canvasElement),
-                        html2canvas(divElement)
-                    ]).then(([canvasImg, divImg]) => {
-                        // 将Canvas和div的内容绘制到目标Canvas上
+                    await html2canvas(canvasElement).then(async canvasImg => {
                         mergedContext.drawImage(canvasImg, 0, 0);
-                        let left = parseInt(divElement.style.left);
-                        let top = parseInt(divElement.style.top);
-                        mergedContext.drawImage(divImg, left, top);
-                        const screenshotUrl = mergedCanvas.toDataURL('image/jpeg', 1.0);
-                        // 将图像数据添加到当前页面的 PDF 中
-                        // pdf.setPage(pageIndex + 1, [width, height], "landscape")
-                        pdf.addImage(screenshotUrl, "JPEG", 0, 0);
-                        if (pageI < arr.length) {
-                            pageI++
-                            pdf.addPage();
-                        }
+                        await html2canvas(divElement).then(async divImg => {
+                            mergedContext.drawImage(divImg, 0, 0);
+                            let left = parseInt(divElement.style.left);
+                            let top = parseInt(divElement.style.top);
+                            mergedContext.drawImage(divImg, left, top);
+                            const screenshotUrl = mergedCanvas.toDataURL('image/jpeg');
+                            await pdf.addImage(screenshotUrl, "JPEG", 0, 0);
+                            pdf.setPage(pageIndex - 1)
+                            if (pageI < arr.length) {
+                                pageI++
+                                pdf.addPage();
+                            }
+                        })
+                    })
 
-                        // // 创建一个下载链接并触发下载
-                        // const link = document.createElement('a');
-                        // link.href = screenshotUrl;
-                        // link.download = 'screenshot.png';
-                        // link.click();
-                    });
+                    // // 创建一个下载链接并触发下载
+                    // const link = document.createElement('a');
+                    // link.href = screenshotUrl;
+                    // link.download = 'screenshot.png';
+                    // link.click();
+                    // });
+
                 })
             })
             setTimeout(() => {
                 pdf.save("merged_pdf.pdf");
-            }, 5000)
+            }, 1000)
+        },
+        async buildPDF2() {
+            const pdf = new jsPDF(
+                {
+                    orientation: 'landscape', // 纵向，或使用 'landscape' 横向
+                    unit: 'px',
+                    format: [640, 360], // 页面格式，可以是 'a4'、'letter' 等
+                    // compress: true // 是否压缩 PDF
+                }
+            );
+            let elements = document.getElementsByClassName('page-container');
+            for (let i = 0; i < elements.length; i++) {
+                let element = elements[i];
+                await html2canvas(element).then(canvasImg => {
+                    const screenshotUrl = canvasImg.toDataURL('image/png');
+                    pdf.addImage(screenshotUrl, "PNG", 0, 0, element.offsetWidth*0.67, element.offsetHeight*0.67);
+                    if (i + 1 < elements.length) {
+                        pdf.addPage();
+                    }
+                })
+            }
+            pdf.save("merged_pdf.pdf");
         },
         //生成PDF并上传
         finishHandle() {
-            this.buildPDF()
+            this.buildPDF2()
             return
 
             // 获取要转换为PDF的HTML元素
