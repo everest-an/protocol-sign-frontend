@@ -61,7 +61,6 @@
 
 <script>
 import * as PDF from "pdfjs-dist";
-// import pdfUrl from "@/assets/2.pdf";
 import signImg from "@/assets/sign_here.svg";
 import entry from "pdfjs-dist/build/pdf.worker.entry";
 import { baseURL } from '@/http'
@@ -330,7 +329,6 @@ export default {
           }
         }).then(res => {
           let url = window.URL.createObjectURL(new Blob([res], { type: 'application/pdf' }));
-          // FileSaver.saveAs(new Blob([res], { type: 'application/pdf' }), '1.pdf');
           let loadingTask = PDF.getDocument(url);
           loadingTask.promise.then((pdf) => {
             this.pdfDoc = pdf // 保存加载的pdf文件流
@@ -450,9 +448,6 @@ export default {
       obj.signedIndex = this.signedIndex;
       this.signedIndex++;
       this.placeMarkSign.push(obj);
-      console.log(obj)
-      this.$emit('setPlaceMarkSign', this.placeMarkSign)
-
 
       this.$nextTick(() => {
         // 获取要移动的节点和目标父节点的引用

@@ -14,10 +14,10 @@
             <div class="pay-method">
                 <div class="title">Pay <span class="red">$1</span> to Dsign, Select payment method</div>
                 <div class="pay-list">
-                    <div class="list " :class="payMetaMask ? 'selected' : ''" @click="payMethods('metamask')">
+                    <!-- <div class="list " :class="payMetaMask ? 'selected' : ''" @click="payMethods('metamask')">
                         <img src="../../assets/ico-fox.png">
                         <span>Pay with Metamask</span>
-                    </div>
+                    </div> -->
                     <div class="list" :class="!payMetaMask ? 'selected' : ''" @click="payMethods('paypal')">
                         <img src="../../assets/ico-paypal.png">
                         <span></span>
@@ -32,9 +32,9 @@
         <!-- <div id="paypal-button-container-P-85191607KB5209331MRW2YPA"></div> -->
         <div class="foot">
             <span @click="handlerBack">Back</span>
-            <!-- <span v-if="!isPay" class="black" @click="handlerPay">Pay</span> -->
-            <!-- <span v-else class="black" @click="handlerStatus">Send</span> -->
-            <span  class="black" @click="handlerSend">Send</span>
+            <span v-if="!isPay" class="black" @click="handlerPay">Pay</span>
+            <span v-else class="black" @click="handlerStatus">Send</span>
+            <!-- <span  class="black" @click="handlerSend">Send</span> -->
         </div>
         <div v-if="showModal" class="modal">
             <div class="modal-content">
@@ -61,7 +61,7 @@ export default {
             message: 'Authenticating...',
             toastMsg: 'Authentication Ok！',
             show: false,
-            payMetaMask: true,
+            payMetaMask: false,
             isPay: false,//是否支付成功
         }
     },
@@ -119,6 +119,8 @@ export default {
                     }
 
                     console.log(response)
+                    // window.location.href = response.results;
+                    window.open(response.results)
 
                 }).catch(function (error) {
                     console.log(error);
@@ -130,6 +132,7 @@ export default {
         },
         handlerSend() {
             let file = this.$store.state.pdfFile;
+            console.log('file',file)
             let receiverEmail = JSON.stringify(this.$store.state.receiverEmail);
             let placeMark = JSON.stringify(this.$store.state.placeMark);
             let authentication = this.selectedOption == 'option2' ? 0 : 1;
@@ -279,6 +282,7 @@ export default {
                     display: flex;
                     align-items: center;
                     // margin: 0 10px;
+                    margin-top: 10px;
                     padding: 5px 0;
 
                     img {
