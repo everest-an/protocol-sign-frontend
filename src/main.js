@@ -3,8 +3,11 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import {request} from './http';
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
 
 const app = createApp(App);
+
 app.config.globalProperties.$axios = request;
 //import ElementPlus from 'element-plus'
 
@@ -16,4 +19,5 @@ app.config.globalProperties.$axios = request;
 // app.config.globalProperties.$tinymce = tinymce
 
 //createApp(App).mount('#app')
+app.use(ElementPlus)
 app.use(store).use(router).mount('#app')

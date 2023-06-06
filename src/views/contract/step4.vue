@@ -32,16 +32,29 @@
         <!-- <div id="paypal-button-container-P-85191607KB5209331MRW2YPA"></div> -->
         <div class="foot">
             <span @click="handlerBack">Back</span>
-            <span v-if="!isPay" class="black" @click="handlerPay">Pay</span>
-            <span v-else class="black" @click="handlerStatus">Send</span>
+            <span class="black" @click="handlerPay">Pay</span>
+            <!-- <span v-else class="black" @click="handlerStatus">Send</span> -->
             <!-- <span  class="black" @click="handlerSend">Send</span> -->
         </div>
-        <div v-if="showModal" class="modal">
+        <!-- <div v-if="showModal" class="modal">
             <div class="modal-content">
                 <span class="close" @click="showModal = false">&times;</span>
                 <p>{{ message }}</p>
             </div>
-        </div>
+        </div> -->
+        <el-dialog v-model="centerDialogVisible" width="30%" center :close-on-click-modal="false">
+            <span>
+                Successfully paid or not?
+            </span>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="centerDialogVisible = false">No</el-button>
+                    <el-button type="primary" @click="handlerStatus">
+                        Yes
+                    </el-button>
+                </span>
+            </template>
+        </el-dialog>
         <div v-if="show" class="toast">
             {{ toastMsg }}
         </div>
@@ -49,6 +62,7 @@
 </template>
 <script>
 import Step from '@/components/step.vue'
+import { ElLoading,ElMessage  } from 'element-plus'
 export default {
     name: "Manage",
     components: { Step },
@@ -63,6 +77,8 @@ export default {
             show: false,
             payMetaMask: false,
             isPay: false,//是否支付成功
+            centerDialogVisible: false,
+            
         }
     },
     mounted() {
@@ -96,20 +112,21 @@ export default {
         },
         handlerPay() {
 
-            this.message = "success..."
+            // this.message = "success..."
             this.showModal = true;
-            setTimeout(() => {
-                this.showModal = false;
-                this.isPay = true;
-            }, 2000)
+            const loadingInstance = ElLoading.service({ text: 'Loading...' })
+
+            // setTimeout(() => {
+            //     this.showModal = false;
+            //     this.isPay = true;
+            // }, 2000)
             let datas = {
                 total: 1,
                 currency: 'USD',
                 description: '',
                 localOrderNo: '',
             };
-
-
+            
             if (!this.payMetaMask) {
                 // 发送POST请求
                 this.$axios.get('/web/pay/payPai', { params: datas }).then((response) => {
@@ -117,7 +134,8 @@ export default {
                         this.showModal = false;
                         this.isPay = true;
                     }
-
+                    loadingInstance.close();
+                    this.centerDialogVisible = true
                     console.log(response)
                     // window.location.href = response.results;
                     window.open(response.results)
@@ -130,9 +148,9 @@ export default {
 
 
         },
-        handlerSend() {
+        handlerSend(loadingInstance) {
             let file = this.$store.state.pdfFile;
-            console.log('file',file)
+            console.log('file', file)
             let receiverEmail = JSON.stringify(this.$store.state.receiverEmail);
             let placeMark = JSON.stringify(this.$store.state.placeMark);
             let authentication = this.selectedOption == 'option2' ? 0 : 1;
@@ -159,7 +177,8 @@ export default {
                     'Content-Type': 'multipart/form-data'
                 }
             }).then((response) => {
-                this.showModal = false;
+                loadingInstance.close();
+                // this.showModal = false;
                 this.$router.push({
                     name: 'Manage'
                 })
@@ -171,9 +190,14 @@ export default {
 
         },
         handlerStatus() {
+            this.centerDialogVisible = false;
+            const loadingInstance = ElLoading.service({ text: 'Loading...' })
             this.$axios.post('/web/contract/queryPayStatus').then((response) => {
                 if (response.code == 0) {
-                    this.handlerSend();
+                    this.handlerSend(loadingInstance);
+                }else if(response.code == -9999){//当前用户没有支付
+                    ElMessage.error('Payment failed');
+                    loadingInstance.close();
                 }
                 console.log(response)
 
@@ -237,7 +261,6 @@ export default {
             display: flex;
             align-items: center;
 
-            .auth {}
 
             .button {
                 width: 104px;
