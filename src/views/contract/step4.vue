@@ -130,11 +130,14 @@ export default {
             if (!this.payMetaMask) {
                 // 发送POST请求
                 this.$axios.get('/web/pay/payPai', { params: datas }).then((response) => {
+                    loadingInstance.close();
                     if (response.code == 0) {
                         this.showModal = false;
                         this.isPay = true;
+                    }else{
+                        ElMessage.error(response.msg)
+                        return
                     }
-                    loadingInstance.close();
                     this.centerDialogVisible = true
                     console.log(response)
                     // window.location.href = response.results;

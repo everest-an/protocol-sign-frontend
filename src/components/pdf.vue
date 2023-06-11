@@ -48,11 +48,34 @@
     </div>
 
     <div class="menu-bar" v-if="showMenu">
-      <div>
+      <div class="item-bar">
         <div class="item-button">Signature Fields</div>
-        <div class="nav-item" @click="signHandle()">
-          <div>0xC50557…a579C7's</div>
+        <div class="nav-item" @click="signHandle(0)">
+          <span>0xC50557…a579C7's</span>
           <div>Signature</div>
+        </div>
+      </div>
+      <div class="item-bar">
+        <div class="item-button">Date Signed</div>
+        <div class="nav-item" @click="signHandle(1)">
+          <span>0xC50557…a579C7's</span>
+          <div>Date Signed</div>
+        </div>
+      </div>
+      <div class="item-bar">
+        <div class="item-button">Wallet Address</div>
+        <div class="nav-item" @click="signHandle(2)">
+          <span>0xC50557…a579C7's</span>
+          <div>Wallet Address</div>
+        </div>
+      </div>
+      <div class="item-bar">
+        <div class="item-button">Text Field</div>
+        <div class="nav-item" @click="signHandle(3)">
+          <div>
+            <span>0xC50557…a579C7's</span>
+            <div>Text Field</div>
+          </div>
         </div>
       </div>
     </div>
@@ -62,6 +85,7 @@
 <script>
 import * as PDF from "pdfjs-dist";
 import signImg from "@/assets/sign_here.svg";
+import clickImg from "@/assets/click_to_place.svg";
 import entry from "pdfjs-dist/build/pdf.worker.entry";
 import { baseURL } from '@/http'
 let rectangles = [];
@@ -369,7 +393,7 @@ export default {
         const canvas = document.createElement('canvas');
         const canvasRect = document.createElement('canvas');
         canvas.id = 'page' + pageNumber;
-       
+
         canvasRect.classList.add('pageContainer');
         canvasRect.id = 'pageRect' + pageNumber;
         canvasRect.style.position = 'absolute';
@@ -427,8 +451,12 @@ export default {
 
     },
     //点击工具栏签名插件
-    signHandle() {
-      this.cursor = `cursor:url(${signImg}),pointer`;
+    signHandle(index) {
+      if (index == 0) {
+        this.cursor = `cursor:url(${signImg}),pointer`;
+      } else {
+        this.cursor = `cursor:url(${clickImg}),pointer`;
+      }
       this.isMenuClick = true;
     },
     //待签名用户点击签名区域
