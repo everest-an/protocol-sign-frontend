@@ -38,21 +38,25 @@
 
       </div>
       <!-- 已输入文本框 日期 -->
-      <div v-for="(item, index) in placeMark" :key="index">
-        <!-- 文本框 -->
-        <div class="sign" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 3" :id="'textField' + index"
-          :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
-          <input placeholder="Add text" style="width: 100%;font-size: 16px;" @change="handleChange($event, item, index)"
-            @input="handleInput($event, index)" :id="'input' + index">
-        </div>
-        <!-- 日期 -->
-        <div class="sign date-signed" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 1"
-          :id="'dateSigned' + index" :data-index="item.index" :data-y="item.y"
-          :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
-          <div placeholder="Add text" style="width: 100%;font-size: 16px;">
-            {{ dateTime }}</div>
+      <div v-if="placeMark && isRender">
+        <div v-for="(item, index) in placeMark" :key="index">
+          <!-- 文本框 -->
+          <div class="sign" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 3"
+            :id="'textField' + index"
+            :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
+            <input placeholder="Add text" style="width: 100%;font-size: 16px;" @change="handleChange($event, item, index)"
+              @input="handleInput($event, index)" :id="'input' + index">
+          </div>
+          <!-- 日期 -->
+          <div class="sign date-signed" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 1"
+            :id="'dateSigned' + index" :data-index="item.index" :data-y="item.y"
+            :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
+            <div placeholder="Add text" style="width: 100%;font-size: 16px;">
+              {{ dateTime }}</div>
+          </div>
         </div>
       </div>
+
 
       <!-- 已签名区域 -->
       <div v-if="placeMarkSign.length > 0 && isRender">
@@ -500,7 +504,10 @@ export default {
         this.isRender = true
       }
       this.loadCanvas();
-      this.placeMarkCopy = JSON.parse(JSON.stringify(this.placeMark))
+      console.log('this.placeMark', this.placeMark)
+      if (this.placeMark) {
+        this.placeMarkCopy = JSON.parse(JSON.stringify(this.placeMark))
+      }
       this.$nextTick(() => {
         let date = document.getElementsByClassName('date-signed');
         let nodeList = [];
