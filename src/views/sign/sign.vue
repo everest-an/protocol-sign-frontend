@@ -2,7 +2,7 @@
     <div class="home-wrap">
         <div class="content" id="ddd">
             <!-- <p class="txt">Sign Page</p> -->
-            <pdf-canvas ref="pdfcanvas" :show-menu="false" :place-mark="placeMark"></pdf-canvas>
+            <pdf-canvas ref="pdfcanvas" :show-menu="false" :place-mark="placeMark" ></pdf-canvas>
             <div class="finish" @click="finishHandle()">Finish</div>
         </div>
     </div>

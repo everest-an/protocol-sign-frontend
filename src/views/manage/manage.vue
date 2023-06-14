@@ -15,7 +15,7 @@
                         <div class="col2">waiting</div>
                         <div class="col3">{{ item.createTime }}</div>
                         <div class="col4">
-                            <button @click="gotoPage(item)" v-if="item.status == 0">Sign</button>
+                            <button @click="gotoPage(item)" v-if="item.status == 0 ">Sign</button>
                             <!-- <button class="grey">Sign</button> -->
                             <button v-else @click="downPdf(item)">Download</button>
                         </div>

@@ -1,5 +1,6 @@
 <template>
   <div class="pdf-content" :class="{ 'pdf-center': showMenu == false }" :style="cursor">
+    <!-- pdf 点击签名区域的弹窗 -->
     <div class="modal" v-if="showModal" @click="showModal = false">
       <div class="modal-content" @click.stop>
         <div class="part-1">
@@ -14,22 +15,33 @@
         <div class="add-btn" @click="insertSign()">Insert</div>
       </div>
     </div>
+
     <div style="position: relative;" id="pdfContainer">
       <!-- 加载原生pdf -->
       <!-- <canvas id="pdf-canvas" class="canvas-location"></canvas> -->
       <!-- 删除按钮 -->
       <span class="delete" style="position: absolute;z-index: 1;color: red;cursor: pointer;" @click="deleteRect(index)"
-        :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * (canvasHeight + item.index * 10) - 20) + 'px'"
+        :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 20) + 'px'"
         v-for="(item, index) in rectangles" :key="index">
         x
       </span>
-      <!-- 待签名区域 -->
+      <!-- 待完成操作区域 -->
       <div v-if="placeMarkCopy && isRender">
-        <div class="sign" @click="userSign(index)"
-          :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * (canvasHeight + item.index * 10) - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'"
-          v-for="(item, index) in placeMarkCopy" :key="index">
-          Click to Sign
+        <div v-for="(item, index) in placeMarkCopy" :key="index">
+          <!-- 待签名 -->
+          <div class="sign" @click="userSign(index)" v-if="item.toolbarType == 0"
+            :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
+            Click to Sign
+          </div>
+          <!-- 文本框 -->
+          <div class="sign" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 3"
+            :id="'textField' + index"
+            :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
+            <input placeholder="Add text" style="width: 100%;font-size: 16px;" @change="handleChange($event, item, index)"
+              @input="handleInput($event, index)" :id="'input' + index">
+          </div>
         </div>
+
       </div>
 
       <!-- 已签名区域 -->
@@ -55,7 +67,7 @@
           <div>Signature</div>
         </div>
       </div>
-      <div class="item-bar">
+      <!-- <div class="item-bar">
         <div class="item-button">Date Signed</div>
         <div class="nav-item" @click="signHandle(1)">
           <span>0xC50557…a579C7's</span>
@@ -68,7 +80,7 @@
           <span>0xC50557…a579C7's</span>
           <div>Wallet Address</div>
         </div>
-      </div>
+      </div> -->
       <div class="item-bar">
         <div class="item-button">Text Field</div>
         <div class="nav-item" @click="signHandle(3)">
@@ -93,7 +105,7 @@ export default {
   name: "PDF",
   props: {
     showMenu: Boolean,
-    placeMark: Array
+    placeMark: Array,
   },
   data() {
     return {
@@ -119,7 +131,9 @@ export default {
       userName: '',
       address: '',
       signIndex: null,
-      signedIndex: 0
+      signedIndex: 0,
+      toolbarType: 0,
+      inputValues: []
     }
   },
   mounted() {
@@ -155,17 +169,24 @@ export default {
         //绘制签名区域
         ctxs[rect.index].fillStyle = 'rgba(0,0,0,0.1)';
         ctxs[rect.index].fillRect(rect.x, rect.y, rect.width, rect.height);
-        //绘制矩形拖拽缩放区域
-        ctxs[rect.index].fillStyle = "gray";
-        ctxs[rect.index].fillRect(rect.x + rect.width - that.sizeDrag, rect.y + rect.height - that.sizeDrag, that.sizeDrag * 2, that.sizeDrag * 2);
-
+        if (rect.toolbarType == 0) {
+          //绘制矩形拖拽缩放区域
+          ctxs[rect.index].fillStyle = "gray";
+          ctxs[rect.index].fillRect(rect.x + rect.width - that.sizeDrag, rect.y + rect.height - that.sizeDrag, that.sizeDrag * 2, that.sizeDrag * 2);
+        }
         // 绘制路径的描边（即矩形边框）
         ctxs[rect.index].strokeStyle = "red";
         ctxs[rect.index].stroke();
 
 
         // 添加描述
-        let text = "This is a Signature Area!";
+        let text = ''
+        if (rect.toolbarType == 0) {
+          text = "This is a Signature Area!";
+        } else if (rect.toolbarType == 3) {
+          text = "This is a Text field!";
+        }
+        // let text = "This is a Signature Area!";
         ctxs[rect.index].font = "bold 16px Arial";
         let textWidth = ctxs[rect.index].measureText(text).width;
         let textHeight = 16;
@@ -241,9 +262,11 @@ export default {
               mouseY < rect.y + rect.height + size
             ) {//在右下角 放大或者缩小矩形
               rect.isResize = true;
-              if (mouseX - rect.x > 10 && mouseY - rect.y > 10) {
-                rect.width = mouseX - rect.x;
-                rect.height = mouseY - rect.y;
+              if (rect.toolbarType == 0) {
+                if (mouseX - rect.x > 10 && mouseY - rect.y > 10) {
+                  rect.width = mouseX - rect.x;
+                  rect.height = mouseY - rect.y;
+                }
               }
               console.log('rect.width====', rect.width)
             } else {
@@ -294,7 +317,10 @@ export default {
             }
           }
         }
-        const rect = { index, x: mouseX, y: mouseY, isDragging: false, ...that.rect };
+        if (that.toolbarType == 3) {
+          that.rect.height = 40
+        }
+        const rect = { index, x: mouseX, y: mouseY, isDragging: false, ...that.rect, toolbarType: that.toolbarType };
         rectangles.push(rect);
         that.redraw();
         that.isMenuClick = false;
@@ -452,6 +478,7 @@ export default {
     },
     //点击工具栏签名插件
     signHandle(index) {
+      this.toolbarType = index;
       if (index == 0) {
         this.cursor = `cursor:url(${signImg}),pointer`;
       } else {
@@ -465,6 +492,36 @@ export default {
       this.userName = '';
       this.signIndex = index;
       this.showModal = true
+    },
+    //文本实时输入
+    handleInput(e, index) {
+      let val = e.target.value;
+      const nodeToMove = document.getElementById('textField' + index);
+      if (!val) {
+        nodeToMove.style.width = 200 + 'px'
+        return
+      }
+      nodeToMove.style.width = 20 + val.length * 8 + 'px'
+    },
+    //文本框失焦
+    handleChange(e, item, index) {
+      console.log(e)
+      let val = e.target.value;
+      const nodeToMove = document.getElementById('textField' + index);
+      const nodeInput = document.getElementById('input' + index);
+      if (nodeToMove) {
+        let j = item.index + 1;
+        nodeToMove.style.top = item.y - 20 + 'px';
+        if(!val){
+          nodeInput.style.border = "1px solid";
+        }else{
+          nodeInput.style.border = "none";
+        }
+       
+        const targetParent = document.getElementById('pageContainer' + j);
+        // 将节点移动到新的父节点下
+        targetParent.appendChild(nodeToMove);
+      }
     },
     //添加签名
     insertSign() {
@@ -663,11 +720,20 @@ export default {
   align-items: center;
 }
 
+
 .signed {
   position: absolute;
   z-index: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+textarea {
+  resize: none;
+}
+
+.bg-none {
+  background-color: rgba(0, 0, 0, 0);
 }
 </style>

@@ -5,7 +5,7 @@
             <img class="img" src="../../assets/ico-add.png">
             <p class="txt">Drop documents here to get started</p>
             <button class="bt-start" @click="handlerStart">Start Now</button>
-            <input type="file" ref="fileInput" style="display:none" @change="handleFileInputChange" accept='.pdf'>
+            <input type="file" ref="fileInput" style="display:none" @change="handleFileInputChange" accept='.pdf,.docx'>
         </div>
     </div>
 </template>
