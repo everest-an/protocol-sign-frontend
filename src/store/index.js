@@ -4,6 +4,7 @@ export default createStore({
     state() {
         return {
             pdfFile: null,
+            word2pdfFile: null,
             receiverEmail: null,
             placeMark: null,//位置标记
         }
@@ -11,6 +12,9 @@ export default createStore({
     mutations: {
         SET_PDF: (state, file) => {
             state.pdfFile = file
+        },
+        SET_WORD2PDF: (state, file) => {
+            state.word2pdfFile = file
         },
         SET_EMAIL: (state, arr) => {
             state.receiverEmail = arr

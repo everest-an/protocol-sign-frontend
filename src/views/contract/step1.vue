@@ -11,6 +11,7 @@
 </template>
 <script>
 import Step from '@/components/step.vue'
+import html2pdf from 'html2pdf.js';
 export default {
     name: "Manage",
     components: { Step },
@@ -29,8 +30,42 @@ export default {
         // 处理选择的文件
         handleFileInputChange(event) {
             const file = event.target.files[0];
-            console.log(file);
-            this.$store.commit('SET_PDF', file)
+            let type = file.name.split('.');
+            if (type[1] !== 'pdf') {
+                //打开word
+                // 创建用于读取文件的FileReader实例
+                const reader = new FileReader();
+                // 读取文件数据
+                reader.readAsText(file);
+                // 当文件加载完成时执行以下代码
+                reader.onload = (event) => {
+                    const fileData = event.target.result;
+                    // 创建一个隐藏的<div>元素，用于将Word内容显示为HTML
+                    const div = document.createElement('div');
+                    div.innerHTML = fileData;
+                    div.style.display = 'none';
+                    // 将<div>元素添加到DOM中
+                    document.body.appendChild(div);
+                    // 将<div>元素转换为PDF文档流
+                    html2pdf()
+                        .from(div)
+                        .outputPdf('datauristring')
+                        .then((pdfDataUri) => {
+                            // PDF文档流可用于进一步处理或显示
+                            console.log('pdf============', pdfDataUri);
+                            this.$store.commit('SET_WORD2PDF', pdfDataUri)
+                        })
+                        .finally(() => {
+                            // 完成后删除<div>元素
+                            document.body.removeChild(div);
+                        });
+                };
+                
+            } else {
+                //打开PDF
+                console.log('pdf===', file)
+                this.$store.commit('SET_PDF', file)
+            }
             this.$router.push({
                 name: 'Step2'
             })

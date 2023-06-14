@@ -25,7 +25,7 @@
         v-for="(item, index) in rectangles" :key="index">
         x
       </span>
-      <!-- 待完成操作区域 -->
+      <!-- 待完成签名区域 -->
       <div v-if="placeMarkCopy && isRender">
         <div v-for="(item, index) in placeMarkCopy" :key="index">
           <!-- 待签名 -->
@@ -33,15 +33,25 @@
             :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
             Click to Sign
           </div>
-          <!-- 文本框 -->
-          <div class="sign" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 3"
-            :id="'textField' + index"
-            :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
-            <input placeholder="Add text" style="width: 100%;font-size: 16px;" @change="handleChange($event, item, index)"
-              @input="handleInput($event, index)" :id="'input' + index">
-          </div>
+
         </div>
 
+      </div>
+      <!-- 已输入文本框 日期 -->
+      <div v-for="(item, index) in placeMark" :key="index">
+        <!-- 文本框 -->
+        <div class="sign" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 3" :id="'textField' + index"
+          :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
+          <input placeholder="Add text" style="width: 100%;font-size: 16px;" @change="handleChange($event, item, index)"
+            @input="handleInput($event, index)" :id="'input' + index">
+        </div>
+        <!-- 日期 -->
+        <div class="sign date-signed" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 1"
+          :id="'dateSigned' + index" :data-index="item.index" :data-y="item.y"
+          :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
+          <div placeholder="Add text" style="width: 100%;font-size: 16px;">
+            {{ dateTime }}</div>
+        </div>
       </div>
 
       <!-- 已签名区域 -->
@@ -67,14 +77,14 @@
           <div>Signature</div>
         </div>
       </div>
-      <!-- <div class="item-bar">
+      <div class="item-bar">
         <div class="item-button">Date Signed</div>
         <div class="nav-item" @click="signHandle(1)">
           <span>0xC50557…a579C7's</span>
           <div>Date Signed</div>
         </div>
       </div>
-      <div class="item-bar">
+      <!-- <div class="item-bar">
         <div class="item-button">Wallet Address</div>
         <div class="nav-item" @click="signHandle(2)">
           <span>0xC50557…a579C7's</span>
@@ -100,6 +110,7 @@ import signImg from "@/assets/sign_here.svg";
 import clickImg from "@/assets/click_to_place.svg";
 import entry from "pdfjs-dist/build/pdf.worker.entry";
 import { baseURL } from '@/http'
+import jsPDF from "jspdf";
 let rectangles = [];
 export default {
   name: "PDF",
@@ -133,7 +144,8 @@ export default {
       signIndex: null,
       signedIndex: 0,
       toolbarType: 0,
-      inputValues: []
+      inputValues: [],
+      dateTime: null
     }
   },
   mounted() {
@@ -143,8 +155,17 @@ export default {
     let str1 = address.substring(0, 10);
     let str2 = address.substring(address.length - 5);
     this.address = str1 + '...' + str2;
+    const today = new Date();
+    this.dateTime = this.formatDate(today);
   },
   methods: {
+    formatDate(date) {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+
+      return `${day}/${month}/${year}`;
+    },
     saveRectangles() {
       console.log(rectangles)
       this.$store.commit('SET_MARK', rectangles);
@@ -182,9 +203,11 @@ export default {
         // 添加描述
         let text = ''
         if (rect.toolbarType == 0) {
-          text = "This is a Signature Area!";
+          text = "This is a Signature Area";
+        } else if (rect.toolbarType == 1) {
+          text = "Date signed";
         } else if (rect.toolbarType == 3) {
-          text = "This is a Text field!";
+          text = "This is a Text field";
         }
         // let text = "This is a Signature Area!";
         ctxs[rect.index].font = "bold 16px Arial";
@@ -317,7 +340,9 @@ export default {
             }
           }
         }
-        if (that.toolbarType == 3) {
+        if (that.toolbarType == 0) {
+          that.rect.height = 100
+        } else {
           that.rect.height = 40
         }
         const rect = { index, x: mouseX, y: mouseY, isDragging: false, ...that.rect, toolbarType: that.toolbarType };
@@ -331,20 +356,35 @@ export default {
       // console.log('pdfUrl===',this.pdfUrl)
       if (!fileCode) {
         // 加载PDF文档 本地文件
-        let file = this.$store.state.pdfFile;
-        const reader = new FileReader();
-        reader.readAsArrayBuffer(file);
-        reader.onload = (event) => {
-          const data = new Uint8Array(event.target.result);
-          let loadingTask = PDF.getDocument(data);
+        let word2pdfFile = this.$store.state.word2pdfFile;
+        if (word2pdfFile) {
+          let loadingTask = PDF.getDocument(word2pdfFile);
           loadingTask.promise.then((pdf) => {
+            console.log('word2pdf===', pdf)
             this.pdfDoc = pdf // 保存加载的pdf文件流
             this.pdfPages = this.pdfDoc.numPages // 获取pdf文件的总页数
+            // alert(this.pdfPages)
             this.$nextTick(() => {
               this.renderPage(pdf);
             });
           });
-        };
+        } else {
+          let file = this.$store.state.pdfFile;
+          const reader = new FileReader();
+          reader.readAsArrayBuffer(file);
+          reader.onload = (event) => {
+            const data = new Uint8Array(event.target.result);
+            let loadingTask = PDF.getDocument(data);
+            loadingTask.promise.then((pdf) => {
+              console.log('pdf===', pdf)
+              this.pdfDoc = pdf // 保存加载的pdf文件流
+              this.pdfPages = this.pdfDoc.numPages // 获取pdf文件的总页数
+              this.$nextTick(() => {
+                this.renderPage(pdf);
+              });
+            });
+          };
+        }
       } else {
 
         // this.$axios.post('/web/contract/loadContract', {
@@ -460,8 +500,30 @@ export default {
         this.isRender = true
       }
       this.loadCanvas();
-      this.placeMarkCopy = this.placeMark
+      this.placeMarkCopy = JSON.parse(JSON.stringify(this.placeMark))
+      this.$nextTick(() => {
+        let date = document.getElementsByClassName('date-signed');
+        let nodeList = [];
+        // console.log('ate.length', date.length)
+        for (let i = 0; i < date.length; i++) {
+          const nodeToMove = date[i];
+          let obj = { index: null, node: null, y: null };
+          let j = parseInt(nodeToMove.dataset.index) + 1;
+          console.log('11111======', nodeToMove.dataset.index)
+          obj.index = j;
+          obj.node = nodeToMove;
+          obj.y = nodeToMove.dataset.y;
+          nodeList.push(obj)
+        }
+        // 将节点移动到新的父节点下
+        nodeList.map(item => {
+          item.node.style.top = parseInt(item.y) - 20 + 'px';
+          const targetParent = document.getElementById('pageContainer' + item.index);
+          targetParent.appendChild(item.node);
+        })
 
+        console.log('date====', date)
+      });
       // const page = await pdf.getPage(1);
       // const viewport = page.getViewport({ scale: 1 });
       // canvas.width = viewport.width;
@@ -512,12 +574,12 @@ export default {
       if (nodeToMove) {
         let j = item.index + 1;
         nodeToMove.style.top = item.y - 20 + 'px';
-        if(!val){
+        if (!val) {
           nodeInput.style.border = "1px solid";
-        }else{
+        } else {
           nodeInput.style.border = "none";
         }
-       
+
         const targetParent = document.getElementById('pageContainer' + j);
         // 将节点移动到新的父节点下
         targetParent.appendChild(nodeToMove);
