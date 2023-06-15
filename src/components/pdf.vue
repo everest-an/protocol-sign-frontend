@@ -37,7 +37,7 @@
         </div>
 
       </div>
-      <!-- 已输入文本框 日期 -->
+      <!-- 已输入文本框 日期 地址-->
       <div v-if="placeMark && isRender">
         <div v-for="(item, index) in placeMark" :key="index">
           <!-- 文本框 -->
@@ -53,6 +53,13 @@
             :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
             <div placeholder="Add text" style="width: 100%;font-size: 16px;">
               {{ dateTime }}</div>
+          </div>
+          <!-- 地址 -->
+          <div class="sign address-signed" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 2"
+            :id="'addressSigned' + index" :data-index="item.index" :data-y="item.y"
+            :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
+            <div placeholder="Add text" style="width: 100%;font-size: 16px;">
+              {{ addressDetails }}</div>
           </div>
         </div>
       </div>
@@ -77,29 +84,29 @@
       <div class="item-bar">
         <div class="item-button">Signature Fields</div>
         <div class="nav-item" @click="signHandle(0)">
-          <span>0xC50557…a579C7's</span>
+          <span>{{ address }}'s</span>
           <div>Signature</div>
         </div>
       </div>
       <div class="item-bar">
         <div class="item-button">Date Signed</div>
         <div class="nav-item" @click="signHandle(1)">
-          <span>0xC50557…a579C7's</span>
+          <span>{{ address }}'s</span>
           <div>Date Signed</div>
         </div>
       </div>
-      <!-- <div class="item-bar">
+      <div class="item-bar">
         <div class="item-button">Wallet Address</div>
         <div class="nav-item" @click="signHandle(2)">
-          <span>0xC50557…a579C7's</span>
+          <span>{{ address }}'s</span>
           <div>Wallet Address</div>
         </div>
-      </div> -->
+      </div>
       <div class="item-bar">
         <div class="item-button">Text Field</div>
         <div class="nav-item" @click="signHandle(3)">
           <div>
-            <span>0xC50557…a579C7's</span>
+            <span>{{ address }}'s</span>
             <div>Text Field</div>
           </div>
         </div>
@@ -145,6 +152,7 @@ export default {
       showModal: false,
       userName: '',
       address: '',
+      addressDetails: '',
       signIndex: null,
       signedIndex: 0,
       toolbarType: 0,
@@ -156,6 +164,7 @@ export default {
     rectangles = [];
     PDF.GlobalWorkerOptions.workerSrc = entry;
     let address = localStorage.getItem('address');
+    this.addressDetails = address;
     let str1 = address.substring(0, 10);
     let str2 = address.substring(address.length - 5);
     this.address = str1 + '...' + str2;
@@ -210,7 +219,10 @@ export default {
           text = "This is a Signature Area";
         } else if (rect.toolbarType == 1) {
           text = "Date signed";
-        } else if (rect.toolbarType == 3) {
+        } else if (rect.toolbarType == 2) {
+          text = that.addressDetails;
+        }
+        else if (rect.toolbarType == 3) {
           text = "This is a Text field";
         }
         // let text = "This is a Signature Area!";
@@ -348,6 +360,11 @@ export default {
           that.rect.height = 100
         } else {
           that.rect.height = 40
+        }
+        if (that.toolbarType == 2) {
+          that.rect.width = 400
+        } else {
+          that.rect.width = 200
         }
         const rect = { index, x: mouseX, y: mouseY, isDragging: false, ...that.rect, toolbarType: that.toolbarType };
         rectangles.push(rect);
@@ -510,26 +527,41 @@ export default {
       }
       this.$nextTick(() => {
         let date = document.getElementsByClassName('date-signed');
-        let nodeList = [];
+        let address = document.getElementsByClassName('address-signed');
+        let nodeList = [];//日期节点列表
+        let addressList = [];//地址节点列表
         // console.log('ate.length', date.length)
         for (let i = 0; i < date.length; i++) {
           const nodeToMove = date[i];
           let obj = { index: null, node: null, y: null };
           let j = parseInt(nodeToMove.dataset.index) + 1;
-          console.log('11111======', nodeToMove.dataset.index)
           obj.index = j;
           obj.node = nodeToMove;
           obj.y = nodeToMove.dataset.y;
           nodeList.push(obj)
         }
-        // 将节点移动到新的父节点下
+        for (let i = 0; i < address.length; i++) {
+          const nodeToMove = address[i];
+          let obj = { index: null, node: null, y: null };
+          let j = parseInt(nodeToMove.dataset.index) + 1;
+          obj.index = j;
+          obj.node = nodeToMove;
+          obj.y = nodeToMove.dataset.y;
+          addressList.push(obj)
+        }
+        // 将日期节点移动到新的父节点下
         nodeList.map(item => {
           item.node.style.top = parseInt(item.y) - 20 + 'px';
           const targetParent = document.getElementById('pageContainer' + item.index);
           targetParent.appendChild(item.node);
         })
+        // 将日期节点移动到新的父节点下
+        addressList.map(item => {
+          item.node.style.top = parseInt(item.y) - 20 + 'px';
+          const targetParent = document.getElementById('pageContainer' + item.index);
+          targetParent.appendChild(item.node);
+        })
 
-        console.log('date====', date)
       });
       // const page = await pdf.getPage(1);
       // const viewport = page.getViewport({ scale: 1 });
