@@ -1,33 +1,36 @@
 <template>
-    <div class="container">
-        <div class="form-container">
-            <div class="left">
+    <div>
+        <div class="container">
+            <div class="form-container">
+                <div class="left">
 
-                <img src="../assets/login-left.png">
-            </div>
-            <div class="right" v-if="!currentType">
-                <div class="styles {{curentType=='fox'?'select':''}}" @click="handleSelectLogin('fox')"><span
-                        class="txt">MetaMask</span><img class="img" src="../assets/ico-fox.png"></div>
-                <div class="styles {{curentType=='email'?'select':''}}" @click="handleSelectLogin('email')"><span
-                        class="txt">Email</span><img class="img" src="../assets/ico-emial.png"></div>
-            </div>
-            <div class="sign-in" v-if="currentType == 'email'">
-                <div class="title">Log In</div>
-                <div class="list">
-                    <div class="name">Email</div>
-                    <input placeholder="Enter Email" v-model="email">
-                    <!-- <div class="err">Email is required have a value</div> -->
+                    <img src="../assets/login-left.png">
                 </div>
-                <div class="list">
-                    <div class="name">Email Code</div>
-                    <input placeholder="Enter Email Code" v-model="emailCode"><span class="code" @click="sendCode">Send
-                        email code</span>
-                    <!-- <div class="err">A Code is required</div> -->
+                <div class="right" v-if="!currentType">
+                    <div class="styles {{curentType=='fox'?'select':''}}" @click="handleSelectLogin('fox')"><span
+                            class="txt">MetaMask</span><img class="img" src="../assets/ico-fox.png"></div>
+                    <div class="styles {{curentType=='email'?'select':''}}" @click="handleSelectLogin('email')"><span
+                            class="txt">Email</span><img class="img" src="../assets/ico-emial.png"></div>
                 </div>
-                <div class="tips">By clicking Get Started, you agree to Dsign's Privacy Notice and Terms & Conditions.
+                <div class="sign-in" v-if="currentType == 'email'">
+                    <div class="title">Log In</div>
+                    <div class="list">
+                        <div class="name">Email</div>
+                        <input placeholder="Enter Email" v-model="email">
+                        <!-- <div class="err">Email is required have a value</div> -->
+                    </div>
+                    <div class="list">
+                        <div class="name">Email Code</div>
+                        <input placeholder="Enter Email Code" v-model="emailCode"><span class="code" @click="sendCode">Send
+                            email code</span>
+                        <!-- <div class="err">A Code is required</div> -->
+                    </div>
+                    <div class="tips">By clicking Get Started, you agree to Dsign's Privacy Notice and Terms & Conditions.
+                    </div>
+                    <div class="bt-submit" @click="loginEmail">LOG IN</div>
                 </div>
-                <div class="bt-submit" @click="loginEmail">LOG IN</div>
             </div>
+            <Footer></Footer>
         </div>
     </div>
 </template>
@@ -38,9 +41,12 @@
 // } from 'element-plus';
 // import * as PDF from "pdfjs-dist";
 // import entry from "pdfjs-dist/build/pdf.worker.entry";
+import Footer from '../components/footer.vue'
 export default {
     name: "Login",
-    components: {},
+    components: {
+        Footer
+    },
     data() {
         return {
             currentType: '',
@@ -79,7 +85,7 @@ export default {
         //     }
         //};
     },
-    mounted(){
+    mounted() {
         // PDF.GlobalWorkerOptions.workerSrc = entry
     },
     methods: {
@@ -103,7 +109,7 @@ export default {
                         this.$axios.post('/web/login/authLogin', { accountAddress: account }).then((res) => {
                             console.log('login=========', res)
                             if (res.code == 0) {
-                                localStorage.setItem('token',res.results.token)
+                                localStorage.setItem('token', res.results.token)
                                 this.$router.push({ name: 'Index' })
                             }
                         }).catch(function (error) {
@@ -138,7 +144,7 @@ export default {
                 console.log(res);
                 if (res.code == 0) {
                     localStorage.setItem('address', res.results.accountAddress)
-                    localStorage.setItem('token',res.results.token)
+                    localStorage.setItem('token', res.results.token)
                     this.$router.push({
                         name: 'Home'
                     })
@@ -179,6 +185,8 @@ export default {
     height: calc(100vh - 60px);
     display: flex;
     align-items: center;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .form-container {
@@ -186,7 +194,7 @@ export default {
     justify-content: center;
     align-items: center;
     width: 980px;
-    margin: 0 auto;
+    // margin: 0 auto;
     height: 426px;
     background: #FFFFFF;
     border-radius: 8px;
@@ -221,6 +229,7 @@ export default {
         align-items: center;
         margin: 0 auto 24px;
         cursor: pointer;
+
         .txt {
             display: block;
         }

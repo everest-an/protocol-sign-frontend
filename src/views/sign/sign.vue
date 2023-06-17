@@ -2,7 +2,7 @@
     <div class="home-wrap">
         <div class="content" id="ddd">
             <!-- <p class="txt">Sign Page</p> -->
-            <pdf-canvas ref="pdfcanvas" :show-menu="false" :place-mark="placeMark" ></pdf-canvas>
+            <pdf-canvas ref="pdfcanvas" :show-menu="false" :place-mark="placeMark"></pdf-canvas>
             <div class="finish" @click="finishHandle()">Finish</div>
         </div>
     </div>
@@ -53,7 +53,7 @@ export default {
             let elements = document.getElementsByClassName('page-container');
             for (let i = 0; i < elements.length; i++) {
                 let element = elements[i];
-                await html2canvas(element).then(canvasImg => {
+                await html2canvas(element, { scale: 2 }).then(canvasImg => {
                     const screenshotUrl = canvasImg.toDataURL('image/png');
                     console.log('canvasImg', canvasImg.width)
                     console.log('canvasImg', canvasImg.height)
@@ -68,7 +68,9 @@ export default {
             const pdfData = pdf.output('arraybuffer');
             const blob = new Blob([pdfData], { type: 'application/pdf' });
             console.log('blob====', blob)
-            // FileSaver.saveAs(blob, 'converted11.pdf');
+            FileSaver.saveAs(blob, 'converted11.pdf');
+            // 增加 jspdf 的输出质量：在生成 PDF 文件之前，尝试设置 jspdf 的输出质量参数。你可以将 jspdf 实例的 setFontSize、setTextColor 和 setProperties 等方法
+            return
             // 发送POST请求
             // 创建FormData对象并将Blob添加到其中
             const formData = new FormData();

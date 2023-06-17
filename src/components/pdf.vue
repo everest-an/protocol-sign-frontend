@@ -602,7 +602,7 @@ export default {
         nodeToMove.style.width = 200 + 'px'
         return
       }
-      nodeToMove.style.width = 20 + val.length * 8 + 'px'
+      nodeToMove.style.width = 20 + val.length * 10 + 'px'
     },
     //文本框失焦
     handleChange(e, item, index) {
