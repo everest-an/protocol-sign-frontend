@@ -25,7 +25,7 @@
                             email code</span>
                         <!-- <div class="err">A Code is required</div> -->
                     </div>
-                    <div class="tips">By clicking Get Started, you agree to Dsign's Privacy Notice and Terms & Conditions.
+                    <div class="tips">By clicking Get Started, you agree to Protocol Sign's Privacy Notice and Terms & Conditions.
                     </div>
                     <div class="bt-submit" @click="loginEmail">LOG IN</div>
                 </div>

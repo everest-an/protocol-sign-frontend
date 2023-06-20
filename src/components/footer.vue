@@ -1,7 +1,7 @@
 <template>
   <div class="foot">
     <img class="logo" src="../assets/circle.png">
-    <div class="des">Managed by Dsign Foundation</div>
+    <div class="des">Managed by Protocol Sign Foundation</div>
     <div class="img-list">
       <img src="@/assets/footer/1.png" @click="gotopage(1)">
       <img src="@/assets/footer/2.png" @click="gotopage(2)">
@@ -10,7 +10,7 @@
       <img src="@/assets/footer/5.png" @click="gotopage(5)">
     </div>
     <div class="tips">
-      © 2023 Dsign Foundation. All rights reserved.
+      © 2023 Protocol Sign Foundation. All rights reserved.
     </div>
   </div>
 </template>

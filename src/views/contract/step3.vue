@@ -39,6 +39,7 @@ export default {
 <style scoped lang="scss">
 .contract-wrap {
     padding: 40px 24px;
+    // height: calc(100vh - 100px);
 }
 
 .foot {

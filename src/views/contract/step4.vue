@@ -12,7 +12,7 @@
                 <div class="button" v-if="isVerfy"><button @click="verfyIdentity">verify</button></div>
             </div>
             <div class="pay-method">
-                <div class="title">Pay <span class="red">$1</span> to Dsign, Select payment method</div>
+                <div class="title">Pay <span class="red">$1</span> to Protocol Sign, Select payment method</div>
                 <div class="pay-list">
                     <!-- <div class="list " :class="payMetaMask ? 'selected' : ''" @click="payMethods('metamask')">
                         <img src="../../assets/ico-fox.png">
