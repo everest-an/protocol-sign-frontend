@@ -30,7 +30,7 @@
                     <div class="bt-submit" @click="loginEmail">LOG IN</div>
                 </div>
             </div>
-            <div style="position: absolute; bottom: 0;">
+            <div style="margin-top: 100px;">
                 <Footer></Footer>
             </div>
         </div>
@@ -184,7 +184,7 @@ export default {
     // background: url(../assets/bg.png) no-repeat center;
     // background-size: 100% 100%;
     // background-attachment: fixed;
-    height: calc(100vh - 60px);
+    // height: calc(100vh - 60px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -197,6 +197,7 @@ export default {
     align-items: center;
     width: 980px;
     // margin: 0 auto;
+    margin-top: 100px;
     height: 426px;
     background: #FFFFFF;
     border-radius: 8px;
