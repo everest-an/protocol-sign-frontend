@@ -209,9 +209,6 @@ export default {
 
             });
             //this.handlerSend();
-
-
-
         },
         handlerBack() {
             this.$router.push({

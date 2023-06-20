@@ -5,7 +5,7 @@ const routes = [
         path: '/',
         name: 'Index',
         component: () => import('../views/Index.vue'),
-        redirect: { name: 'Home' },
+        redirect: { name: 'Introduce' },
         children: [
             {
                 path: 'home',
@@ -18,6 +18,7 @@ const routes = [
                 component: () => import('../views/home/home.vue'),
 
             },
+           
             {
                 path: '/manage',
                 name: 'Manage',
@@ -75,6 +76,11 @@ const routes = [
         path: '/login',
         name: 'Login',
         component: () => import('../views/Login.vue')
+    },
+    {
+        path: '/index',
+        name: 'Introduce',
+        component: () => import('../views/introduce.vue'),
     },
     {
         path: '/:catchAll(.*)',

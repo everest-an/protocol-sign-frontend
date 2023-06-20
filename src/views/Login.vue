@@ -30,7 +30,9 @@
                     <div class="bt-submit" @click="loginEmail">LOG IN</div>
                 </div>
             </div>
-            <Footer></Footer>
+            <div style="position: absolute; bottom: 0;">
+                <Footer></Footer>
+            </div>
         </div>
     </div>
 </template>
@@ -110,7 +112,7 @@ export default {
                             console.log('login=========', res)
                             if (res.code == 0) {
                                 localStorage.setItem('token', res.results.token)
-                                this.$router.push({ name: 'Index' })
+                                this.$router.push({ name: 'Home' })
                             }
                         }).catch(function (error) {
                             console.log(error);

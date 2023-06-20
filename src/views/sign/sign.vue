@@ -68,9 +68,9 @@ export default {
             const pdfData = pdf.output('arraybuffer');
             const blob = new Blob([pdfData], { type: 'application/pdf' });
             console.log('blob====', blob)
-            FileSaver.saveAs(blob, 'converted11.pdf');
-            // 增加 jspdf 的输出质量：在生成 PDF 文件之前，尝试设置 jspdf 的输出质量参数。你可以将 jspdf 实例的 setFontSize、setTextColor 和 setProperties 等方法
-            return
+            // FileSaver.saveAs(blob, 'converted11.pdf');
+            // // 增加 jspdf 的输出质量：在生成 PDF 文件之前，尝试设置 jspdf 的输出质量参数。你可以将 jspdf 实例的 setFontSize、setTextColor 和 setProperties 等方法
+            // return
             // 发送POST请求
             // 创建FormData对象并将Blob添加到其中
             const formData = new FormData();

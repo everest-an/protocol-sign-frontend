@@ -11,22 +11,20 @@
                         @click="addOrther">Add</button></div>
             </div>
             <div class="list">
-                <div class="text-box" v-for="(item, index) in userArr" :key="index">
-                    <div class="img"><img src="../../assets/ico-logo.png"></div>
-                    <div class="text">
-                        <p class="txt1">{{ item.address }}</p>
-                        <!-- <p class="txt2">对方暂未注册</p> -->
+                <div v-for="(item, index) in userArr" :key="index" class="text-box">
+                    <div style="display: flex;align-items: center;">
+                        <div class="img"><img src="../../assets/ico-logo.png"></div>
+                        <div class="text">
+                            <p class="txt1">{{ item.address }}</p>
+                            <!-- <p class="txt2">对方暂未注册</p> -->
+                        </div>
+                        <div class="del" @click="deleteAccount(index)"><img src="../../assets/ico-del.png"></div>
                     </div>
-                    <div class="del" @click="deleteAccount(index)"><img src="../../assets/ico-del.png"></div>
+                    <div class="add-email">
+                        <div>Recipient email</div>
+                        <el-input v-model="email" placeholder="Please enter your email address" style="width: 300px;"/>
+                    </div>
                 </div>
-                <!-- <div class="text-box">
-                <div class="img"><img src="../../assets/ico-logo.png"></div>
-                <div class="text">
-                    <p class="txt1">dsfsfss</p>
-                    <p class="txt2">dsfsdfsfsf</p>
-                </div>
-                <div class="del"><img src="../../assets/ico-del.png"></div>
-            </div> -->
             </div>
 
         </div>
@@ -43,11 +41,12 @@ export default {
             currentType: '',
             userArr: [],
             ortherAddress: '',
-            address: ''
+            address: '',
+            email: ''
         }
     },
     methods: {
-        deleteAccount(index){
+        deleteAccount(index) {
             this.userArr.splice(index, 1);
             // console.log(this.userArr);
             let arr = [];
@@ -118,6 +117,7 @@ export default {
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
+
                 img {
                     width: 13px;
                     height: 13px;
@@ -178,7 +178,8 @@ export default {
                 border: 1px solid #EEEEEE;
                 margin: 0 10px;
                 display: flex;
-                align-items: center;
+                flex-direction: column;
+                align-items: flex-start;
                 margin-top: 20px;
 
                 .img {
@@ -225,6 +226,7 @@ export default {
                     width: 24px;
                     height: 24px;
                     cursor: pointer;
+
                     img {
                         display: block;
                         width: 24px;
@@ -262,6 +264,16 @@ export default {
             font-weight: 400;
             color: #FFFFFF;
         }
+    }
+}
+
+.add-email {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    div{
+        margin-right: 10px;
+        margin-top: 10px;
     }
 }
 </style>

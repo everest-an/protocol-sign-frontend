@@ -2,45 +2,53 @@
     <div class="home-wrap">
         <div class="content">
             <img class="img" src="../../assets/ico-add.png">
-            <p class="txt">Drop  documents here to get started</p>
+            <p class="txt">Drop documents here to get started</p>
             <button class="bt-start" @click="handlerStart">Start Now</button>
+        </div>
+        <div style="position: absolute; bottom: 0;">
+            <Footer></Footer>
         </div>
     </div>
 </template>
 <script>
+import Footer from '../../components/footer.vue'
 export default {
     name: "Home",
-    components: {},
+    components: {
+        Footer
+    },
     data() {
-        return{
-            currentType:'',
+        return {
+            currentType: '',
         }
     },
-    methods:{
-        handlerStart(){
+    methods: {
+        handlerStart() {
             this.$router.push({
-                name:'Step1'
+                name: 'Step1'
             })
         },
     },
 }
 </script>
 <style lang="scss" scoped>
-.home-wrap{
+.home-wrap {
     display: flex;
     justify-content: center;
-    .content{
+
+    .content {
         width: 100%;
         margin: 150px 0 0;
-        
+
         // border: 1px solid #D5D5D5;
-        .img{
+        .img {
             display: block;
             width: 48px;
             height: 48px;
             margin: 0 auto;
         }
-        .txt{
+
+        .txt {
             font-size: 12px;
             font-family: PingFangSC-Regular, PingFang SC;
             font-weight: 400;
@@ -49,7 +57,8 @@ export default {
             margin: 12px 0;
             display: block;
         }
-        .bt-start{
+
+        .bt-start {
             width: 102px;
             height: 24px;
             border-radius: 16px;
@@ -64,5 +73,4 @@ export default {
             cursor: pointer;
         }
     }
-}
-</style>
+}</style>

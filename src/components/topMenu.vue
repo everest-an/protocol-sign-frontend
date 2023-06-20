@@ -1,5 +1,5 @@
 <template>
-  <div class="top-bar">
+  <div class="top-bar" v-if="showBar">
     <img class="logo" src="../assets/logo.png">
     <div class="menus">
       <div v-if="menuList.indexOf(currentName) > -1">
@@ -19,20 +19,26 @@ export default {
   },
   data() {
     return {
-      menuList: ['Home', 'Manage', 'Authentication','Step1','Step2','Step3','Step4'],
+      menuList: ['Home', 'Manage', 'Authentication', 'Step1', 'Step2', 'Step3', 'Step4'],
       menuLists: ['Home', 'Manage', 'Authentication'],
       currentName: 'Home',
-      logMsg: 'Login'
+      logMsg: 'Login',
+      showBar: false
     }
   },
   mounted() {
-    console.log('gg==', this.$route);
+    // console.log('gg==', this.$route);
 
   },
   watch: {
     '$route'(val) {
       this.currentName = val.name;
       console.log('=======', val)
+      if (val.name == 'Introduce') {
+        this.showBar = false
+      }else{
+        this.showBar = true
+      }
       if (val.path == '/login') {
         this.logMsg = "Login"
       } else {
@@ -73,7 +79,7 @@ export default {
   .menus {
     flex: 1;
     text-align: left;
-   
+
     span {
       display: inline-block;
       margin: 0 64px 0 0;
@@ -99,6 +105,7 @@ export default {
     align-items: center;
     margin-right: 20px;
     cursor: pointer;
+
     img {
       display: block;
       width: 18px;
