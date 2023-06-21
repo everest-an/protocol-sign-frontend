@@ -34,7 +34,7 @@ export default {
     '$route'(val) {
       this.currentName = val.name;
       console.log('=======', val)
-      if (val.name == 'Introduce') {
+      if (val.name == 'Introduce' || val.name == 'Step3') {
         this.showBar = false
       }else{
         this.showBar = true

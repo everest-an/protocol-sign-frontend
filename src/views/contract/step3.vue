@@ -39,6 +39,11 @@ export default {
 <style scoped lang="scss">
 .contract-wrap {
     padding: 40px 24px;
+    background-color: #fff;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: calc(100vw - 280px);
     // height: calc(100vh - 100px);
 }
 

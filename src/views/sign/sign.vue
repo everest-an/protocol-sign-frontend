@@ -1,10 +1,7 @@
 <template>
     <div class="home-wrap">
-        <div class="content" id="ddd">
-            <!-- <p class="txt">Sign Page</p> -->
-            <pdf-canvas ref="pdfcanvas" :show-menu="false" :place-mark="placeMark"></pdf-canvas>
-            <div class="finish" @click="finishHandle()">Finish</div>
-        </div>
+        <pdf-canvas ref="pdfcanvas" :show-menu="false" :place-mark="placeMark"></pdf-canvas>
+        <div class="finish" @click="finishHandle()">Finish</div>
     </div>
 </template>
 <script>
@@ -98,14 +95,18 @@ export default {
 </script>
 <style lang="scss" scoped>
 .home-wrap {
-    display: flex;
-    justify-content: center;
-    position: relative;
+    padding: 40px 24px;
+    background-color: #fff;
+    position: absolute;
+    left: 50%;
+    top: 100px;
+    width: calc(100vw - 280px);
+    transform: translate(-50%,0);
 
     .content {
+        height: 700px;
+        overflow-y: scroll;
         width: 100%;
-
-        // border: 1px solid #D5D5D5;
         .img {
             display: block;
             width: 48px;
@@ -142,8 +143,8 @@ export default {
 
 .finish {
     position: fixed;
-    right: 210px;
-    bottom: 20px;
+    right: 0px;
+    bottom: -50px;
     background: #000000;
     font-size: 14px;
     color: #FFFFFF;

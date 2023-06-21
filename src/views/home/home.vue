@@ -35,7 +35,6 @@ export default {
 .home-wrap {
     display: flex;
     justify-content: center;
-
     .content {
         width: 100%;
         margin: 150px 0 0;

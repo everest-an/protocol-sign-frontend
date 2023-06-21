@@ -7,7 +7,7 @@
         <div class="logo-des">Decentralized Signature</div>
       </div>
     </div>
-    <div class="login-part" @click="logout"><img src="../assets/ico-login.png"><span>{{ logMsg }}</span></div>
+    <div class="login-part" @click="goHome"><img src="../assets/ico-login.png"><span>{{ logMsg }}</span></div>
   </div>
 </template>
 
@@ -25,14 +25,14 @@ export default {
   mounted() {
     let token = localStorage.getItem('token');
     if (token) {
-      this.logMsg = "Logout"
+      this.logMsg = "Protocol Sign"
+    }else{
+      this.logMsg = "Login"
     }
   },
   methods: {
-    logout() {
-      this.logMsg = "Login"
-      localStorage.clear();
-      this.$router.push({ name: 'Login' })
+    goHome() {
+      this.$router.push({ name: 'Home' })
     }
   },
 }

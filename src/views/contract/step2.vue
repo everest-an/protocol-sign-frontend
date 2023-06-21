@@ -7,7 +7,7 @@
                 <div class="bt-button" @click="addMyself"><img src="../../assets/ico-add1.png">
                     <div class="bt-start">Add Myself</div>
                 </div>
-                <div class="input-button"><input placeholder="email，wallete addres" v-model="ortherAddress" /><button
+                <div class="input-button"><input placeholder="email，wallete addres" v-model="email" /><button
                         @click="addOrther">Add</button></div>
             </div>
             <div class="list">
@@ -15,14 +15,15 @@
                     <div style="display: flex;align-items: center;">
                         <div class="img"><img src="../../assets/ico-logo.png"></div>
                         <div class="text">
-                            <p class="txt1">{{ item.address }}</p>
+                            <p class="txt1">{{ item.address || item.email }}</p>
                             <!-- <p class="txt2">对方暂未注册</p> -->
                         </div>
                         <div class="del" @click="deleteAccount(index)"><img src="../../assets/ico-del.png"></div>
                     </div>
-                    <div class="add-email">
+                    <div class="add-email" v-if="item.address">
                         <div>Recipient email</div>
-                        <el-input v-model="email" placeholder="Please enter your email address" style="width: 300px;"/>
+                        <el-input v-model="item.email" placeholder="Please enter your email address"
+                            style="width: 300px;" />
                     </div>
                 </div>
             </div>
@@ -33,6 +34,7 @@
 </template>
 <script>
 import Step from '@/components/step.vue'
+import { ElMessage } from 'element-plus'
 export default {
     name: "Manage",
     components: { Step },
@@ -40,12 +42,16 @@ export default {
         return {
             currentType: '',
             userArr: [],
-            ortherAddress: '',
+            email: '',
             address: '',
-            email: ''
         }
     },
     methods: {
+        validateEmail(email) {
+            // 邮箱验证正则表达式
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        },
         deleteAccount(index) {
             this.userArr.splice(index, 1);
             // console.log(this.userArr);
@@ -58,25 +64,60 @@ export default {
         },
         addMyself() {
             this.address = localStorage.getItem('address');
-            let obj = { address: this.address }
+            let obj = { email: '', address: this.address }
             this.userArr.push(obj);
-            let arr = [];
-            this.userArr.map(item => {
-                arr.push(item.address)
-            })
-            console.log('arr==', arr)
-            this.$store.commit('SET_EMAIL', arr)
+            // let arr = [];
+            // this.userArr.map(item => {
+            //     arr.push(item.address)
+            // })
+            // console.log('arr==', arr)
+            // this.$store.commit('SET_EMAIL', arr)
         },
         addOrther() {
-            let obj = { address: this.ortherAddress }
+            var isValid = this.validateEmail(this.email);
+
+            if (isValid) {
+                console.log("邮箱格式正确");
+            } else {
+                ElMessage.error('Email error')
+                console.log("邮箱格式错误");
+                return
+            }
+            let obj = { email: this.email }
             this.userArr.push(obj);
-            let arr = [];
-            this.userArr.map(item => {
-                arr.push(item.address)
-            })
-            this.$store.commit('SET_EMAIL', arr)
+            // let arr = [];
+            // this.userArr.map(item => {
+            //     arr.push(item.address)
+            // })
+            // this.$store.commit('SET_EMAIL', arr)
         },
         handlerNext() {
+            console.log(this.userArr)
+            let isEmail = true;
+            let emailError = false;
+            this.userArr.map(item => {
+                if (!item.email) {
+                    isEmail = false
+                }
+            })
+            if (isEmail == false) {
+                ElMessage.error('Please enter your email address')
+                return
+            }
+            this.userArr.map(item => {
+                if (!this.validateEmail(item.email)) {
+                    emailError = true
+                }
+            })
+            if (emailError) {
+                ElMessage.error('Email error')
+                return
+            }
+            let arr = [];
+            this.userArr.map(item=>{
+                arr.push(item.email)
+            })
+            this.$store.commit('SET_EMAIL', arr)
             this.$router.push({
                 name: 'Step3'
             })
@@ -271,7 +312,8 @@ export default {
     display: flex;
     align-items: center;
     white-space: nowrap;
-    div{
+
+    div {
         margin-right: 10px;
         margin-top: 10px;
     }

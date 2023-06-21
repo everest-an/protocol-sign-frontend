@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div style="position: relative;" id="pdfContainer">
+    <div style="position: relative;width: 100%;" id="pdfContainer">
       <!-- 加载原生pdf -->
       <!-- <canvas id="pdf-canvas" class="canvas-location"></canvas> -->
       <!-- 删除按钮 -->
@@ -142,7 +142,7 @@ export default {
       canvasWidth: 0,
       canvasIndex: 0,
       rectangles: [],
-      rect: { width: 200, height: 100, isResize: false },
+      rect: { width: 200, height: 100, isResize: false, bl: 1 },
       deleteStyle: '',
       ctxs: [],
       sizeDrag: 5,
@@ -499,12 +499,21 @@ export default {
         // 获取当前页的数据
         const page = await pdf.getPage(pageNumber);
 
-        // 获取页面的原始大小
-        const viewport = page.getViewport({ scale: 1 });
 
+        // 获取页面的原始大小
+        let viewport = page.getViewport({ scale: 1 });
         // 设置 Canvas 的大小以适应页面
+        //页面容器跟canvas比例
+        let bl = (container.offsetWidth / viewport.width).toFixed(2);
+        console.log('bl=================', bl)
+        viewport = page.getViewport({ scale: bl });
+        // let bl = 1;
+        console.log(bl)
+        this.rect.bl = bl;
+        viewport.width = viewport.width;
+        viewport.height = viewport.height;
         let width = viewport.width;
-        let height = viewport.height;;
+        let height = viewport.height;
         canvas.width = width;
         canvas.height = height;
         canvasRect.width = width;
@@ -517,6 +526,7 @@ export default {
         // 获取 Canvas 的上下文
         const context = canvas.getContext('2d');
         // 将页面渲染到 Canvas 上
+        console.log('viewport==', viewport)
         await page.render({ canvasContext: context, viewport });
         this.isRender = true
       }
@@ -524,6 +534,13 @@ export default {
       console.log('this.placeMark', this.placeMark)
       if (this.placeMark) {
         this.placeMarkCopy = JSON.parse(JSON.stringify(this.placeMark))
+        // this.placeMarkCopy.forEach(item => {
+        //   item.x = item.x / item.bl * this.rect.bl;
+        //   item.y = item.y / item.bl * this.rect.bl;
+        //   item.width = item.width / item.bl * this.rect.bl;
+        //   item.height = item.height / item.bl * this.rect.bl;
+
+        // })
       }
       this.$nextTick(() => {
         let date = document.getElementsByClassName('date-signed');
@@ -659,6 +676,8 @@ export default {
   position: relative;
   // cursor: url('@/assets/sign_here.svg'),pointer;
   cursor: default;
+  height: 700px;
+  overflow-y: scroll;
 }
 
 .text-signature-container {
@@ -786,7 +805,7 @@ export default {
 }
 
 .menu-bar {
-  position: absolute;
+  position: fixed;
   width: 250px;
   height: 100%;
   right: 0;

@@ -126,7 +126,7 @@ export default {
             window.addEventListener('scroll', function () {
                 // 处理滚动事件
                 var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                console.log(scrollTop);
+                // console.log(scrollTop);
                 if (scrollTop > 200) {
                     that.opacity = '0'
                 } else {
@@ -155,14 +155,13 @@ export default {
 .part-1 {
     display: flex;
     align-items: center;
+    justify-content: space-around;
     padding-top: 110px;
-
+    flex-wrap: wrap;
     .txt {
         text-align: left;
         font-size: 36px;
-        margin-top: -50px;
-        margin-right: 150px;
-        // font-weight: bold;
+        padding: 0 20px;
     }
 
     .boll {
@@ -177,9 +176,10 @@ export default {
 .txt-2 {
     display: flex;
     align-items: center;
-
+    flex-wrap: wrap;
     .des {
         margin-top: 20px;
+        padding: 0 20px;
     }
 
     .learn-more {
@@ -189,7 +189,7 @@ export default {
         border-radius: 10px;
         border: 1px solid #000;
         padding: 15px 8px;
-        margin-left: 50px;
+        margin-left: 20px;
         cursor: pointer;
     }
 }
@@ -199,7 +199,7 @@ export default {
     align-items: center;
     justify-content: space-around;
     margin-top: 100px;
-
+    flex-wrap: wrap;
     .title {
         font-size: 15px;
         font-weight: bold;
@@ -209,25 +209,24 @@ export default {
     .part-sign {
         display: flex;
         flex-direction: column;
-        width: 360px;
+        width: 300px;
         background: linear-gradient(to bottom, rgba(20, 20, 22, 0.1), rgba(0, 0, 0, 0));
         padding: 40px;
         border-radius: 100px;
         border: 1px solid #fff;
-
-
+        margin-bottom: 20px;
     }
 
     .part-send {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        width: 360px;
+        width: 300px;
         background: linear-gradient(to bottom, rgba(20, 20, 22, 0.1), rgba(0, 0, 0, 0));
         padding: 40px;
         border-radius: 100px;
         border: 1px solid #fff;
-
+        margin-bottom: 20px;
         .title {
             font-size: 15px;
             font-weight: bold;
@@ -242,17 +241,17 @@ export default {
     align-items: center;
     flex-direction: column;
     margin-top: 150px;
-
+    flex-wrap: wrap;
     .content-part {
         width: 100%;
         display: flex;
         justify-content: space-around;
+        flex-wrap: wrap;
     }
 
     .part {
         width: 280px;
-
-        // background-color: red;
+        margin-bottom: 30px;
         .title {
             font-size: 18px;
             font-weight: bold;
