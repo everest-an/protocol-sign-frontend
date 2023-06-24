@@ -3,6 +3,13 @@
     <!-- pdf 点击签名区域的弹窗 -->
     <div class="modal" v-if="showModal" @click="showModal = false">
       <div class="modal-content" @click.stop>
+        <div class="tab-list">
+          <button>Type</button>
+          <div class="tab-options-divider"></div>
+          <button>Draw</button>
+          <div class="tab-options-divider"></div>
+          <button>Upload</button>
+        </div>
         <div class="part-1">
           <span class="input-label">Type</span>
           <input class="text-signature-input" type="text" placeholder="Type Signature" v-model="userName">
@@ -732,7 +739,7 @@ export default {
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    // justify-content: center;
     align-items: flex-start;
     width: 600px;
     height: 400px;
@@ -855,5 +862,48 @@ textarea {
 
 .bg-none {
   background-color: rgba(0, 0, 0, 0);
+}
+
+.tab-list {
+  font-size: 14px;
+  width: 100%;
+  display: flex;
+  border-radius: 15px;
+  border: 1px solid #cfd4da;
+  height: 40px;
+  color: #485056;
+  margin-bottom: 35px;
+
+  button {
+    outline: none;
+    // background: #ffe8de !important;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 24px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    flex: 1;
+    border-radius: 0;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  button:first-child {
+    border-bottom-left-radius: 15px;
+    border-top-left-radius: 15px;
+  }
+  button:last-child {
+    border-bottom-right-radius: 15px;
+    border-top-right-radius: 15px;
+  }
+  div{
+    width: 1px;
+    background: #cfd4da;
+  }
 }
 </style>

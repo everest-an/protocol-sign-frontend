@@ -42,7 +42,7 @@ export default {
         this.$axios.post('/web/contract/queryPage', { size: 20, current: 1 }).then((res) => {
             console.log(res);
             this.list = res.results.records;
-        }).catch(function (error) {
+        }).catch((error) => {
             console.log(error);
         });
     },

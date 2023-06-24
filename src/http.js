@@ -5,6 +5,9 @@ import {
 
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
+import { ElMessage } from 'element-plus';
+import router from '@/router'
+
 NProgress.configure({
     showSpinner: true
 })
@@ -25,7 +28,7 @@ function endLoading() {
 }
 
 //  const baseURL = 'https://tjtest.pugongyinghulian.com/dsign_api'
- const baseURL = 'https://www.ahawechat.com/dsign_api'
+const baseURL = 'https://www.ahawechat.com/dsign_api'
 // const baseURL = 'http://18.181.218.33:8132/'
 
 // const baseURL = 'http://192.168.1.22:8116/smallshop'
@@ -34,7 +37,7 @@ axios.defaults.baseURL = baseURL;
 // let token = localStorage.getItem('token')
 const request = axios.create({
     baseURL: baseURL,
-    timeout:60000,
+    timeout: 60000,
     headers: {
         'isWeb': '0',
     },
@@ -68,7 +71,15 @@ request.interceptors.response.use(response => {
     if (count == resCount) {
         endLoading();
     }
+    
     // console.log('http response===',response)
+    if (response.data.code == '401') {
+        localStorage.clear();
+        console.log('router==',router)
+        router.push({ name: 'Login' })
+        ElMessage.error(response.data.msg);
+        return Promise.reject(response.data.msg);
+    }
     return response.data;
 }, error => {
     // 请求失败
