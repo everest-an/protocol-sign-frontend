@@ -4,21 +4,24 @@
     <div class="modal" v-if="showModal" @click="showModal = false">
       <div class="modal-content" @click.stop>
         <div class="tab-list">
-          <button>Type</button>
+          <button :class="{ 'btn-active': btnIndex == 0 }" @click="btnHandle(0)">Type</button>
           <div class="tab-options-divider"></div>
-          <button>Draw</button>
+          <button :class="{ 'btn-active': btnIndex == 1 }" @click="btnHandle(1)">Draw</button>
           <div class="tab-options-divider"></div>
-          <button>Upload</button>
+          <button :class="{ 'btn-active': btnIndex == 2 }" @click="btnHandle(2)">Upload</button>
         </div>
-        <div class="part-1">
-          <span class="input-label">Type</span>
-          <input class="text-signature-input" type="text" placeholder="Type Signature" v-model="userName">
+        <div class="sign-part">
+          <div class="part-1">
+            <span class="input-label">Type</span>
+            <input class="text-signature-input" type="text" placeholder="Type Signature" v-model="userName">
+          </div>
+          <div class="text-signature-container">
+            <span class="eth-signed-by-text">Dsigned By:</span>
+            <span class="sign-text">{{ userName || address }}</span>
+            <span class="address-text">{{ address }}</span>
+          </div>
         </div>
-        <div class="text-signature-container">
-          <span class="eth-signed-by-text">Dsigned By:</span>
-          <span class="sign-text">{{ userName || address }}</span>
-          <span class="address-text">{{ address }}</span>
-        </div>
+
         <div class="add-btn" @click="insertSign()">Insert</div>
       </div>
     </div>
@@ -164,7 +167,8 @@ export default {
       signedIndex: 0,
       toolbarType: 0,
       inputValues: [],
-      dateTime: null
+      dateTime: null,
+      btnIndex: 0
     }
   },
   mounted() {
@@ -179,6 +183,10 @@ export default {
     this.dateTime = this.formatDate(today);
   },
   methods: {
+    //选择签名方式
+    btnHandle(index) {
+      this.btnIndex = index
+    },
     formatDate(date) {
       const day = String(date.getDate()).padStart(2, '0');
       const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -739,7 +747,7 @@ export default {
     position: relative;
     display: flex;
     flex-direction: column;
-    // justify-content: center;
+
     align-items: flex-start;
     width: 600px;
     height: 400px;
@@ -749,9 +757,18 @@ export default {
     background: #f9fbfc;
     box-sizing: border-box;
 
+    .sign-part {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      width: 100%;
+    }
+
     .part-1 {
       display: flex;
       align-items: center;
+      width: 100%;
     }
 
 
@@ -874,9 +891,12 @@ textarea {
   color: #485056;
   margin-bottom: 35px;
 
+  .btn-active {
+    background: #ffe8de !important;
+  }
+
   button {
     outline: none;
-    // background: #ffe8de !important;
     padding: 0;
     border: none;
     background-color: transparent;
@@ -897,11 +917,13 @@ textarea {
     border-bottom-left-radius: 15px;
     border-top-left-radius: 15px;
   }
+
   button:last-child {
     border-bottom-right-radius: 15px;
     border-top-right-radius: 15px;
   }
-  div{
+
+  div {
     width: 1px;
     background: #cfd4da;
   }
