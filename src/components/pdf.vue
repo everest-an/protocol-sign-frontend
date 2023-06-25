@@ -10,7 +10,8 @@
           <div class="tab-options-divider"></div>
           <button :class="{ 'btn-active': btnIndex == 2 }" @click="btnHandle(2)">Upload</button>
         </div>
-        <div class="sign-part">
+        <!-- 系统签名 -->
+        <div class="sign-part" v-if="btnIndex == 0">
           <div class="part-1">
             <span class="input-label">Type</span>
             <input class="text-signature-input" type="text" placeholder="Type Signature" v-model="userName">
@@ -21,8 +22,30 @@
             <span class="address-text">{{ address }}</span>
           </div>
         </div>
-
-        <div class="add-btn" @click="insertSign()">Insert</div>
+        <!-- 个性签名 -->
+        <div class="sign-part" v-if="btnIndex == 1">
+          <div class="text-signature-container person-sign" @mousedown="handleDraw">
+            <span class="eth-signed-by-text" v-if="isDrawSign">Dsigned By:</span>
+            <span class="address-text sign-here" v-if="!isDrawSign">Sign here</span>
+            <span class="address-text" v-if="isDrawSign">{{ address }}</span>
+            <vue-esign style="position: absolute;left: 0;top: 0;width: 100%" ref="personCanvas"></vue-esign>
+          </div>
+        </div>
+        <!-- 上传图片签名 -->
+        <div class="sign-part" v-if="btnIndex == 2">
+          <div class="text-signature-container person-sign" style="height: 250px;cursor: default;justify-content: center">
+            <span class="eth-signed-by-text" v-if="isDrawSign">Dsigned By:</span>
+            <img :src="uploadImageSrc" class="upload-imagesrc">
+            <span class="address-text" v-if="isDrawSign">{{ address }}</span>
+            <button class="image-signature-upload" @click="uploadFile" v-if="!isDrawSign">Browser File</button>
+            <input type="file" ref="fileInput" style="display:none" @change="handleFileInputChange"
+              accept='.jpg,.jpeg,.png'>
+          </div>
+        </div>
+        <div class="btn-list">
+          <div class="clear-btn" @click="clearSign()">Clear</div>
+          <div class="add-btn" @click="insertSign()">Insert</div>
+        </div>
       </div>
     </div>
 
@@ -80,9 +103,22 @@
         <div class="signed" :id="'signed' + item.signedIndex"
           :style="'left:' + item.x + 'px;' + 'top:' + (item.y - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'"
           v-for="(item, index) in placeMarkSign" :key="index">
-          <div class="text-signature-container" style="border: none;">
+          <!-- 系统签名 -->
+          <div class="text-signature-container" style="border: none;" v-if="item.btnIndex == 0">
             <span class="eth-signed-by-text">Dsigned By:</span>
             <span class="sign-text">{{ item.userName || address }}</span>
+            <span class="address-text">{{ address }}</span>
+          </div>
+          <!-- 个性签名 -->
+          <div class="text-signature-container" style="border: none;height: 100%;" v-if="item.btnIndex == 1">
+            <span class="eth-signed-by-text">Dsigned By:</span>
+            <span class="address-text">{{ address }}</span>
+            <img :src=item.personCanvasImg class="person-canvasimg">
+          </div>
+          <!-- 图片签名 -->
+          <div class="text-signature-container " style="border: none;height: 100%;"  v-if="item.btnIndex == 2">
+            <span class="eth-signed-by-text">Dsigned By:</span>
+            <img :src="item.uploadImageSrc" class="upload-imagesrc">
             <span class="address-text">{{ address }}</span>
           </div>
         </div>
@@ -131,7 +167,7 @@ import signImg from "@/assets/sign_here.svg";
 import clickImg from "@/assets/click_to_place.svg";
 import entry from "pdfjs-dist/build/pdf.worker.entry";
 import { baseURL } from '@/http'
-import jsPDF from "jspdf";
+// import jsPDF from "jspdf";
 let rectangles = [];
 export default {
   name: "PDF",
@@ -139,6 +175,7 @@ export default {
     showMenu: Boolean,
     placeMark: Array,
   },
+
   data() {
     return {
       currentType: '',
@@ -168,7 +205,10 @@ export default {
       toolbarType: 0,
       inputValues: [],
       dateTime: null,
-      btnIndex: 0
+      btnIndex: 0,
+      isDrawSign: false,
+      personCanvasImg: '',
+      uploadImageSrc: ''
     }
   },
   mounted() {
@@ -183,9 +223,36 @@ export default {
     this.dateTime = this.formatDate(today);
   },
   methods: {
+    // 处理选择的文件
+    handleFileInputChange(event) {
+      this.isDrawSign = true;
+      const file = event.target.files[0];
+      console.log(file)
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        this.uploadImageSrc = event.target.result;
+      };
+
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+
+    },
+    uploadFile() {
+      this.$refs.fileInput.click();
+    },
+    handleDraw() {
+      this.isDrawSign = true;
+    },
     //选择签名方式
     btnHandle(index) {
-      this.btnIndex = index
+      this.btnIndex = index;
+      this.isDrawSign = false;
+      //上传图片签名
+      if (index == 2) {
+        this.uploadImageSrc = ''
+      }
     },
     formatDate(date) {
       const day = String(date.getDate()).padStart(2, '0');
@@ -656,29 +723,85 @@ export default {
         targetParent.appendChild(nodeToMove);
       }
     },
+    //清除签名
+    clearSign() {
+      //个性签名
+      if (this.btnIndex == 1) {
+        this.$refs.personCanvas.reset();
+        this.isDrawSign = false;
+      } else if (this.btnIndex == 0) {//系统签名
+        this.userName = '';
+      }
+
+    },
+
     //添加签名
     insertSign() {
-      let str = JSON.stringify(this.placeMarkCopy[this.signIndex]);
-      this.placeMarkCopy.splice(this.signIndex, 1);
-      this.showModal = false;
-      let obj = JSON.parse(str);
-      obj.userName = this.userName;
-      obj.signedIndex = this.signedIndex;
-      this.signedIndex++;
-      this.placeMarkSign.push(obj);
-
-      this.$nextTick(() => {
-        // 获取要移动的节点和目标父节点的引用
-        const nodeToMove = document.getElementById('signed' + obj.signedIndex);
-        let j = obj.index + 1;
-        const targetParent = document.getElementById('pageContainer' + j);
-        // console.log(nodeToMove)
-        // console.log(targetParent)
-        // 将节点移动到新的父节点下
-        targetParent.appendChild(nodeToMove);
-      })
-
-
+      if (this.btnIndex == 0) {//系统签名
+        let str = JSON.stringify(this.placeMarkCopy[this.signIndex]);
+        this.placeMarkCopy.splice(this.signIndex, 1);
+        this.showModal = false;
+        let obj = JSON.parse(str);
+        obj.userName = this.userName;
+        obj.signedIndex = this.signedIndex;
+        obj.btnIndex = this.btnIndex;
+        this.signedIndex++;
+        this.placeMarkSign.push(obj);
+        this.$nextTick(() => {
+          // 获取要移动的节点和目标父节点的引用
+          const nodeToMove = document.getElementById('signed' + obj.signedIndex);
+          let j = obj.index + 1;
+          const targetParent = document.getElementById('pageContainer' + j);
+          // 将节点移动到新的父节点下
+          targetParent.appendChild(nodeToMove);
+        })
+      } else if (this.btnIndex == 1) {//个性签名
+        this.$refs.personCanvas.generate().then((base64) => {
+          this.personCanvasImg = base64; //默认生成的是base64形式的图片
+          let str = JSON.stringify(this.placeMarkCopy[this.signIndex]);
+          this.placeMarkCopy.splice(this.signIndex, 1);
+          this.showModal = false;
+          let obj = JSON.parse(str);
+          obj.userName = this.userName;
+          obj.signedIndex = this.signedIndex;
+          obj.btnIndex = this.btnIndex;
+          obj.height = 130;
+          obj.width = 250;
+          obj.personCanvasImg = this.personCanvasImg;
+          this.signedIndex++;
+          this.placeMarkSign.push(obj);
+          this.$nextTick(() => {
+            // 获取要移动的节点和目标父节点的引用
+            const nodeToMove = document.getElementById('signed' + obj.signedIndex);
+            let j = obj.index + 1;
+            const targetParent = document.getElementById('pageContainer' + j);
+            // 将节点移动到新的父节点下
+            targetParent.appendChild(nodeToMove);
+          })
+        }).catch((err) => {
+          console.log(err); // 画布没有签字时会执行这里 'Not Signned'
+        });
+      } else {//传入图片签名
+        let str = JSON.stringify(this.placeMarkCopy[this.signIndex]);
+        this.placeMarkCopy.splice(this.signIndex, 1);
+        this.showModal = false;
+        let obj = JSON.parse(str);
+        obj.userName = this.userName;
+        obj.signedIndex = this.signedIndex;
+        obj.btnIndex = this.btnIndex;
+        obj.uploadImageSrc = this.uploadImageSrc;
+        obj.height = 180;
+        this.signedIndex++;
+        this.placeMarkSign.push(obj);
+        this.$nextTick(() => {
+          // 获取要移动的节点和目标父节点的引用
+          const nodeToMove = document.getElementById('signed' + obj.signedIndex);
+          let j = obj.index + 1;
+          const targetParent = document.getElementById('pageContainer' + j);
+          // 将节点移动到新的父节点下
+          targetParent.appendChild(nodeToMove);
+        })
+      }
     }
   },
 }
@@ -705,7 +828,7 @@ export default {
   border: 1.31868px solid rgba(0, 0, 0, .1);
   box-sizing: border-box;
   border-radius: 15px;
-  margin-top: 15px;
+  // margin-top: 15px;
   padding: 12px 30px;
 
   .eth-signed-by-text {
@@ -713,6 +836,7 @@ export default {
     font-size: 20px;
     line-height: 24px;
     color: #e27019;
+    user-select: none;
   }
 
   .sign-text {
@@ -720,6 +844,7 @@ export default {
     font-size: 26px;
     line-height: 39px;
     color: #373b46;
+    user-select: none;
   }
 
   .address-text {
@@ -727,6 +852,7 @@ export default {
     font-size: 20px;
     line-height: 24px;
     color: #6e7179;
+    user-select: none;
   }
 }
 
@@ -750,8 +876,8 @@ export default {
 
     align-items: flex-start;
     width: 600px;
-    height: 400px;
-    padding: 30px 51px;
+    height: 470px;
+    padding: 30px 50px;
     border-radius: 20px;
     box-shadow: 0 0 3px #868e96;
     background: #f9fbfc;
@@ -769,11 +895,35 @@ export default {
       display: flex;
       align-items: center;
       width: 100%;
+      margin-bottom: 35px;
     }
 
+    .btn-list {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      align-items: center;
+      position: absolute;
+      width: 500px;
+      bottom: 50px;
+    }
+
+    .clear-btn {
+      left: 52px;
+      bottom: 50px;
+      border-radius: 8px;
+      padding: 8px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6e7179 !important;
+      font-weight: 450;
+      font-size: 16px;
+      border: 2px solid transparent;
+      cursor: pointer;
+    }
 
     .add-btn {
-      position: absolute;
       right: 52px;
       bottom: 50px;
       background: black;
@@ -927,5 +1077,48 @@ textarea {
     width: 1px;
     background: #cfd4da;
   }
+}
+
+.person-sign {
+  height: 186px;
+  // padding-left: 140px;
+  position: relative;
+  cursor: crosshair;
+}
+
+.sign-here {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.person-canvasimg {
+  position: absolute;
+  width: 100%;
+  object-fit: cover;
+  left: 15px;
+}
+
+.image-signature-upload {
+  font-weight: 450;
+  font-size: 16px;
+  border-radius: 8px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 12px 48px;
+  background: #d97d40;
+  cursor: pointer;
+  border: 2px solid transparent;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.upload-imagesrc {
+  height: 136px;
+  object-fit: contain;
 }
 </style>

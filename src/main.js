@@ -6,6 +6,8 @@ import {request} from './http';
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 
+import vueEsign from 'vue-esign';
+
 const app = createApp(App);
 
 app.config.globalProperties.$axios = request;
@@ -20,4 +22,5 @@ app.config.globalProperties.$axios = request;
 
 //createApp(App).mount('#app')
 app.use(ElementPlus)
+app.use(vueEsign)
 app.use(store).use(router).mount('#app')
