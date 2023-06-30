@@ -33,7 +33,7 @@ export default {
   watch: {
     '$route'(val) {
       this.currentName = val.name;
-      console.log('=======', val)
+      // console.log('=======', val)
       if (val.name == 'Introduce' || val.name == 'Step3') {
         this.showBar = false
       }else{

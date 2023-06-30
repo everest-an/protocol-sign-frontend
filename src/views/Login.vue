@@ -1,6 +1,7 @@
 <template>
     <div>
         <div class="container">
+
             <div class="form-container">
                 <div class="left">
 
@@ -25,7 +26,8 @@
                             email code</span>
                         <!-- <div class="err">A Code is required</div> -->
                     </div>
-                    <div class="tips">By clicking Get Started, you agree to Protocol Sign's Privacy Notice and Terms & Conditions.
+                    <div class="tips">By clicking Get Started, you agree to Protocol Sign's Privacy Notice and Terms &
+                        Conditions.
                     </div>
                     <div class="bt-submit" @click="loginEmail">LOG IN</div>
                 </div>
@@ -53,7 +55,8 @@ export default {
         return {
             currentType: '',
             email: '',
-            emailCode: ''
+            emailCode: '',
+            authCode: ''
         }
 
         // var validateuserName = (rule, value, callback) => {
@@ -89,9 +92,12 @@ export default {
     },
     mounted() {
         // PDF.GlobalWorkerOptions.workerSrc = entry
+        this.authCode = sessionStorage.getItem('authCode')
+        // console.log('authCode===', authCode)
     },
     methods: {
         handleSelectLogin(type) {
+            let that = this;
             if (type == 'fox') {//小狐狸登录
                 // 检查MetaMask是否已经安装
                 if (typeof window.ethereum !== 'undefined') {
@@ -112,7 +118,12 @@ export default {
                             console.log('login=========', res)
                             if (res.code == 0) {
                                 localStorage.setItem('token', res.results.token)
-                                this.$router.push({ name: 'Home' })
+                                if (that.authCode == '401') {
+                                    this.$router.go(-1);
+                                    sessionStorage.clear()
+                                } else {
+                                    this.$router.push({ name: 'Home' })
+                                }
                             }
                         }).catch(function (error) {
                             console.log(error);
@@ -147,9 +158,15 @@ export default {
                 if (res.code == 0) {
                     localStorage.setItem('address', res.results.accountAddress)
                     localStorage.setItem('token', res.results.token)
-                    this.$router.push({
-                        name: 'Home'
-                    })
+                    if (this.authCode == '401') {
+                        this.$router.go(-1);
+                        sessionStorage.clear()
+                    } else {
+                        this.$router.push({ name: 'Home' })
+                    }
+                    // this.$router.push({
+                    //     name: 'Home'
+                    // })
                 } else {
                     alert(res.msg)
                 }
@@ -189,6 +206,7 @@ export default {
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    min-height: calc(100vh - 70px);
 }
 
 .form-container {
@@ -196,8 +214,6 @@ export default {
     justify-content: center;
     align-items: center;
     width: 980px;
-    // margin: 0 auto;
-    margin-top: 100px;
     height: 426px;
     background: #FFFFFF;
     border-radius: 8px;

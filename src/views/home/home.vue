@@ -5,6 +5,7 @@
             <p class="txt">Drop documents here to get started</p>
             <button class="bt-start" @click="handlerStart">Start Now</button>
         </div>
+        <!-- <argos-id ref="argosIdButton" :id="id" :project="projectId" ></argos-id> -->
         <div style="position: absolute; bottom: 0;">
             <Footer></Footer>
         </div>
@@ -12,15 +13,30 @@
 </template>
 <script>
 import Footer from '../../components/footer.vue'
+// import ArgosId from "argos-id";
 export default {
     name: "Home",
     components: {
-        Footer
+        Footer,
+        // ArgosId
     },
     data() {
         return {
-            currentType: '',
+            id: "argos-id-button",
+            projectId: "your-project-id",
+            buttonStyle: {
+                backgroundColor: "blue",
+                color: "white"
+            },
+            chains: "bsc,eth,klay"
         }
+    },
+    mounted() {
+        // const argosIdButton = this.$refs.argosIdButton;
+        // // if (window.location.href.includes("eth")) {
+        // //     argosIdButton.setAttribute("chains", "eth");
+        // // }
+        // argosIdButton.setAttribute("chains", "eth");
     },
     methods: {
         handlerStart() {
@@ -35,6 +51,7 @@ export default {
 .home-wrap {
     display: flex;
     justify-content: center;
+
     .content {
         width: 100%;
         margin: 150px 0 0;
@@ -72,4 +89,5 @@ export default {
             cursor: pointer;
         }
     }
-}</style>
+}
+</style>

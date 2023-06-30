@@ -17,7 +17,7 @@
             <input class="text-signature-input" type="text" placeholder="Type Signature" v-model="userName">
           </div>
           <div class="text-signature-container">
-            <span class="eth-signed-by-text">Dsigned By:</span>
+            <span class="eth-signed-by-text">Protocol Signed By:</span>
             <span class="sign-text">{{ userName || address }}</span>
             <span class="address-text">{{ address }}</span>
           </div>
@@ -25,7 +25,7 @@
         <!-- 个性签名 -->
         <div class="sign-part" v-if="btnIndex == 1">
           <div class="text-signature-container person-sign" @mousedown="handleDraw">
-            <span class="eth-signed-by-text" v-if="isDrawSign">Dsigned By:</span>
+            <span class="eth-signed-by-text" v-if="isDrawSign">Protocol Signed By:</span>
             <span class="address-text sign-here" v-if="!isDrawSign">Sign here</span>
             <span class="address-text" v-if="isDrawSign">{{ address }}</span>
             <vue-esign style="position: absolute;left: 0;top: 0;width: 100%" ref="personCanvas"></vue-esign>
@@ -34,7 +34,7 @@
         <!-- 上传图片签名 -->
         <div class="sign-part" v-if="btnIndex == 2">
           <div class="text-signature-container person-sign" style="height: 250px;cursor: default;justify-content: center">
-            <span class="eth-signed-by-text" v-if="isDrawSign">Dsigned By:</span>
+            <span class="eth-signed-by-text" v-if="isDrawSign">Protocol Signed By:</span>
             <img :src="uploadImageSrc" class="upload-imagesrc">
             <span class="address-text" v-if="isDrawSign">{{ address }}</span>
             <button class="image-signature-upload" @click="uploadFile" v-if="!isDrawSign">Browser File</button>
@@ -105,19 +105,19 @@
           v-for="(item, index) in placeMarkSign" :key="index">
           <!-- 系统签名 -->
           <div class="text-signature-container" style="border: none;" v-if="item.btnIndex == 0">
-            <span class="eth-signed-by-text">Dsigned By:</span>
+            <span class="eth-signed-by-text">Protocol Signed By:</span>
             <span class="sign-text">{{ item.userName || address }}</span>
             <span class="address-text">{{ address }}</span>
           </div>
           <!-- 个性签名 -->
           <div class="text-signature-container" style="border: none;height: 100%;" v-if="item.btnIndex == 1">
-            <span class="eth-signed-by-text">Dsigned By:</span>
+            <span class="eth-signed-by-text">Protocol Signed By:</span>
             <span class="address-text">{{ address }}</span>
             <img :src=item.personCanvasImg class="person-canvasimg">
           </div>
           <!-- 图片签名 -->
           <div class="text-signature-container " style="border: none;height: 100%;"  v-if="item.btnIndex == 2">
-            <span class="eth-signed-by-text">Dsigned By:</span>
+            <span class="eth-signed-by-text">Protocol Signed By:</span>
             <img :src="item.uploadImageSrc" class="upload-imagesrc">
             <span class="address-text">{{ address }}</span>
           </div>
@@ -814,7 +814,7 @@ export default {
   position: relative;
   // cursor: url('@/assets/sign_here.svg'),pointer;
   cursor: default;
-  height: 700px;
+  height: calc(100vh - 250px);
   overflow-y: scroll;
 }
 

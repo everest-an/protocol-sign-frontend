@@ -27,11 +27,9 @@ function endLoading() {
     NProgress.done();
 }
 
-//  const baseURL = 'https://tjtest.pugongyinghulian.com/dsign_api'
-const baseURL = 'https://www.ahawechat.com/dsign_api'
-// const baseURL = 'http://18.181.218.33:8132/'
+ const baseURL = 'https://tjtest.pugongyinghulian.com/dsign_api'
+// const baseURL = 'https://www.ahawechat.com/dsign_api'
 
-// const baseURL = 'http://192.168.1.22:8116/smallshop'
 axios.defaults.baseURL = baseURL;
 
 // let token = localStorage.getItem('token')
@@ -71,11 +69,12 @@ request.interceptors.response.use(response => {
     if (count == resCount) {
         endLoading();
     }
-    
+
     // console.log('http response===',response)
     if (response.data.code == '401') {
         localStorage.clear();
-        console.log('router==',router)
+        sessionStorage.setItem('authCode', '401')
+        console.log('router==', router)
         router.push({ name: 'Login' })
         ElMessage.error(response.data.msg);
         return Promise.reject(response.data.msg);

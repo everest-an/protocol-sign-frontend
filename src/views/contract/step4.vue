@@ -14,10 +14,10 @@
             <div class="pay-method">
                 <div class="title">Pay <span class="red">$1</span> to Protocol Sign, Select payment method</div>
                 <div class="pay-list">
-                    <!-- <div class="list " :class="payMetaMask ? 'selected' : ''" @click="payMethods('metamask')">
+                    <div class="list " :class="payMetaMask ? 'selected' : ''" @click="payMethods('metamask')">
                         <img src="../../assets/ico-fox.png">
                         <span>Pay with Metamask</span>
-                    </div> -->
+                    </div>
                     <div class="list" :class="!payMetaMask ? 'selected' : ''" @click="payMethods('paypal')">
                         <img src="../../assets/ico-paypal.png">
                         <span></span>
@@ -62,7 +62,7 @@
 </template>
 <script>
 import Step from '@/components/step.vue'
-import { ElLoading,ElMessage  } from 'element-plus'
+import { ElLoading, ElMessage } from 'element-plus'
 export default {
     name: "Manage",
     components: { Step },
@@ -75,10 +75,10 @@ export default {
             message: 'Authenticating...',
             toastMsg: 'Authentication Ok！',
             show: false,
-            payMetaMask: false,
+            payMetaMask: true,
             isPay: false,//是否支付成功
             centerDialogVisible: false,
-            
+
         }
     },
     mounted() {
@@ -113,28 +113,24 @@ export default {
         handlerPay() {
 
             // this.message = "success..."
-            this.showModal = true;
-            const loadingInstance = ElLoading.service({ text: 'Loading...' })
 
-            // setTimeout(() => {
-            //     this.showModal = false;
-            //     this.isPay = true;
-            // }, 2000)
-            let datas = {
-                total: 1,
-                currency: 'USD',
-                description: '',
-                localOrderNo: '',
-            };
-            
-            if (!this.payMetaMask) {
+            let that = this;
+            if (!this.payMetaMask) {//paypal支付
+                this.showModal = true;
+                const loadingInstance = ElLoading.service({ text: 'Loading...' })
+                let datas = {
+                    total: 1,
+                    currency: 'USD',
+                    description: '',
+                    localOrderNo: '',
+                };
                 // 发送POST请求
                 this.$axios.get('/web/pay/payPai', { params: datas }).then((response) => {
                     loadingInstance.close();
                     if (response.code == 0) {
                         this.showModal = false;
                         this.isPay = true;
-                    }else{
+                    } else {
                         ElMessage.error(response.msg)
                         return
                     }
@@ -146,9 +142,62 @@ export default {
                 }).catch(function (error) {
                     console.log(error);
                 });
+            } else {//metamask支付
+                // 检查 Metamask 是否已安装
+                if (typeof window.ethereum !== 'undefined') {
+                    // 使用 Metamask 提供的 Web3 提供程序
+                    const web3 = new Web3(window.ethereum);
+
+                    // 请求用户授权连接 Metamask
+                    window.ethereum.enable().then(function (accounts) {
+                        // 授权成功，可以使用 accounts[0] 访问用户的钱包地址
+                        console.log(accounts[0])
+                        that.metaMaskPay(web3, accounts[0])
+                    }).catch(function (error) {
+                        // 用户拒绝授权或发生错误
+                        console.error(error);
+                    });
+                } else {
+                    // Metamask 未安装
+                    console.error('请先安装并登录 Metamask');
+                }
             }
+        },
+        metaMaskPay(web3, curAddress) {
+            let that = this;
+            const receiverAddress = '0x53761ba267eC279DC296345cb62168A225366945'; // 替换为接收方的以太坊地址
+            const etherAmount = web3.utils.toWei('0.01', 'ether'); // 替换为您要支付的以太币数量
 
+            // 构造交易对象
+            const transactionObject = {
+                from: curAddress,
+                to: receiverAddress,
+                value: etherAmount,
+                gasPrice: web3.utils.toWei('50', 'gwei') // 设置更高的燃气价格
+            };
+            const loadingInstance = ElLoading.service({ text: 'Loading...' })
 
+            // 发送交易
+            web3.eth.sendTransaction(transactionObject)
+                .on('transactionHash', function (hash) {
+                    // 交易哈希
+                    console.log('交易已提交，交易哈希：', hash);
+                    // 在此处进行后续操作（如显示成功消息、更新界面等）
+                    // 发送POST请求
+                    that.$axios.post('/web/pay/queryMetaMaskPayStatus', { txhash: hash, chainId: 97, net: 1 }).then((res) => {
+                        console.log('交易状态',res)
+                        if(res.results.status==1){//交易成功
+                            that.handlerSend(loadingInstance);
+                        }
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                })
+                .on('error', function (error) {
+                    // 发生错误
+                    console.error('交易失败：', error);
+                    // 在此处进行后续操作（如显示错误消息、回滚操作等）
+                });
 
         },
         handlerSend(loadingInstance) {
@@ -198,7 +247,7 @@ export default {
             this.$axios.post('/web/contract/queryPayStatus').then((response) => {
                 if (response.code == 0) {
                     this.handlerSend(loadingInstance);
-                }else if(response.code == -9999){//当前用户没有支付
+                } else if (response.code == -9999) {//当前用户没有支付
                     ElMessage.error('Payment failed');
                     loadingInstance.close();
                 }
