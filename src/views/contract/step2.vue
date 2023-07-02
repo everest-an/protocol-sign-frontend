@@ -13,7 +13,7 @@
             <div class="list">
                 <div v-for="(item, index) in userArr" :key="index" class="text-box">
                     <div style="display: flex;align-items: center;">
-                        <div class="img"><img src="../../assets/ico-logo.png"></div>
+                        <div class="img"><img src="../../assets/circle.png"></div>
                         <div class="text">
                             <p class="txt1">{{ item.address || item.email }}</p>
                             <!-- <p class="txt2">对方暂未注册</p> -->
@@ -228,7 +228,7 @@ export default {
                     width: 64px;
                     height: 64px;
                     overflow: hidden;
-                    background: #D8D8D8;
+                    background: #eee;
                     border-radius: 100%;
 
                     img {

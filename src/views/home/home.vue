@@ -2,7 +2,7 @@
     <div class="home-wrap">
         <div class="content">
             <img class="img" src="../../assets/ico-add.png">
-            <p class="txt">Drop documents here to get started</p>
+            <p class="txt">Drop documents here to get start</p>
             <button class="bt-start" @click="handlerStart">Start Now</button>
         </div>
         <!-- <argos-id ref="argosIdButton" :id="id" :project="projectId" ></argos-id> -->
@@ -51,10 +51,12 @@ export default {
 .home-wrap {
     display: flex;
     justify-content: center;
+    align-items: center;
+    height: 100%;
 
     .content {
         width: 100%;
-        margin: 150px 0 0;
+        // margin: 150px 0 0;
 
         // border: 1px solid #D5D5D5;
         .img {

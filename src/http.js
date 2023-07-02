@@ -27,15 +27,16 @@ function endLoading() {
     NProgress.done();
 }
 
- const baseURL = 'https://tjtest.pugongyinghulian.com/dsign_api'
+//  const baseURL = 'https://tjtest.pugongyinghulian.com/dsign_api'
 // const baseURL = 'https://www.ahawechat.com/dsign_api'
+const baseURL = 'https://www.protocolsign.cn/dsign_api'
 
 axios.defaults.baseURL = baseURL;
 
 // let token = localStorage.getItem('token')
 const request = axios.create({
     baseURL: baseURL,
-    timeout: 60000,
+    timeout: 600000,
     headers: {
         'isWeb': '0',
     },

@@ -4,7 +4,7 @@
       <img class="logo" src="../assets/circle.png">
       <div class="txt">
         <div class="logo-title">Protocol Sign</div>
-        <div class="logo-des">Decentralized Signature</div>
+        <!-- <div class="logo-des">Decentralized Signature</div> -->
       </div>
     </div>
     <div class="login-part" @click="goHome"><img src="../assets/ico-login.png"><span>{{ logMsg }}</span></div>
@@ -20,19 +20,25 @@ export default {
   data() {
     return {
       logMsg: 'Login',
+      token:''
     }
   },
   mounted() {
     let token = localStorage.getItem('token');
+    this.token = token;
     if (token) {
+      this.logMsg = "Home"
+    } else {
       this.logMsg = "Protocol Sign"
-    }else{
-      this.logMsg = "Login"
     }
   },
   methods: {
     goHome() {
-      this.$router.push({ name: 'Home' })
+      if (this.token) {
+        this.$router.push({ name: 'Home' })
+      } else {
+        this.$router.push({ name: 'Login' })
+      }
     }
   },
 }
@@ -104,4 +110,5 @@ export default {
       line-height: 24px;
     }
   }
-}</style>
+}
+</style>

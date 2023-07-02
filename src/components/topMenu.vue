@@ -1,6 +1,6 @@
 <template>
   <div class="top-bar" v-if="showBar">
-    <img class="logo" src="../assets/logo.png">
+    <img class="logo" src="../assets/logo.png" @click="gotoPage">
     <div class="menus">
       <div v-if="menuList.indexOf(currentName) > -1">
         <span v-for="(item, idx) in menuLists" :key="idx" @click="handlerMenu(item)"
@@ -36,7 +36,7 @@ export default {
       // console.log('=======', val)
       if (val.name == 'Introduce' || val.name == 'Step3') {
         this.showBar = false
-      }else{
+      } else {
         this.showBar = true
       }
       if (val.path == '/login') {
@@ -57,6 +57,9 @@ export default {
       this.logMsg = "Login"
       localStorage.clear();
       this.$router.push({ name: 'Login' })
+    },
+    gotoPage() {
+      this.$router.push({ name: 'Introduce' })
     }
   },
 }
@@ -69,11 +72,13 @@ export default {
   align-items: center;
   // justify-content: space-between;
   border-bottom: 2px solid #efefef;
+  min-height: 70px;
 
   .logo {
     display: block;
     width: 157px;
-    margin: 0 50px 0 0;
+    margin: 0 50px 0 20px;
+    cursor: pointer;
   }
 
   .menus {

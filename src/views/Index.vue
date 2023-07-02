@@ -65,7 +65,7 @@ export default {
   display: flex;
   width: 70%;
   margin: 30px auto 0;
-  min-height: 500px;
+  min-height: 50vh;
   overflow: hidden;
 
   // background-color: #FFFFFF;

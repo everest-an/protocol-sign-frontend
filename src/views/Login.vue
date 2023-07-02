@@ -32,9 +32,7 @@
                     <div class="bt-submit" @click="loginEmail">LOG IN</div>
                 </div>
             </div>
-            <div style="margin-top: 100px;">
-                <Footer></Footer>
-            </div>
+            <Footer></Footer>
         </div>
     </div>
 </template>
@@ -93,7 +91,7 @@ export default {
     mounted() {
         // PDF.GlobalWorkerOptions.workerSrc = entry
         this.authCode = sessionStorage.getItem('authCode')
-        // console.log('authCode===', authCode)
+        console.log('authCode===', this.authCode)
     },
     methods: {
         handleSelectLogin(type) {
@@ -204,7 +202,7 @@ export default {
     // height: calc(100vh - 60px);
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
     flex-direction: column;
     min-height: calc(100vh - 70px);
 }

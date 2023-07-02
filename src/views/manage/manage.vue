@@ -1,6 +1,7 @@
 <template>
     <div class="manage-wrap">
         <div class="top"><button class="bt-start" @click="startNow">Start Now</button></div>
+        <!-- <input type="file" ref="fileInput" @change="handleFileInputChange" accept='.jpg,.png'> -->
         <div class="content">
             <div class="title">My uploaded files</div>
             <div class="table-wrap">
@@ -12,7 +13,8 @@
                             <p class="txt1">{{ item.fileName }}</p>
                             <!-- <p class="txt2">To：{123455667@163.com}</p> -->
                         </div>
-                        <div class="col2">waiting</div>
+                        <div class="col2" v-if="item.status == 0">waiting</div>
+                        <div class="col2" v-else>complete</div>
                         <div class="col3">{{ item.createTime }}</div>
                         <div class="col4">
                             <button @click="gotoPage(item)" v-if="item.status == 0">Sign</button>
@@ -39,18 +41,45 @@ export default {
         }
     },
     mounted() {
+
         this.$axios.post('/web/contract/queryPage', { size: 20, current: 1 }).then((res) => {
             console.log(res);
             this.list = res.results.records;
         }).catch((error) => {
             console.log(error);
         });
+
     },
     methods: {
         startNow() {
             this.$router.push({
                 name: 'Step1'
             })
+        },
+
+        handleFileInputChange(event) {
+            const file = event.target.files[0];
+            //KYC
+            //创建一个FormData对象
+            var formData = new FormData();
+            // 添加参数
+            formData.append('issuingCountry', 'CHN');
+            formData.append('email', 'wjkcool@gmail.com');
+            formData.append('idType', 'drivers_license');
+            formData.append('idImage', file);
+
+            this.$axios.post('https://rest-api.argoskyc.com/v3/submission/step1', formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'x-api-key': 'jsOoheVIjb2Xihn3Utk87gNH48E0NMb1nXr2Wkyj'
+                    }
+                }
+            ).then((res) => {
+                console.log(res);
+            }).catch((error) => {
+                console.log(error);
+            });
         },
         gotoPage(item) {
             this.$router.push({ name: 'Sign', query: { 'fileCode': item.fileCode } });

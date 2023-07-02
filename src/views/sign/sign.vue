@@ -26,6 +26,12 @@ export default {
         this.fileCode = this.$route.query.fileCode;
         this.$refs.pdfcanvas.loadFile(this.fileCode);
         this.placeMark = JSON.parse(sessionStorage.getItem('placeMark'));
+        // this.placeMark.forEach(item => {
+        //     // item.height = item.height / 2.04347;
+        //     // item.width = item.width / 2.04347;
+        //     item.x = item.x / 2.04347;
+        //     item.y = item.y / 2.04347;
+        // })
         console.log('placeMark====', this.placeMark);
 
     },
@@ -101,12 +107,13 @@ export default {
     left: 50%;
     top: 100px;
     width: calc(100vw - 280px);
-    transform: translate(-50%,0);
+    transform: translate(-50%, 0);
 
     .content {
         height: 700px;
         overflow-y: scroll;
         width: 100%;
+
         .img {
             display: block;
             width: 48px;

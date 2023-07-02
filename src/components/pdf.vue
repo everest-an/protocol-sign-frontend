@@ -16,7 +16,7 @@
             <span class="input-label">Type</span>
             <input class="text-signature-input" type="text" placeholder="Type Signature" v-model="userName">
           </div>
-          <div class="text-signature-container">
+          <div class="text-signature-container" style="padding: 12px 30px;">
             <span class="eth-signed-by-text">Protocol Signed By:</span>
             <span class="sign-text">{{ userName || address }}</span>
             <span class="address-text">{{ address }}</span>
@@ -24,16 +24,17 @@
         </div>
         <!-- 个性签名 -->
         <div class="sign-part" v-if="btnIndex == 1">
-          <div class="text-signature-container person-sign" @mousedown="handleDraw">
+          <div class="text-signature-container person-sign" style="padding: 12px 30px;" @mousedown="handleDraw">
             <span class="eth-signed-by-text" v-if="isDrawSign">Protocol Signed By:</span>
             <span class="address-text sign-here" v-if="!isDrawSign">Sign here</span>
             <span class="address-text" v-if="isDrawSign">{{ address }}</span>
-            <vue-esign style="position: absolute;left: 0;top: 0;width: 100%" ref="personCanvas"></vue-esign>
+            <vue-esign style="position: absolute;left: 0;top: 0;width: 100%;important;" ref="personCanvas"></vue-esign>
           </div>
         </div>
         <!-- 上传图片签名 -->
         <div class="sign-part" v-if="btnIndex == 2">
-          <div class="text-signature-container person-sign" style="height: 250px;cursor: default;justify-content: center">
+          <div class="text-signature-container person-sign"
+            style="height: 250px;cursor: default;justify-content: center;padding: 12px 30px;">
             <span class="eth-signed-by-text" v-if="isDrawSign">Protocol Signed By:</span>
             <img :src="uploadImageSrc" class="upload-imagesrc">
             <span class="address-text" v-if="isDrawSign">{{ address }}</span>
@@ -63,7 +64,7 @@
         <div v-for="(item, index) in placeMarkCopy" :key="index">
           <!-- 待签名 -->
           <div class="sign" @click="userSign(index)" v-if="item.toolbarType == 0"
-            :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
+            :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 10) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
             Click to Sign
           </div>
 
@@ -76,21 +77,21 @@
           <!-- 文本框 -->
           <div class="sign" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 3"
             :id="'textField' + index"
-            :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
+            :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 10) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
             <input placeholder="Add text" style="width: 100%;font-size: 16px;" @change="handleChange($event, item, index)"
               @input="handleInput($event, index)" :id="'input' + index">
           </div>
           <!-- 日期 -->
           <div class="sign date-signed" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 1"
             :id="'dateSigned' + index" :data-index="item.index" :data-y="item.y"
-            :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
+            :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 10) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
             <div placeholder="Add text" style="width: 100%;font-size: 16px;">
               {{ dateTime }}</div>
           </div>
           <!-- 地址 -->
           <div class="sign address-signed" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 2"
             :id="'addressSigned' + index" :data-index="item.index" :data-y="item.y"
-            :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
+            :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 10) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
             <div placeholder="Add text" style="width: 100%;font-size: 16px;">
               {{ addressDetails }}</div>
           </div>
@@ -101,25 +102,26 @@
       <!-- 已签名区域 -->
       <div v-if="placeMarkSign.length > 0 && isRender">
         <div class="signed" :id="'signed' + item.signedIndex"
-          :style="'left:' + item.x + 'px;' + 'top:' + (item.y - 20) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'"
+          :style="'left:' + (item.x) + 'px;' + 'top:' + (item.y - 10) + 'px;' + 'width:' + (item.width / scaleSize) + 'px;' + 'height:' + item.height + 'px;min-width:150px'"
           v-for="(item, index) in placeMarkSign" :key="index">
           <!-- 系统签名 -->
           <div class="text-signature-container" style="border: none;" v-if="item.btnIndex == 0">
-            <span class="eth-signed-by-text">Protocol Signed By:</span>
-            <span class="sign-text">{{ item.userName || address }}</span>
-            <span class="address-text">{{ address }}</span>
+            <span class="eth-signed-by-text" :style="'font-size:' + (20 / scaleSize) + 'px'">Protocol Signed By:</span>
+            <span class="sign-text" :style="'font-size:' + (20 / scaleSize) + 'px'">{{ item.userName || address }}</span>
+            <span class="address-text" :style="'font-size:' + (20 / scaleSize) + 'px'">{{ address }}</span>
           </div>
           <!-- 个性签名 -->
-          <div class="text-signature-container" style="border: none;height: 100%;" v-if="item.btnIndex == 1">
-            <span class="eth-signed-by-text">Protocol Signed By:</span>
-            <span class="address-text">{{ address }}</span>
+          <div class="text-signature-container" style="border: none;" :style="'height:' + item.height + 'px;'"
+            v-if="item.btnIndex == 1">
+            <span class="eth-signed-by-text" :style="'font-size:' + (20 / scaleSize) + 'px'">Protocol Signed By:</span>
+            <span class="address-text" :style="'font-size:' + (20 / scaleSize) + 'px'">{{ address }}</span>
             <img :src=item.personCanvasImg class="person-canvasimg">
           </div>
           <!-- 图片签名 -->
-          <div class="text-signature-container " style="border: none;height: 100%;"  v-if="item.btnIndex == 2">
-            <span class="eth-signed-by-text">Protocol Signed By:</span>
-            <img :src="item.uploadImageSrc" class="upload-imagesrc">
-            <span class="address-text">{{ address }}</span>
+          <div class="text-signature-container " style="border: none;height: 100%;" v-if="item.btnIndex == 2">
+            <span class="eth-signed-by-text" :style="'font-size:' + (20 / scaleSize) + 'px'">Protocol Signed By:</span>
+            <img :src="item.uploadImageSrc" class="upload-imagesrc" :style="'height:' + (136 / scaleSize) + 'px'">
+            <span class="address-text" :style="'font-size:' + (20 / scaleSize) + 'px'">{{ address }}</span>
           </div>
         </div>
       </div>
@@ -189,7 +191,7 @@ export default {
       canvasWidth: 0,
       canvasIndex: 0,
       rectangles: [],
-      rect: { width: 200, height: 100, isResize: false, bl: 1 },
+      rect: { width: 250, height: 100, isResize: false, bl: 1 },
       deleteStyle: '',
       ctxs: [],
       sizeDrag: 5,
@@ -208,7 +210,8 @@ export default {
       btnIndex: 0,
       isDrawSign: false,
       personCanvasImg: '',
-      uploadImageSrc: ''
+      uploadImageSrc: '',
+      scaleSize: 1
     }
   },
   mounted() {
@@ -446,7 +449,7 @@ export default {
         if (that.toolbarType == 2) {
           that.rect.width = 400
         } else {
-          that.rect.width = 200
+          that.rect.width = 250
         }
         const rect = { index, x: mouseX, y: mouseY, isDragging: false, ...that.rect, toolbarType: that.toolbarType };
         rectangles.push(rect);
@@ -549,7 +552,7 @@ export default {
 
       // 获取容器元素
       const container = document.getElementById('pdfContainer');
-
+      let bl = '';
       // 清空容器
       // container.innerHTML = '';
 
@@ -586,11 +589,9 @@ export default {
         let viewport = page.getViewport({ scale: 1 });
         // 设置 Canvas 的大小以适应页面
         //页面容器跟canvas比例
-        let bl = (container.offsetWidth / viewport.width).toFixed(2);
+        bl = (container.offsetWidth / viewport.width).toFixed(2);
         console.log('bl=================', bl)
         viewport = page.getViewport({ scale: bl });
-        // let bl = 1;
-        console.log(bl)
         this.rect.bl = bl;
         viewport.width = viewport.width;
         viewport.height = viewport.height;
@@ -613,17 +614,18 @@ export default {
         this.isRender = true
       }
       this.loadCanvas();
-      console.log('this.placeMark', this.placeMark)
+
       if (this.placeMark) {
         this.placeMarkCopy = JSON.parse(JSON.stringify(this.placeMark))
-        // this.placeMarkCopy.forEach(item => {
-        //   item.x = item.x / item.bl * this.rect.bl;
-        //   item.y = item.y / item.bl * this.rect.bl;
-        //   item.width = item.width / item.bl * this.rect.bl;
-        //   item.height = item.height / item.bl * this.rect.bl;
-
-        // })
+        this.placeMarkCopy.forEach(item => {
+          this.scaleSize = item.bl / this.rect.bl;
+          item.x = item.x / this.scaleSize;
+          item.y = item.y / this.scaleSize;
+          item.width = item.width / this.scaleSize;
+          item.height = item.height / this.scaleSize;
+        })
       }
+      console.log('this.placeMarkCopy', this.placeMarkCopy)
       this.$nextTick(() => {
         let date = document.getElementsByClassName('date-signed');
         let address = document.getElementsByClassName('address-signed');
@@ -650,13 +652,13 @@ export default {
         }
         // 将日期节点移动到新的父节点下
         nodeList.map(item => {
-          item.node.style.top = parseInt(item.y) - 20 + 'px';
+          item.node.style.top = parseInt(item.y) - 10 + 'px';
           const targetParent = document.getElementById('pageContainer' + item.index);
           targetParent.appendChild(item.node);
         })
         // 将日期节点移动到新的父节点下
         addressList.map(item => {
-          item.node.style.top = parseInt(item.y) - 20 + 'px';
+          item.node.style.top = parseInt(item.y) - 10 + 'px';
           const targetParent = document.getElementById('pageContainer' + item.index);
           targetParent.appendChild(item.node);
         })
@@ -696,12 +698,30 @@ export default {
     //文本实时输入
     handleInput(e, index) {
       let val = e.target.value;
+      console.log(val)
       const nodeToMove = document.getElementById('textField' + index);
       if (!val) {
         nodeToMove.style.width = 200 + 'px'
         return
       }
-      nodeToMove.style.width = 20 + val.length * 10 + 'px'
+      var count = countChineseChars(val);
+      console.log("汉字字符数量：", count); 
+      nodeToMove.style.width = 20 + val.length * 16 + 'px'
+    },
+    //汉字字符有几个
+    countChineseChars(str) {
+      // 使用正则表达式匹配汉字字符
+      var regex = /[\u4e00-\u9fa5]/g;
+
+      // 使用 match 方法找出所有匹配项，并返回匹配项数组
+      var matches = str.match(regex);
+
+      // 如果 matches 不为 null，则返回匹配项的数量
+      if (matches !== null) {
+        return matches.length;
+      } else {
+        return 0; // 没有汉字字符，返回 0
+      }
     },
     //文本框失焦
     handleChange(e, item, index) {
@@ -711,7 +731,7 @@ export default {
       const nodeInput = document.getElementById('input' + index);
       if (nodeToMove) {
         let j = item.index + 1;
-        nodeToMove.style.top = item.y - 20 + 'px';
+        nodeToMove.style.top = item.y - 10 + 'px';
         if (!val) {
           nodeInput.style.border = "1px solid";
         } else {
@@ -765,7 +785,7 @@ export default {
           obj.userName = this.userName;
           obj.signedIndex = this.signedIndex;
           obj.btnIndex = this.btnIndex;
-          obj.height = 130;
+          // obj.height = 130;
           obj.width = 250;
           obj.personCanvasImg = this.personCanvasImg;
           this.signedIndex++;
@@ -816,6 +836,7 @@ export default {
   cursor: default;
   height: calc(100vh - 250px);
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .text-signature-container {
@@ -828,8 +849,10 @@ export default {
   border: 1.31868px solid rgba(0, 0, 0, .1);
   box-sizing: border-box;
   border-radius: 15px;
+  word-break: break-word;
+  text-align: left;
   // margin-top: 15px;
-  padding: 12px 30px;
+  // padding: 12px 30px;
 
   .eth-signed-by-text {
     font-weight: 700;
@@ -842,7 +865,7 @@ export default {
   .sign-text {
     font-weight: 700;
     font-size: 26px;
-    line-height: 39px;
+    // line-height: 39px;
     color: #373b46;
     user-select: none;
   }
@@ -1021,6 +1044,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  // min-height: 100px;
 }
 
 textarea {
@@ -1097,7 +1121,7 @@ textarea {
   position: absolute;
   width: 100%;
   object-fit: cover;
-  left: 15px;
+  // left: 15px;
 }
 
 .image-signature-upload {
