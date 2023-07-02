@@ -704,9 +704,13 @@ export default {
         nodeToMove.style.width = 200 + 'px'
         return
       }
-      var count = countChineseChars(val);
-      console.log("汉字字符数量：", count); 
-      nodeToMove.style.width = 20 + val.length * 16 + 'px'
+      var count = this.countChineseChars(val);//汉字数量
+      let strLength = val.length - count;//非汉字数量
+      // console.log("汉字字符数量：", count);
+      // console.log("非汉字字符数量：", count);
+      let width = 10 + count * 16 + strLength * 9 + 'px';
+      // console.log("相应宽度===", width);
+      nodeToMove.style.width = width
     },
     //汉字字符有几个
     countChineseChars(str) {
