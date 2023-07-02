@@ -72,8 +72,8 @@
 
       </div>
       <!-- 已输入文本框 日期 地址-->
-      <div v-if="placeMark && isRender">
-        <div v-for="(item, index) in placeMark" :key="index">
+      <div v-if="placeMarkCopy && isRender">
+        <div v-for="(item, index) in placeMarkCopy" :key="index">
           <!-- 文本框 -->
           <div class="sign" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 3"
             :id="'textField' + index"
@@ -92,7 +92,7 @@
           <div class="sign address-signed" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 2"
             :id="'addressSigned' + index" :data-index="item.index" :data-y="item.y"
             :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 10) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
-            <div placeholder="Add text" style="width: 100%;font-size: 16px;">
+            <div placeholder="Add text" style="width: 100%;font-size: 16px;text-align: left;">
               {{ addressDetails }}</div>
           </div>
         </div>
@@ -698,7 +698,7 @@ export default {
     //文本实时输入
     handleInput(e, index) {
       let val = e.target.value;
-      console.log(val)
+      // console.log(val)
       const nodeToMove = document.getElementById('textField' + index);
       if (!val) {
         nodeToMove.style.width = 200 + 'px'
