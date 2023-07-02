@@ -92,7 +92,7 @@
           <div class="sign address-signed" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 2"
             :id="'addressSigned' + index" :data-index="item.index" :data-y="item.y"
             :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 10) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
-            <div placeholder="Add text" style="width: 100%;font-size: 16px;text-align: left;">
+            <div placeholder="Add text" style="width: 100%;text-align: center;" :style="'font-size:' + (16 / scaleSize) + 'px'">
               {{ addressDetails }}</div>
           </div>
         </div>
@@ -102,12 +102,12 @@
       <!-- 已签名区域 -->
       <div v-if="placeMarkSign.length > 0 && isRender">
         <div class="signed" :id="'signed' + item.signedIndex"
-          :style="'left:' + (item.x) + 'px;' + 'top:' + (item.y - 10) + 'px;' + 'width:' + (item.width / scaleSize) + 'px;' + 'height:' + item.height + 'px;min-width:150px'"
+          :style="'left:' + (item.x) + 'px;' + 'top:' + (item.y - 10) + 'px;' + 'width:' + item.width  + 'px;' + 'height:' + item.height + 'px;min-width:150px'"
           v-for="(item, index) in placeMarkSign" :key="index">
           <!-- 系统签名 -->
           <div class="text-signature-container" style="border: none;" v-if="item.btnIndex == 0">
             <span class="eth-signed-by-text" :style="'font-size:' + (20 / scaleSize) + 'px'">Protocol Signed By:</span>
-            <span class="sign-text" :style="'font-size:' + (20 / scaleSize) + 'px'">{{ item.userName || address }}</span>
+            <span class="sign-text" :style="'font-size:' + (20 / scaleSize) + 'px;padding:10px 0'">{{ item.userName || address }}</span>
             <span class="address-text" :style="'font-size:' + (20 / scaleSize) + 'px'">{{ address }}</span>
           </div>
           <!-- 个性签名 -->
@@ -120,7 +120,7 @@
           <!-- 图片签名 -->
           <div class="text-signature-container " style="border: none;height: 100%;" v-if="item.btnIndex == 2">
             <span class="eth-signed-by-text" :style="'font-size:' + (20 / scaleSize) + 'px'">Protocol Signed By:</span>
-            <img :src="item.uploadImageSrc" class="upload-imagesrc" :style="'height:' + (136 / scaleSize) + 'px'">
+            <img :src="item.uploadImageSrc" class="upload-imagesrc" :style="'height:' + (100 / scaleSize) + 'px'">
             <span class="address-text" :style="'font-size:' + (20 / scaleSize) + 'px'">{{ address }}</span>
           </div>
         </div>
@@ -790,7 +790,7 @@ export default {
           obj.signedIndex = this.signedIndex;
           obj.btnIndex = this.btnIndex;
           // obj.height = 130;
-          obj.width = 250;
+          // obj.width = 250;
           obj.personCanvasImg = this.personCanvasImg;
           this.signedIndex++;
           this.placeMarkSign.push(obj);
@@ -1146,7 +1146,8 @@ textarea {
 }
 
 .upload-imagesrc {
-  height: 136px;
+  height: 100px;
+  padding: 10px 0;
   object-fit: contain;
 }
 </style>
