@@ -61,38 +61,37 @@
       </span>
       <!-- 待完成签名区域 -->
       <div v-if="placeMarkCopy && isRender">
-        <div v-for="(item, index) in placeMarkCopy" :key="index">
+        <div v-for="(item, index) in placeMarkCopy" :key="index" >
           <!-- 待签名 -->
-          <div class="sign" @click="userSign(index)" v-if="item.toolbarType == 0"
+          <div class="sign" @click="userSign(index)" v-if="item.toolbarType == 0 && item.account == loginAccount"
             :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 10) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
             Click to Sign
           </div>
-
         </div>
-
       </div>
       <!-- 已输入文本框 日期 地址-->
       <div v-if="placeMarkCopy && isRender">
         <div v-for="(item, index) in placeMarkCopy" :key="index">
           <!-- 文本框 -->
-          <div class="sign" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 3"
+          <div class="sign" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 3 && item.account == loginAccount"
             :id="'textField' + index"
             :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 10) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
             <input placeholder="Add text" style="width: 100%;font-size: 16px;" @change="handleChange($event, item, index)"
               @input="handleInput($event, index)" :id="'input' + index">
           </div>
           <!-- 日期 -->
-          <div class="sign date-signed" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 1"
+          <div class="sign date-signed" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 1 && item.account == loginAccount"
             :id="'dateSigned' + index" :data-index="item.index" :data-y="item.y"
             :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 10) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
             <div placeholder="Add text" style="width: 100%;font-size: 16px;">
               {{ dateTime }}</div>
           </div>
           <!-- 地址 -->
-          <div class="sign address-signed" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 2"
+          <div class="sign address-signed" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 2 && item.account == loginAccount"
             :id="'addressSigned' + index" :data-index="item.index" :data-y="item.y"
             :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 10) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
-            <div placeholder="Add text" style="width: 100%;text-align: center;" :style="'font-size:' + (16 / scaleSize) + 'px'">
+            <div placeholder="Add text" style="width: 100%;text-align: center;"
+              :style="'font-size:' + (16 / scaleSize) + 'px'">
               {{ addressDetails }}</div>
           </div>
         </div>
@@ -102,12 +101,13 @@
       <!-- 已签名区域 -->
       <div v-if="placeMarkSign.length > 0 && isRender">
         <div class="signed" :id="'signed' + item.signedIndex"
-          :style="'left:' + (item.x) + 'px;' + 'top:' + (item.y - 10) + 'px;' + 'width:' + item.width  + 'px;' + 'height:' + item.height + 'px;min-width:150px'"
+          :style="'left:' + (item.x) + 'px;' + 'top:' + (item.y - 10) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px;min-width:150px'"
           v-for="(item, index) in placeMarkSign" :key="index">
           <!-- 系统签名 -->
           <div class="text-signature-container" style="border: none;" v-if="item.btnIndex == 0">
             <span class="eth-signed-by-text" :style="'font-size:' + (20 / scaleSize) + 'px'">Protocol Signed By:</span>
-            <span class="sign-text" :style="'font-size:' + (20 / scaleSize) + 'px;padding:10px 0'">{{ item.userName || address }}</span>
+            <span class="sign-text" :style="'font-size:' + (20 / scaleSize) + 'px;padding:10px 0'">{{ item.userName ||
+              address }}</span>
             <span class="address-text" :style="'font-size:' + (20 / scaleSize) + 'px'">{{ address }}</span>
           </div>
           <!-- 个性签名 -->
@@ -125,36 +125,49 @@
           </div>
         </div>
       </div>
-
     </div>
 
     <div class="menu-bar" v-if="showMenu">
       <div class="item-bar">
         <div class="item-button">Signature Fields</div>
-        <div class="nav-item" @click="signHandle(0)">
-          <span>{{ address }}'s</span>
-          <div>Signature</div>
+        <div class="nav-item" @click="signHandle(0, item.color, item.account)" v-for="(item, index) in userList"
+          :key="index">
+          <div class="item-color" :style="'background:' + item.color"></div>
+          <div class="item-flex">
+            <span>{{ item.account }}'s</span>
+            <div>Signature</div>
+          </div>
         </div>
       </div>
       <div class="item-bar">
         <div class="item-button">Date Signed</div>
-        <div class="nav-item" @click="signHandle(1)">
-          <span>{{ address }}'s</span>
-          <div>Date Signed</div>
+        <div class="nav-item" @click="signHandle(1, item.color, item.account)" v-for="(item, index) in userList"
+          :key="index">
+          <div class="item-color" :style="'background:' + item.color"></div>
+          <div class="item-flex">
+            <span>{{ item.account }}'s</span>
+            <div>Date Signed</div>
+          </div>
         </div>
       </div>
       <div class="item-bar">
         <div class="item-button">Wallet Address</div>
-        <div class="nav-item" @click="signHandle(2)">
-          <span>{{ address }}'s</span>
-          <div>Wallet Address</div>
+        <div class="nav-item" @click="signHandle(2, item.color, item.account)" v-for="(item, index) in userList"
+          :key="index">
+          <div class="item-color" :style="'background:' + item.color"></div>
+          <div class="item-flex">
+            <span>{{ item.account }}'s</span>
+            <div>Wallet Address</div>
+          </div>
         </div>
       </div>
       <div class="item-bar">
         <div class="item-button">Text Field</div>
-        <div class="nav-item" @click="signHandle(3)">
-          <div>
-            <span>{{ address }}'s</span>
+        <div class="nav-item" @click="signHandle(3, item.color, item.account)" v-for="(item, index) in userList"
+          :key="index">
+          <div class="item-color" :style="'background:' + item.color"></div>
+          <div class="item-flex">
+            <span>{{ item.account }}'s</span>
             <div>Text Field</div>
           </div>
         </div>
@@ -191,7 +204,7 @@ export default {
       canvasWidth: 0,
       canvasIndex: 0,
       rectangles: [],
-      rect: { width: 250, height: 100, isResize: false, bl: 1 },
+      rect: { width: 250, height: 100, isResize: false, bl: 1, account: '' },
       deleteStyle: '',
       ctxs: [],
       sizeDrag: 5,
@@ -211,19 +224,45 @@ export default {
       isDrawSign: false,
       personCanvasImg: '',
       uploadImageSrc: '',
-      scaleSize: 1
+      scaleSize: 1,
+      userList: [],
+      userColor: '',
+      userAccount: '',//用户邀请签名的账号
+      loginAccount: '',//用户登陆时的账户
     }
   },
   mounted() {
-    rectangles = [];
-    PDF.GlobalWorkerOptions.workerSrc = entry;
     let address = localStorage.getItem('address');
+    rectangles = [];
+    let email = localStorage.getItem('email');
+    if (email) {
+      this.loginAccount = email
+    } else {
+      this.loginAccount = address
+    }
+    PDF.GlobalWorkerOptions.workerSrc = entry;
     this.addressDetails = address;
     let str1 = address.substring(0, 10);
     let str2 = address.substring(address.length - 5);
     this.address = str1 + '...' + str2;
     const today = new Date();
     this.dateTime = this.formatDate(today);
+    console.log('3========', this.$store.state.userArr);
+    let colorList = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#00FFFF', '#0000FF', '#8B00FF']
+    this.$store.state.userArr.map((item, index) => {
+      let obj = { account: '', color: '' };
+      if (item.address) {
+        let addr = item.address;
+        // let str1 = addr.substring(0, 10);
+        // let str2 = addr.substring(address.length - 5);
+        // addr = str1 + '...' + str2;
+        obj.account = addr;
+      } else {
+        obj.account = item.email;
+      }
+      obj.color = colorList[index];
+      this.userList.push(obj)
+    })
   },
   methods: {
     // 处理选择的文件
@@ -286,7 +325,8 @@ export default {
         // 设置线条样式为虚线
         ctxs[rect.index].setLineDash([5, 3]);
         //绘制签名区域
-        ctxs[rect.index].fillStyle = 'rgba(0,0,0,0.1)';
+        // ctxs[rect.index].fillStyle = 'rgba(0,0,0,0.1)';
+        ctxs[rect.index].fillStyle = rect.color;
         ctxs[rect.index].fillRect(rect.x, rect.y, rect.width, rect.height);
         if (rect.toolbarType == 0) {
           //绘制矩形拖拽缩放区域
@@ -451,7 +491,7 @@ export default {
         } else {
           that.rect.width = 250
         }
-        const rect = { index, x: mouseX, y: mouseY, isDragging: false, ...that.rect, toolbarType: that.toolbarType };
+        const rect = { index, x: mouseX, y: mouseY, isDragging: false, color: that.userColor, ...that.rect, account: that.userAccount, toolbarType: that.toolbarType };
         rectangles.push(rect);
         that.redraw();
         that.isMenuClick = false;
@@ -679,8 +719,10 @@ export default {
 
     },
     //点击工具栏签名插件
-    signHandle(index) {
+    signHandle(index, color, account) {
       this.toolbarType = index;
+      this.userColor = color;
+      this.userAccount = account;
       if (index == 0) {
         this.cursor = `cursor:url(${signImg}),pointer`;
       } else {
@@ -1014,6 +1056,7 @@ export default {
   background: lightgray;
   padding: 10px;
   box-sizing: border-box;
+  overflow-y: scroll
 }
 
 .item-button {
@@ -1027,8 +1070,11 @@ export default {
 
 .nav-item {
   text-align: left;
-  margin-left: 30px;
+  margin-left: 20px;
   cursor: pointer;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
 }
 
 .sign {
@@ -1149,5 +1195,19 @@ textarea {
   height: 100px;
   padding: 10px 0;
   object-fit: contain;
+}
+
+.item-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.item-flex {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap
 }
 </style>

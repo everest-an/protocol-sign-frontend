@@ -156,6 +156,7 @@ export default {
                 if (res.code == 0) {
                     localStorage.setItem('address', res.results.accountAddress)
                     localStorage.setItem('token', res.results.token)
+                    localStorage.setItem('email', this.email)
                     if (this.authCode == '401') {
                         this.$router.go(-1);
                         sessionStorage.clear()

@@ -83,8 +83,13 @@ export default {
                 console.log("邮箱格式错误");
                 return
             }
+            if (this.userArr.length > 4) {
+                ElMessage.error('Add up to 5 recipients')
+                return
+            }
             let obj = { email: this.email }
             this.userArr.push(obj);
+           
             // let arr = [];
             // this.userArr.map(item => {
             //     arr.push(item.address)
@@ -92,7 +97,7 @@ export default {
             // this.$store.commit('SET_EMAIL', arr)
         },
         handlerNext() {
-            console.log(this.userArr)
+
             let isEmail = true;
             let emailError = false;
             this.userArr.map(item => {
@@ -114,10 +119,11 @@ export default {
                 return
             }
             let arr = [];
-            this.userArr.map(item=>{
+            this.userArr.map(item => {
                 arr.push(item.email)
             })
-            this.$store.commit('SET_EMAIL', arr)
+            this.$store.commit('SET_EMAIL', arr);
+            this.$store.commit('SET_USERARR', this.userArr);
             this.$router.push({
                 name: 'Step3'
             })

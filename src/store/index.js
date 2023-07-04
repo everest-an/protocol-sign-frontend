@@ -7,6 +7,7 @@ export default createStore({
             word2pdfFile: null,
             receiverEmail: null,
             placeMark: null,//位置标记
+            userArr: null
         }
     },
     mutations: {
@@ -18,6 +19,9 @@ export default createStore({
         },
         SET_EMAIL: (state, arr) => {
             state.receiverEmail = arr
+        },
+        SET_USERARR: (state, arr) => {
+            state.userArr = arr
         },
         SET_MARK: (state, mark) => {
             state.placeMark = mark

@@ -1,11 +1,12 @@
 <template>
   <div class="top-bar" :style="'opacity:' + opacity">
     <div class="left">
-      <img class="logo" src="../assets/circle.png">
+      <img class="logo-img" src="../assets/logo.png">
+      <!-- <img class="logo" src="../assets/circle.png">
       <div class="txt">
         <div class="logo-title">Protocol Sign</div>
-        <!-- <div class="logo-des">Decentralized Signature</div> -->
-      </div>
+        <div class="logo-des">Decentralized Signature</div>
+      </div> -->
     </div>
     <div class="login-part" @click="goHome"><img src="../assets/ico-login.png"><span>{{ logMsg }}</span></div>
   </div>
@@ -54,12 +55,12 @@ export default {
   align-items: center;
   justify-content: space-between;
   background-color: #fff;
-  height: 130px;
+  height: 72px;
 
   .left {
     display: flex;
     align-items: center;
-    margin-left: 40px;
+    margin-left: 20px;
 
     .txt {
       text-align: left;
@@ -81,6 +82,9 @@ export default {
     width: 62px;
     height: auto;
     object-fit: cover;
+  }
+  .logo-img{
+    width: 160px;
   }
 
 
