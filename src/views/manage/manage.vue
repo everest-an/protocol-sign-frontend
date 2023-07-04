@@ -13,7 +13,7 @@
                             <p class="txt1">{{ item.fileName }}</p>
                             <!-- <p class="txt2">To：{123455667@163.com}</p> -->
                         </div>
-                        <div class="col2" v-if="item.status == 0">waiting</div>
+                        <div class="col2" v-if="item.status !== 2">waiting</div>
                         <div class="col2" v-else>complete</div>
                         <div class="col3">{{ item.createTime }}</div>
                         <div class="col4">
@@ -26,6 +26,11 @@
                 </div>
             </div>
         </div>
+        <el-dialog v-model="centerDialogVisible">
+            <div class="dialog-content">
+                <div id='veriff-root'></div>
+            </div>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -37,12 +42,14 @@ export default {
     data() {
         return {
             currentType: '',
-            list: []
+            list: [],
+            centerDialogVisible: false
         }
     },
     mounted() {
 
-        this.$axios.post('/web/contract/queryPage', { size: 20, current: 1 }).then((res) => {
+        // this.$axios.post('/web/contract/queryPage', { size: 20, current: 1 }).then((res) => {
+        this.$axios.post('/web/contract/queryPageBySign', { size: 20, current: 1 }).then((res) => {
             console.log(res);
             this.list = res.results.records;
         }).catch((error) => {
@@ -82,8 +89,34 @@ export default {
             });
         },
         gotoPage(item) {
-            this.$router.push({ name: 'Sign', query: { 'fileCode': item.fileCode } });
-            sessionStorage.setItem('placeMark', item.placeMark)
+            if (item.identityStatus == 1) {//已验证
+                this.$router.push({ name: 'Sign', query: { 'fileCode': item.fileCode } });
+                sessionStorage.setItem('placeMark', item.placeMark)
+            } else {//去人脸认证
+                this.centerDialogVisible = true;
+                this.$nextTick(() => {
+                    const veriff = Veriff({
+                        apiKey: 'f19cb8a2-a203-4995-9089-a585a72cd573',
+                        parentId: 'veriff-root',
+                        onSession: function (err, response) {
+                            // received the response, verification can be started / triggered now
+                            console.log('response=====', response)
+                            // redirect
+                            window.location.href = response.verification.url;
+                        }
+                    });
+                    veriff.setParams({
+                        person: {
+                            givenName: ' ',
+                            lastName: ' '
+                        },
+                        vendorData: 'abc123abc'
+                    });
+                    veriff.mount({
+                        submitBtnText: 'Get verified'
+                    });
+                })
+            }
         },
         //下载pdf
         downPdf(item) {
@@ -243,5 +276,13 @@ export default {
             }
         }
     }
+}
+
+.dialog-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
 </style>
