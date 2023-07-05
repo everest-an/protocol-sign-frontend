@@ -1,14 +1,16 @@
 <template>
     <div class="home-wrap">
         <pdf-canvas ref="pdfcanvas" :show-menu="false" :place-mark="placeMark"></pdf-canvas>
-        <div class="finish" @click="finishHandle()">Finish</div>
+        <!-- <div class="finish" @click="finishHandle()">Finish</div> -->
+        <el-button class="finish" :loading="loading" @click="finishHandle()">Finish</el-button>
     </div>
 </template>
 <script>
 import PdfCanvas from '@/components/pdf.vue'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
-import FileSaver from 'file-saver'
+// import FileSaver from 'file-saver'
+import { ElLoading } from 'element-plus'
 // import {} from 'http'
 let pageList = []
 export default {
@@ -19,7 +21,9 @@ export default {
             currentType: '',
             placeMark: [],
             fileCode: '',
-            pageList: []
+            pageList: [],
+            loading: false,
+            loadingInstance: null
         }
     },
     mounted() {
@@ -45,22 +49,32 @@ export default {
             this.$router.push({ name: 'Sign' })
         },
         async buildPDF2() {
+            let ele = document.getElementById('pageContainer1');
+            console.log('====123', ele.offsetWidth)
+            let width = this.$store.state.pdfWidth;
+            let height = this.$store.state.pdfHeight;
+            let orientation = '';
+            if (width > height) {
+                orientation = 'l'
+            }else{
+                orientation = 'p'
+            }
             const pdf = new jsPDF(
                 {
-                    orientation: 'landscape', // 纵向，或使用 'landscape' 横向
+                    orientation: orientation, // 纵向，或使用 'landscape' 横向 "landscape" | "p" | "portrait" | "l"
                     unit: 'pt',
-                    format: [768, 432], // 页面格式，可以是 'a4'、'letter' 等
+                    format: [width, height], // 页面格式，可以是 'a4'、'letter' 等
                     compress: true // 是否压缩 PDF
                 }
             );
             let elements = document.getElementsByClassName('page-container');
             for (let i = 0; i < elements.length; i++) {
                 let element = elements[i];
-                await html2canvas(element, { scale: 2 }).then(canvasImg => {
+                await html2canvas(element).then(canvasImg => {
                     const screenshotUrl = canvasImg.toDataURL('image/png');
                     console.log('canvasImg', canvasImg.width)
                     console.log('canvasImg', canvasImg.height)
-                    pdf.addImage(screenshotUrl, "PNG", 0, 0, 768, 432);
+                    pdf.addImage(screenshotUrl, "PNG", 0, 0, width, height);
                     if (i + 1 < elements.length) {
                         pdf.addPage();
                     }
@@ -84,6 +98,8 @@ export default {
                     'Content-Type': 'multipart/form-data'
                 }
             }).then((response) => {
+                this.loading = false;
+                this.loadingInstance.close();
                 this.$router.push({
                     name: 'Manage'
                 })
@@ -94,6 +110,8 @@ export default {
         },
         //生成PDF并上传
         finishHandle() {
+            this.loadingInstance = ElLoading.service({ text: 'Loading...' })
+            this.loading = true;
             this.buildPDF2()
         }
     },

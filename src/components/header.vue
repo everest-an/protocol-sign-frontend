@@ -8,7 +8,7 @@
         <div class="logo-des">Decentralized Signature</div>
       </div> -->
     </div>
-    <div class="login-part" @click="goHome"><img src="../assets/ico-login.png"><span>{{ logMsg }}</span></div>
+    <div class="login-part" @click="goHome"><img src="../assets/ico-login.png" v-if="logMsg=='Login'"><span>{{ logMsg }}</span></div>
   </div>
 </template>
 
@@ -28,7 +28,7 @@ export default {
     let token = localStorage.getItem('token');
     this.token = token;
     if (token) {
-      this.logMsg = "Logout"
+      this.logMsg = "Back"
     } else {
       this.logMsg = "Login"
     }
@@ -38,9 +38,7 @@ export default {
       if (this.logMsg=='Login') {
         this.$router.push({ name: 'Login' })
       } else {
-        this.logMsg = "Login"
-        localStorage.clear();
-        this.$router.push({ name: 'Login' })
+        this.$router.go(-1)
       }
     }
   },

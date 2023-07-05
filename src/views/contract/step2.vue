@@ -138,6 +138,7 @@ export default {
             this.$store.commit('SET_EMAIL', arr);
             console.log(this.$store.state.receiverEmail)
             this.$store.commit('SET_USERARR', this.userArr);
+            console.log('this.userArr===',this.userArr)
             if (arr.length < 1) {
                 ElMessage.error('Please add recipients')
                 return

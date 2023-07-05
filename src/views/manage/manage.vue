@@ -3,7 +3,7 @@
         <div class="top"><button class="bt-start" @click="startNow">Start Now</button></div>
         <!-- <input type="file" ref="fileInput" @change="handleFileInputChange" accept='.jpg,.png'> -->
         <div class="content">
-            <div class="title">My uploaded files</div>
+            <div class="title">My files</div>
             <div class="table-wrap">
                 <div class="table-title"><span class="col1">Subject</span><span class="col2">Status</span><span
                         class="col3">Last Change</span><span class="col4"></span></div>

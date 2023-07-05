@@ -61,9 +61,9 @@
       </span>
       <!-- 待完成签名区域 -->
       <div v-if="placeMarkCopy && isRender">
-        <div v-for="(item, index) in placeMarkCopy" :key="index" >
+        <div v-for="(item, index) in placeMarkCopy" :key="index">
           <!-- 待签名 -->
-          <div class="sign" @click="userSign(index)" v-if="item.toolbarType == 0 && item.account == loginAccount"
+          <div class="sign" @click="userSign(index)" v-if="item.toolbarType == 0 && item.showMenu"
             :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 10) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
             Click to Sign
           </div>
@@ -73,22 +73,24 @@
       <div v-if="placeMarkCopy && isRender">
         <div v-for="(item, index) in placeMarkCopy" :key="index">
           <!-- 文本框 -->
-          <div class="sign" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 3 && item.account == loginAccount"
+          <div class="sign" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 3 && item.showMenu"
             :id="'textField' + index"
             :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 10) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
             <input placeholder="Add text" style="width: 100%;font-size: 16px;" @change="handleChange($event, item, index)"
               @input="handleInput($event, index)" :id="'input' + index">
           </div>
           <!-- 日期 -->
-          <div class="sign date-signed" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 1 && item.account == loginAccount"
-            :id="'dateSigned' + index" :data-index="item.index" :data-y="item.y"
+          <div class="sign date-signed" :class="{ 'bg-none': showMenu == false }"
+            v-if="item.toolbarType == 1 && item.showMenu" :id="'dateSigned' + index" :data-index="item.index"
+            :data-y="item.y"
             :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 10) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
             <div placeholder="Add text" style="width: 100%;font-size: 16px;">
               {{ dateTime }}</div>
           </div>
           <!-- 地址 -->
-          <div class="sign address-signed" :class="{ 'bg-none': showMenu == false }" v-if="item.toolbarType == 2 && item.account == loginAccount"
-            :id="'addressSigned' + index" :data-index="item.index" :data-y="item.y"
+          <div class="sign address-signed" :class="{ 'bg-none': showMenu == false }"
+            v-if="item.toolbarType == 2 && item.showMenu" :id="'addressSigned' + index" :data-index="item.index"
+            :data-y="item.y"
             :style="'left:' + item.x + 'px;' + 'top:' + (item.y + item.index * canvasHeight + item.index * 10 - 10) + 'px;' + 'width:' + item.width + 'px;' + 'height:' + item.height + 'px'">
             <div placeholder="Add text" style="width: 100%;text-align: center;"
               :style="'font-size:' + (16 / scaleSize) + 'px'">
@@ -225,7 +227,7 @@ export default {
       personCanvasImg: '',
       uploadImageSrc: '',
       scaleSize: 1,
-      userList: [],
+      userList: [],//右侧菜单栏显示的用户
       userColor: '',
       userAccount: '',//用户邀请签名的账号
       loginAccount: '',//用户登陆时的账户
@@ -234,12 +236,7 @@ export default {
   mounted() {
     let address = localStorage.getItem('address');
     rectangles = [];
-    let email = localStorage.getItem('email');
-    if (email) {
-      this.loginAccount = email
-    } else {
-      this.loginAccount = address
-    }
+
     PDF.GlobalWorkerOptions.workerSrc = entry;
     this.addressDetails = address;
     let str1 = address.substring(0, 10);
@@ -249,20 +246,22 @@ export default {
     this.dateTime = this.formatDate(today);
     console.log('3========', this.$store.state.userArr);
     let colorList = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#00FFFF', '#0000FF', '#8B00FF']
-    this.$store.state.userArr.map((item, index) => {
-      let obj = { account: '', color: '' };
-      if (item.address) {
-        let addr = item.address;
-        // let str1 = addr.substring(0, 10);
-        // let str2 = addr.substring(address.length - 5);
-        // addr = str1 + '...' + str2;
-        obj.account = addr;
-      } else {
-        obj.account = item.email;
-      }
-      obj.color = colorList[index];
-      this.userList.push(obj)
-    })
+    if (this.$store.state.userArr) {
+      this.$store.state.userArr.map((item, index) => {
+        let obj = { account: '', color: '' };
+        if (item.address) {
+          let addr = item.address;
+          // let str1 = addr.substring(0, 10);
+          // let str2 = addr.substring(address.length - 5);
+          // addr = str1 + '...' + str2;
+          obj.account = addr;
+        } else {
+          obj.account = item.email;
+        }
+        obj.color = colorList[index];
+        this.userList.push(obj)
+      })
+    }
   },
   methods: {
     // 处理选择的文件
@@ -582,6 +581,7 @@ export default {
     },
 
     async renderPage(pdf) {
+      console.log('pdf=====',pdf)
 
       // //绘制矩形的画布
       // const canvasRect = document.getElementById('canvas');
@@ -625,16 +625,18 @@ export default {
         const page = await pdf.getPage(pageNumber);
 
 
-        // 获取页面的原始大小
+        // 获取PDF页面的原始大小
         let viewport = page.getViewport({ scale: 1 });
+        this.$store.commit('SET_PDF_WIDTH', viewport.width);
+        this.$store.commit('SET_PDF_HEIGHT', viewport.height);
         // 设置 Canvas 的大小以适应页面
         //页面容器跟canvas比例
         bl = (container.offsetWidth / viewport.width).toFixed(2);
         console.log('bl=================', bl)
         viewport = page.getViewport({ scale: bl });
         this.rect.bl = bl;
-        viewport.width = viewport.width;
-        viewport.height = viewport.height;
+        // viewport.width = viewport.width;
+        // viewport.height = viewport.height;
         let width = viewport.width;
         let height = viewport.height;
         canvas.width = width;
@@ -658,6 +660,20 @@ export default {
       if (this.placeMark) {
         this.placeMarkCopy = JSON.parse(JSON.stringify(this.placeMark))
         this.placeMarkCopy.forEach(item => {
+          let email = localStorage.getItem('email');
+          if (item.account.indexOf('@') > -1) {
+            if (item.account == email) {
+              item.showMenu = true;
+            } else {
+              item.showMenu = false;
+            }
+          } else {
+            if (item.account == this.addressDetails) {
+              item.showMenu = true;
+            } else {
+              item.showMenu = false;
+            }
+          }
           this.scaleSize = item.bl / this.rect.bl;
           item.x = item.x / this.scaleSize;
           item.y = item.y / this.scaleSize;
