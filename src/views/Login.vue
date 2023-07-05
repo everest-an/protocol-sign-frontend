@@ -22,8 +22,9 @@
                     </div>
                     <div class="list">
                         <div class="name">Email Code</div>
-                        <input placeholder="Enter Email Code" v-model="emailCode"><span class="code" @click="sendCode">Send
-                            email code</span>
+                        <input placeholder="Enter Email Code" v-model="emailCode">
+                        <span class="code" v-if="!isSendEmail" @click="sendCode">Send email code</span>
+                        <span class="code" v-else>{{ second }}s</span>
                         <!-- <div class="err">A Code is required</div> -->
                     </div>
                     <div class="tips">By clicking Get Started, you agree to Protocol Sign's Privacy Notice and Terms &
@@ -38,9 +39,9 @@
 </template>
 
 <script>
-// import {
-//     ElMessage
-// } from 'element-plus';
+import {
+    ElMessage
+} from 'element-plus';
 // import * as PDF from "pdfjs-dist";
 // import entry from "pdfjs-dist/build/pdf.worker.entry";
 import Footer from '../components/footer.vue'
@@ -54,39 +55,10 @@ export default {
             currentType: '',
             email: '',
             emailCode: '',
-            authCode: ''
+            authCode: '',
+            isSendEmail: false,
+            second: 60
         }
-
-        // var validateuserName = (rule, value, callback) => {
-        //     if (!value) {
-        //         return callback(new Error('账号不能为空'));
-        //     } else {
-        //         callback();
-        //     }
-        // };
-        // var validatePass = (rule, value, callback) => {
-        //     if (!value) {
-        //         return callback(new Error('密码不能为空'));
-        //     } else {
-        //         callback();
-        //     }
-        // };
-        // return {
-        //     ruleForm: {
-        //         userName: '',
-        //         password: ''
-        //     },
-        //     rules: {
-        //         userName: [{
-        //             validator: validateuserName,
-        //             trigger: 'blur'
-        //         }],
-        //         password: [{
-        //             validator: validatePass,
-        //             trigger: 'blur'
-        //         }]
-        //     }
-        //};
     },
     mounted() {
         // PDF.GlobalWorkerOptions.workerSrc = entry
@@ -139,11 +111,35 @@ export default {
             }
         },
         sendCode() {
+            let isEmail = this.validateEmail(this.email);
+            if (!this.email || !isEmail) {
+                ElMessage.error('Email error')
+                return
+            }
+            this.isSendEmail = true;
+            this.timer();
             this.$axios.post('/web/login/sendCode', { emailAddress: this.email }).then((response) => {
                 console.log(response);
             }).catch(function (error) {
                 console.log(error);
             });
+        },
+        timer() { //计时函数
+            if (this.second > 0) {
+                //隔一秒回调start函数，注意setTimeout里函数不要加括号，或者用function（）{}
+                setTimeout(() => {
+                    this.second = this.second - 1;
+                    this.timer()
+                }, 1000);
+            } else {
+                this.second = 60;
+                this.isSendEmail = false
+            }
+        },
+        validateEmail(email) {
+            // 邮箱验证正则表达式
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
         },
         //邮箱登录
         loginEmail() {

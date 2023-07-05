@@ -9,7 +9,7 @@
                     <label><input name="auth" value="option2" type="radio" v-model="selectedOption"
                             @click="handleOptionClick('option2')">No</label>
                 </div>
-                <div class="button" v-if="isVerfy"><button @click="verfyIdentity">Verify</button></div>
+                <!-- <div class="button" v-if="isVerfy"><button @click="verfyIdentity">Verify</button></div> -->
             </div>
             <div class="pay-method">
                 <div class="title">Pay <span class="red">$1</span> to Protocol Sign, Select payment method</div>

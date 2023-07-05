@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { ElLoading } from "element-plus";
 
 const routes = [
     {
@@ -93,16 +94,28 @@ const router = createRouter({
     history: createWebHashHistory(process.env.BASE_URL),
     routes
 })
+// 创建全局的loading实例
+let loadingInstance = null;
 
-// router.beforeEach((to, from, next) => {
-//     const token = localStorage.getItem('token')
-//     if (token) {
-//         next()
-//     } else if (to.name === 'Login') {
-//         next()
-//     } else {
-//         next('/login')
-//     }
-// })
+router.beforeEach((to, from, next) => {
+    loadingInstance = ElLoading.service({
+        fullscreen: true, // 是否全屏显示loading
+        text: 'Loading...', // 自定义loading文本
+        background: 'rgba(0, 0, 0, 0.7)' // loading遮罩的背景颜色
+    })
+    const token = localStorage.getItem('token')
+    if (token) {
+        next()
+    } else if (to.name === 'Login' || to.name === 'Introduce') {
+        next()
+    } else {
+        next('/login')
+    }
+})
+router.afterEach(() => {
+    // 在路由跳转完成后隐藏加载提示
+    // 可以在这里将全局的loading状态设置为false，隐藏加载提示
+    loadingInstance.close()
+})
 
 export default router
