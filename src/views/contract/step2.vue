@@ -20,11 +20,11 @@
                         </div>
                         <div class="del" @click="deleteAccount(index)"><img src="../../assets/ico-del.png"></div>
                     </div>
-                    <div class="add-email" v-if="item.address">
+                    <!-- <div class="add-email" v-if="item.address">
                         <div>Recipient email</div>
                         <el-input v-model="item.email" placeholder="Please enter your email address"
                             style="width: 300px;" />
-                    </div>
+                    </div> -->
                 </div>
             </div>
 
@@ -73,23 +73,32 @@ export default {
             // console.log('arr==', arr)
             // this.$store.commit('SET_EMAIL', arr)
         },
+
         addOrther() {
             var isValid = this.validateEmail(this.email);
-
-            if (isValid) {
-                console.log("邮箱格式正确");
-            } else {
-                ElMessage.error('Email error')
-                console.log("邮箱格式错误");
-                return
-            }
             if (this.userArr.length > 4) {
                 ElMessage.error('Add up to 5 recipients')
                 return
             }
-            let obj = { email: this.email }
-            this.userArr.push(obj);
-           
+            if (isValid) {//添加的是邮箱
+                let obj = { email: this.email }
+                this.userArr.push(obj);
+            } else {//添加的是区块链地址
+                this.$axios.post('/web/customer/queryInfoByAccountAddress', { accountAddress: this.email }).then((res) => {
+                    console.log(res);
+                    if (res.code == 0) {
+                        let obj = { email: this.email }
+                        this.userArr.push(obj);
+                    } else {
+                        ElMessage.error(res.msg);
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                    ElMessage.error(error);
+                });
+            }
+
+
             // let arr = [];
             // this.userArr.map(item => {
             //     arr.push(item.address)
@@ -98,32 +107,41 @@ export default {
         },
         handlerNext() {
 
-            let isEmail = true;
-            let emailError = false;
-            this.userArr.map(item => {
-                if (!item.email) {
-                    isEmail = false
-                }
-            })
-            if (isEmail == false) {
-                ElMessage.error('Please enter your email address')
-                return
-            }
-            this.userArr.map(item => {
-                if (!this.validateEmail(item.email)) {
-                    emailError = true
-                }
-            })
-            if (emailError) {
-                ElMessage.error('Email error')
-                return
-            }
+            // let isEmail = true;
+            // let emailError = false;
+            // this.userArr.map(item => {
+            //     if (!item.email) {
+            //         isEmail = false
+            //     }
+            // })
+            // if (isEmail == false) {
+            //     ElMessage.error('Please enter your email address')
+            //     return
+            // }
+            // this.userArr.map(item => {
+            //     if (!this.validateEmail(item.email)) {
+            //         emailError = true
+            //     }
+            // })
+            // if (emailError) {
+            //     ElMessage.error('Email error')
+            //     return
+            // }
             let arr = [];
             this.userArr.map(item => {
-                arr.push(item.email)
+                if (item.email) {
+                    arr.push(item.email)
+                } else {
+                    arr.push(item.address)
+                }
             })
             this.$store.commit('SET_EMAIL', arr);
+            console.log(this.$store.state.receiverEmail)
             this.$store.commit('SET_USERARR', this.userArr);
+            if (arr.length < 1) {
+                ElMessage.error('Please add recipients')
+                return
+            }
             this.$router.push({
                 name: 'Step3'
             })

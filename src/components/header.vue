@@ -21,23 +21,25 @@ export default {
   data() {
     return {
       logMsg: 'Login',
-      token:''
+      token: ''
     }
   },
   mounted() {
     let token = localStorage.getItem('token');
     this.token = token;
     if (token) {
-      this.logMsg = "Home"
+      this.logMsg = "Logout"
     } else {
-      this.logMsg = "Protocol Sign"
+      this.logMsg = "Login"
     }
   },
   methods: {
     goHome() {
-      if (this.token) {
-        this.$router.push({ name: 'Home' })
+      if (this.logMsg=='Login') {
+        this.$router.push({ name: 'Login' })
       } else {
+        this.logMsg = "Login"
+        localStorage.clear();
         this.$router.push({ name: 'Login' })
       }
     }
@@ -83,7 +85,8 @@ export default {
     height: auto;
     object-fit: cover;
   }
-  .logo-img{
+
+  .logo-img {
     width: 160px;
   }
 

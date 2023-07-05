@@ -6,7 +6,7 @@
             <button class="bt-start" @click="handlerStart">Start Now</button>
         </div>
         <!-- <argos-id ref="argosIdButton" :id="id" :project="projectId" ></argos-id> -->
-        <div style="position: absolute; bottom: 0;">
+        <div style="position: fixed; bottom: 0;">
             <Footer></Footer>
         </div>
     </div>

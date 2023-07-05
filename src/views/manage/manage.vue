@@ -89,7 +89,7 @@ export default {
             });
         },
         gotoPage(item) {
-            if (item.identityStatus == 1) {//已验证
+            if (item.identityStatus == 1 || item.authentication == 0) {//已验证
                 this.$router.push({ name: 'Sign', query: { 'fileCode': item.fileCode } });
                 sessionStorage.setItem('placeMark', item.placeMark)
             } else {//去人脸认证
@@ -110,7 +110,7 @@ export default {
                             givenName: ' ',
                             lastName: ' '
                         },
-                        vendorData: 'abc123abc'
+                        vendorData: item.customerNumber
                     });
                     veriff.mount({
                         submitBtnText: 'Get verified'
