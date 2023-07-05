@@ -27,9 +27,9 @@ function endLoading() {
     NProgress.done();
 }
 
- const baseURL = 'https://tjtest.pugongyinghulian.com/dsign_api'
+//  const baseURL = 'https://tjtest.pugongyinghulian.com/dsign_api'
 // const baseURL = 'https://www.ahawechat.com/dsign_api'
-// const baseURL = 'https://www.protocolsign.cn/dsign_api'
+const baseURL = 'https://www.protocolsign.cn/dsign_api'
 
 axios.defaults.baseURL = baseURL;
 

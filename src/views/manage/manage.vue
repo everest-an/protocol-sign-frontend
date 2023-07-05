@@ -13,13 +13,13 @@
                             <p class="txt1">{{ item.fileName }}</p>
                             <!-- <p class="txt2">To：{123455667@163.com}</p> -->
                         </div>
-                        <div class="col2" v-if="item.status !== 2">waiting</div>
+                        <div class="col2" v-if="item.status !== 1">waiting</div>
                         <div class="col2" v-else>complete</div>
                         <div class="col3">{{ item.createTime }}</div>
                         <div class="col4">
                             <button @click="gotoPage(item)" v-if="item.status == 0">Sign</button>
-                            <!-- <button class="grey">Sign</button> -->
-                            <button v-else @click="downPdf(item)">Download</button>
+                            <button class="grey" v-if="item.status == 2">Waiting</button>
+                            <button v-if="item.status == 1" @click="downPdf(item)">Download</button>
                         </div>
                     </div>
 
