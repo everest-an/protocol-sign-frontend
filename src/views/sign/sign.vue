@@ -49,8 +49,6 @@ export default {
             this.$router.push({ name: 'Sign' })
         },
         async buildPDF2() {
-            let ele = document.getElementById('pageContainer1');
-            console.log('====123', ele.offsetWidth)
             let width = this.$store.state.pdfWidth;
             let height = this.$store.state.pdfHeight;
             let orientation = '';
