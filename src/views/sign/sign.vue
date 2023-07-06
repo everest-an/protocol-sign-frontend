@@ -110,7 +110,7 @@ export default {
         },
         //生成PDF并上传
         finishHandle() {
-            this.loadingInstance = ElLoading.service({ text: 'Loading...' })
+            this.loadingInstance = ElLoading.service({ text: 'Waiting...' })
             this.loading = true;
             this.buildPDF2()
         }

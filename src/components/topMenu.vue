@@ -59,6 +59,7 @@ export default {
       this.$router.push({ name: 'Login' })
     },
     gotoPage() {
+      sessionStorage.setItem('goBack', 1)
       this.$router.push({ name: 'Introduce' })
     }
   },
