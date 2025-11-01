@@ -1,5 +1,5 @@
 {
-  "name": "dsign",
+  "name": "protocol-sign",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -16,7 +16,7 @@
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.1",
     "jspdf": "^2.5.1",
-    "node-sass": "^8.0.0",
+    "sass": "^1.62.0",
     "nprogress": "^0.2.0",
     "pdfjs-dist": "2.11.338",
     "sass-loader": "^13.2.2",

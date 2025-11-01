@@ -1,7 +1,7 @@
 <template>
   <div class="top-bar" :style="'opacity:' + opacity">
     <div class="left">
-      <img class="logo-img" src="../assets/logo.png">
+      <img class="logo-img" src="../assets/logo-protocol-sign.png">
       <!-- <img class="logo" src="../assets/circle.png">
       <div class="txt">
         <div class="logo-title">Protocol Sign</div>

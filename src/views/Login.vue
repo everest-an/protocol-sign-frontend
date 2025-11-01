@@ -5,7 +5,7 @@
             <div class="form-container">
                 <div class="left">
 
-                    <img src="../assets/login-left.png">
+                    <img src="../assets/login-left-new.png">
                 </div>
                 <div class="right" v-if="!currentType">
                     <div class="styles {{curentType=='fox'?'select':''}}" @click="handleSelectLogin('fox')"><span

@@ -1,6 +1,6 @@
 <template>
   <div class="top-bar" v-if="showBar">
-    <img class="logo" src="../assets/logo.png" @click="gotoPage">
+    <img class="logo" src="../assets/logo-protocol-sign.png" @click="gotoPage">
     <div class="menus">
       <div v-if="menuList.indexOf(currentName) > -1">
         <span v-for="(item, idx) in menuLists" :key="idx" @click="handlerMenu(item)"
