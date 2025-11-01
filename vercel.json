@@ -1,0 +1,15 @@
+{
+  "name": "protocol-sign",
+  "version": 2,
+  "buildCommand": "npm run build",
+  "devCommand": "npm run serve",
+  "installCommand": "npm install",
+  "framework": "vue",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
