@@ -8,10 +8,14 @@
                     <img src="../assets/login-left-new.png">
                 </div>
                 <div class="right" v-if="!currentType">
-                    <div class="styles {{curentType=='fox'?'select':''}}" @click="handleSelectLogin('fox')"><span
-                            class="txt">MetaMask</span><img class="img" src="../assets/ico-fox.png"></div>
-                    <div class="styles {{curentType=='email'?'select':''}}" @click="handleSelectLogin('email')"><span
-                            class="txt">Email</span><img class="img" src="../assets/ico-emial.png"></div>
+                    <div class="styles" :class="{select: currentType=='fox'}" @click="handleSelectLogin('fox')">
+                        <span class="txt">MetaMask</span>
+                        <img class="img" src="../assets/ico-fox.png">
+                    </div>
+                    <div class="styles" :class="{select: currentType=='email'}" @click="handleSelectLogin('email')">
+                        <span class="txt">Email</span>
+                        <img class="img" src="../assets/ico-emial.png">
+                    </div>
                 </div>
                 <div class="sign-in" v-if="currentType == 'email'">
                     <div class="title">Log In</div>
@@ -230,7 +234,10 @@ export default {
     flex: 1;
     padding: 0 50px 28px 0;
     border-radius: 8px;
-
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
     .styles {
         width: 232px;
