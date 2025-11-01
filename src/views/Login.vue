@@ -219,6 +219,16 @@ export default {
 
     .left {
         width: 490px;
+        height: 426px;
+        overflow: hidden;
+        border-radius: 8px 0 0 8px;
+        
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
     }
 
 }
